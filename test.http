@@ -1,0 +1,37 @@
+
+GET http://localhost:5000/api/users
+
+###
+GET http://localhost:5000/api/profile
+
+###
+GET http://localhost:5000/api/users/1
+
+###
+
+PUT  http://localhost:5000/api/users/1
+Content-Type: application/json
+
+{
+    "name": "sébastien",
+    "email": "test@user.com"
+}
+
+###
+
+POST http://localhost:5000/api/addUser
+Content-Type: application/json
+
+{
+    "name": "pix",
+    "email": "pix@tdddest.co"
+}
+
+###
+DELETE  http://localhost:5000/api/users/2
+
+###
+
+DELETE  http://localhost:5000/api/profile/2
+
+###
