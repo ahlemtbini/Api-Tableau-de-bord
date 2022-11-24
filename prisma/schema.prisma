@@ -10,29 +10,326 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+enum Role {
+  super_admin
+  client_admin
+  manager
+  chauffeur
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+enum ContractType {
+  CDI
+  CDD
+  Interimaire
+  Stagiaire
+}
+
+enum Droits {
+  consulter
+  gerer
+}
+
+enum Etat {
+  recu
+  enAttente
+  confirme
+  refuse
+}
+
+enum NatureSinistre {
+  ETRANGER
+  Corpo
+  Non_Auto
+}
+
+enum EtatSinistre {
+  En_cours
+  Clos
+}
+
+enum EPA_declared {
+  oui
+  non
+  ne_sais_pas
+}
+
+enum Jours {
+  Lundi
+  Mardi
+  Mercredi
+  Jeudi
+  Vendredi
+  Samedi
+  Dimanche
+}
+
+enum intervalle_des_heures {
+  Entre_3h_6h
+  Entre_6h_9h
+  Entre_9h_11h
+  Entre_11h_13h
+  Entre_15h_17h
+  Entre_17h_19h
+  Entre_19h_22h
+  Entre_22h_3h
+}
+
+enum intervalle_de_temps_conduite {
+  Moins_30min
+  Entre_30min_1h
+  Entre_1h_2h
+  Entre_2h_3h
+  Entre_3h_4h
+  plus_4h
 }
 
 model User {
+  id            Int          @id @default(autoincrement())
+  email         String       @unique
+  nom           String
+  prenom        String
+  mdp           String       @default("default")
+  role          String
+  aciveInactive Boolean      @default(true)
+  profile       Profile?
+  super_admin   SuperAdmin?
+  admin_client  AdminClient?
+  manager       Manager?
+  chauffeur     Chauffeur?
+}
+
+model Profile {
+  id                Int           @id @default(autoincrement())
+  numTel            Int?
+  date_de_naissance DateTime      @db.Date
+  typeContrat       ContractType?
+  dateEmbauche      DateTime?
+  creerPar          Role          @default(manager)
+  permisConduire    Bytes?
+  picture           Bytes?
+  user              User          @relation(fields: [userId], references: [id])
+  userId            Int           @unique
+}
+
+model SuperAdmin {
   id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+  user    User     @relation(fields: [userId], references: [id])
+  userId  Int      @unique
+  clients Client[]
+}
+
+model AdminClient {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int    @unique
+  client   Client @relation(fields: [clientID], references: [id])
+  clientID Int    @unique
+}
+
+model Manager {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  droits   Droits
+  userId   Int       @unique
+  societes Societe[]
+}
+
+model Chauffeur {
+  id                     Int                     @id @default(autoincrement())
+  siteName               String
+  region                 String
+  user                   User                    @relation(fields: [userId], references: [id])
+  userId                 Int                     @unique
+  site                   Site                    @relation(fields: [siteId], references: [id])
+  siteId                 Int                     @unique
+  sinistres              Sinistre[]
+  entretienPostAciidents EntretienPostAccident[]
+  entretienVehicules     EntretienVehicule[]
+}
+
+model Client {
+  id                   Int           @id @default(autoincrement())
+  nomClient            String
+  email                String
+  numTel               Int
+  numContart           String
+  numAssistance        Int
+  descriptifAssistance String        @db.VarChar(1000)
+  nomDomaine           String
+  numSiret             Int
+  nbreSociete          Int           @default(0)
+  nbreSites            Int           @default(0)
+  nbreAdmins           Int           @default(0)
+  startDate            DateTime
+  endDate              DateTime
+  donneesCrypte        Boolean
+  isActive             Boolean
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  superAdmin           SuperAdmin    @relation(fields: [superAdminID], references: [userId])
+  superAdminID         Int
+  adminClients         AdminClient[]
+  countrys             Country[]
+}
+
+model Country {
+  id       Int      @id @default(autoincrement())
+  name     String
+  client   Client   @relation(fields: [clientId], references: [id])
+  clientId Int
+  regions  Region[]
+}
+
+model Region {
+  id        Int       @id @default(autoincrement())
+  name      String
+  country   Country   @relation(fields: [countryID], references: [id])
+  countryID Int
+  societes  Societe[]
+}
+
+model Societe {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String
+  numTel     Int
+  numSiret   Int?
+  nmbreSites Int       @default(0)
+  creerPar   Role
+  isActive   Boolean
+  region     Region    @relation(fields: [regionID], references: [id])
+  regionID   Int       @unique
+  managers   Manager[]
+  sites      Site[]
+}
+
+model Site {
+  id           Int         @id @default(autoincrement())
+  name         String
+  adresse      String
+  nbrChauffeur Int         @default(0)
+  creerPar     Role
+  isActive     Boolean
+  societe      Societe     @relation(fields: [companyID], references: [id])
+  companyID    Int         @unique
+  chuaffeurs   Chauffeur[]
+}
+
+model Sinistre {
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  etat                 Etat                  @default(recu)
+  chauffeur            Chauffeur             @relation(fields: [chauffeurID], references: [id])
+  chauffeurID          Int
+  declarationSinistres DeclarationSinistre[]
+}
+
+model EntretienPostAccident {
+  id                                                              Int                          @id @default(autoincrement())
+  // 1 - Identification
+  societe                                                         String
+  Entite                                                          String
+  nom_prenom_chauffeur                                            String
+  date_entree_dans_fonction                                       DateTime
+  Contrat                                                         ContractType
+  date_accident                                                   DateTime
+  declare_a_assureur                                              EPA_declared
+  date_entretien                                                  DateTime
+  entretien_realisee_par                                          String
+  // 2 - Jour de l’accident
+  jour_de_survenance_de_accident                                  Jours
+  Dernier_jour_de_pause_hebdomadaire                              Jours
+  Heure_accident                                                  intervalle_des_heures
+  Heure_prise_service                                             intervalle_des_heures
+  temps_coduite_depuis_prise_servise_au_dernier_pause_obligatoire intervalle_de_temps_conduite
+  // 3 - Type de véhicule
+  Vehicule_habituel                                               Boolean
+  type_de_vehicule                                                String
+  chauffeur                                                       Chauffeur                    @relation(fields: [chauffeurID], references: [id])
+  chauffeurID                                                     Int
+  // 4 - Conditions de survenance
+  meteo                                                           String //enum
+  luminosite                                                      String //enum
+  environement                                                    String //enum
+  configuration                                                   String //enum
+  type_de_voie                                                    String //enum
+  type_de_tiers                                                   String //enum
+  type_de_trajet                                                  String //enum
+  Kilometres_parcourus_avant_le_sinistre                          String //enum
+  Gestion_de_la_mission                                           String //enum
+  //5 - Nature du sinistre
+  Estimation_de_accident                                          String //enum
+  Genre_du_sinistre                                               String //enum
+  Degats                                                          String //enum
+  // 6 - Impact sur le véhicule
+  endroit_impact                                                  String //enum
+  Expression_libre                                                String                       @db.Text
+  // 7 - Situations de survenance
+  Circonstance_de_accident                                        Int //enum 1..25
+  Evitabilite_de_accident                                         Int // enum 1..7
+  ifacteur_nfluence_survenance_accident                           Int // enum 1..6
+  Avis_Evitable_O_N                                               Boolean
+  Signature_responsable                                           Bytes
+  Signature_Conducteur                                            Bytes
+}
+
+model EntretienVehicule {
+  id                    Int       @id @default(autoincrement())
+  etat                  String // reçu/ en cours / confirmé / refus
+  resultat_entretien    String
+  description_entretien String    @db.Text
+  type_vehicule         String
+  matricule             String
+  chauffeur             Chauffeur @relation(fields: [chauffeurID], references: [id])
+  chauffeurID           Int
+}
+
+model DeclarationSinistre {
+  sinistre                      Sinistre       @relation(fields: [sinistreId], references: [id])
+  sinistreId                    Int            @unique
+  ref_Sinistre                  Int
+  ref_SATAR                     Int
+  Date_recep                    DateTime
+  Date_Survenance               DateTime
+  Heure                         DateTime
+  CAS                           String
+  LIEU_SINISTRE                 String
+  SOCIETE_A_Facturer            String
+  Site                          String
+  Region                        String
+  Type_Vehicule                 String
+  Immatriculation               String
+  Marque                        String
+  premiere_MEC                  DateTime
+  Perte_Fi                      Boolean
+  Conducteur                    String
+  pourcentage_RC                Int
+  Cas_IDA                       Int?
+  Nature                        NatureSinistre
+  Circonstances                 String         @db.Text
+  Dommages                      String
+  Cie_adv                       String
+  Conv                          Boolean
+  Mt_Dom                        Float
+  Franchise                     Int
+  Date_MISSIONNEMENT            DateTime
+  Lieu_expertise                String
+  Date_EXPERTISE                DateTime
+  Date_RAPPORT                  DateTime
+  Ref_expertise                 Int
+  Date_RAPPORT_DEFINITIF        DateTime
+  cout_expert                   Float
+  REPARATION_oui_non            Boolean
+  CESSION_EPAVE                 Boolean
+  Mt_rec                        Int
+  Pieces_manquantes_Oui_Non     Boolean
+  Detail_pieces_manquantes      String
+  Date_de_relance_pieces_M      DateTime?
+  Constat_original_O_N          Boolean
+  Date_clot                     DateTime
+  Charge_Provisionnelle_Solaris Float?
+  Charge_ajustee                Float?
+  Charge_reelle                 Float?
+  Etat                          EtatSinistre
+  Commentaires                  String         @db.Text
 }
