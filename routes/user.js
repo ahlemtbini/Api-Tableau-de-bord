@@ -4,16 +4,16 @@ const router = express.Router();
 const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient()
 const userCtrl = require("../controllers/user");
+const clientsCtrl = require("../controllers/clients");
 
-  router.get('/posts', async (req, res, next) => {
-    try {
-      const posts = await prisma.post.findMany({})
-      res.json(posts)
-    } catch (error) {
-      next(error)
-    }
-  });
-
+//   router.get('/clients',async (req, res, next) => {
+//     try {
+//       const profile = await prisma.user.findMany({})
+//       res.json(profile)
+//     } catch (error) {
+//       next(error)
+//     }
+// })
   // user controller
   router.get('/profile', userCtrl.getProfile);
   router.get('/users', userCtrl.getUsers);
@@ -23,7 +23,10 @@ const userCtrl = require("../controllers/user");
   router.delete('/users/:id',userCtrl.deleteUser);
   router.delete('/profile/:id', userCtrl.deleteProfile);
 
-  // admin controller
+  // clients controller
+
+  router.get('/clients', clientsCtrl.getClients)
+  router.post('/clients/add', clientsCtrl.getClients)
 
 
 /*

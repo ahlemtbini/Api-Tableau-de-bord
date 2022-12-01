@@ -1,0 +1,20 @@
+GET http://localhost:5000/api/users
+
+###
+GET http://localhost:5000/api/clients
+
+###
+POST http://localhost:5000/api/clients/add
+Content-Type: application/json
+
+{
+    "nom": "dsqd",
+    "prenom": "dqsd",
+    "email": "sdsq@sqdsq.qsd",
+    "numTel": "1245",
+    "numContrat": "565656",
+    "nomDomain": "@sdqsd.qsd",
+    "numSiret": "123213",
+    "isActive": "oui",
+    "donneesCrypte": "non"
+}

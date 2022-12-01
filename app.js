@@ -15,14 +15,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
-/*
+
 app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-*/
+
 
 app.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });

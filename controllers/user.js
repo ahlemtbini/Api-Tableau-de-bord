@@ -1,5 +1,6 @@
 
-
+const {PrismaClient} = require('@prisma/client')
+const prisma = new PrismaClient()
 exports.getProfile = async (req, res, next) => {
     try {
       const profile = await prisma.profile.findMany({})
@@ -13,8 +14,7 @@ exports.getUsers = async (req, res, next) => {
     try {
       const users = await prisma.user.findMany({
         include: {
-          posts: true,
-          profile: true,
+          super_admin: true,
         },
       })
       res.json(users)

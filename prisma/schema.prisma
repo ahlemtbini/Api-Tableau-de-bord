@@ -152,20 +152,20 @@ model Client {
   nomClient            String
   email                String
   numTel               Int
-  numContart           String
-  numAssistance        Int
-  descriptifAssistance String        @db.VarChar(1000)
+  numContrat           String
+  numAssistance        Int?
+  descriptifAssistance String?       @db.VarChar(1000)
   nomDomaine           String
   numSiret             Int
   nbreSociete          Int           @default(0)
-  nbreSites            Int           @default(0)
-  nbreAdmins           Int           @default(0)
-  startDate            DateTime
-  endDate              DateTime
+  nbreSites            Int?          @default(0)
+  nbreAdmins           Int?          @default(0)
+  startDate            DateTime?
+  endDate              DateTime?
   donneesCrypte        Boolean
   isActive             Boolean
   createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
+  updatedAt            DateTime?     @updatedAt
   superAdmin           SuperAdmin    @relation(fields: [superAdminID], references: [userId])
   superAdminID         Int
   adminClients         AdminClient[]
