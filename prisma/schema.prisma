@@ -4,11 +4,12 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+//enum role
 
 enum Role {
   super_admin
@@ -16,43 +17,36 @@ enum Role {
   manager
   chauffeur
 }
-
 enum ContractType {
   CDI
   CDD
   Interimaire
   Stagiaire
 }
-
 enum Droits {
   consulter
   gerer
 }
-
 enum Etat {
   recu
   enAttente
   confirme
   refuse
 }
-
 enum NatureSinistre {
   ETRANGER
   Corpo
   Non_Auto
 }
-
 enum EtatSinistre {
   En_cours
   Clos
 }
-
 enum EPA_declared {
   oui
   non
   ne_sais_pas
 }
-
 enum Jours {
   Lundi
   Mardi
@@ -62,7 +56,6 @@ enum Jours {
   Samedi
   Dimanche
 }
-
 enum intervalle_des_heures {
   Entre_3h_6h
   Entre_6h_9h
@@ -73,7 +66,6 @@ enum intervalle_des_heures {
   Entre_19h_22h
   Entre_22h_3h
 }
-
 enum intervalle_de_temps_conduite {
   Moins_30min
   Entre_30min_1h
@@ -97,7 +89,6 @@ model User {
   manager       Manager?
   chauffeur     Chauffeur?
 }
-
 model Profile {
   id                Int           @id @default(autoincrement())
   numTel            Int?
@@ -110,14 +101,12 @@ model Profile {
   user              User          @relation(fields: [userId], references: [id])
   userId            Int           @unique
 }
-
 model SuperAdmin {
   id      Int      @id @default(autoincrement())
   user    User     @relation(fields: [userId], references: [id])
   userId  Int      @unique
   clients Client[]
 }
-
 model AdminClient {
   id       Int    @id @default(autoincrement())
   user     User   @relation(fields: [userId], references: [id])
@@ -125,15 +114,13 @@ model AdminClient {
   client   Client @relation(fields: [clientID], references: [id])
   clientID Int    @unique
 }
-
 model Manager {
   id       Int       @id @default(autoincrement())
   user     User      @relation(fields: [userId], references: [id])
-  droits   Droits
   userId   Int       @unique
+  droits   Droits
   societes Societe[]
 }
-
 model Chauffeur {
   id                     Int                     @id @default(autoincrement())
   siteName               String
@@ -146,7 +133,6 @@ model Chauffeur {
   entretienPostAciidents EntretienPostAccident[]
   entretienVehicules     EntretienVehicule[]
 }
-
 model Client {
   id                   Int           @id @default(autoincrement())
   nomClient            String
@@ -160,8 +146,8 @@ model Client {
   nbreSociete          Int           @default(0)
   nbreSites            Int?          @default(0)
   nbreAdmins           Int?          @default(0)
-  startDate            DateTime?
-  endDate              DateTime?
+  startDate            String?  
+  endDate              String? 
   donneesCrypte        Boolean
   isActive             Boolean
   createdAt            DateTime      @default(now())
@@ -171,7 +157,6 @@ model Client {
   adminClients         AdminClient[]
   countrys             Country[]
 }
-
 model Country {
   id       Int      @id @default(autoincrement())
   name     String
@@ -179,7 +164,6 @@ model Country {
   clientId Int
   regions  Region[]
 }
-
 model Region {
   id        Int       @id @default(autoincrement())
   name      String
@@ -187,7 +171,6 @@ model Region {
   countryID Int
   societes  Societe[]
 }
-
 model Societe {
   id         Int       @id @default(autoincrement())
   name       String
@@ -202,7 +185,6 @@ model Societe {
   managers   Manager[]
   sites      Site[]
 }
-
 model Site {
   id           Int         @id @default(autoincrement())
   name         String
@@ -214,7 +196,6 @@ model Site {
   companyID    Int         @unique
   chuaffeurs   Chauffeur[]
 }
-
 model Sinistre {
   id                   Int                   @id @default(autoincrement())
   name                 String
@@ -223,7 +204,6 @@ model Sinistre {
   chauffeurID          Int
   declarationSinistres DeclarationSinistre[]
 }
-
 model EntretienPostAccident {
   id                                                              Int                          @id @default(autoincrement())
   // 1 - Identification
@@ -272,7 +252,6 @@ model EntretienPostAccident {
   Signature_responsable                                           Bytes
   Signature_Conducteur                                            Bytes
 }
-
 model EntretienVehicule {
   id                    Int       @id @default(autoincrement())
   etat                  String // reçu/ en cours / confirmé / refus
@@ -283,7 +262,6 @@ model EntretienVehicule {
   chauffeur             Chauffeur @relation(fields: [chauffeurID], references: [id])
   chauffeurID           Int
 }
-
 model DeclarationSinistre {
   sinistre                      Sinistre       @relation(fields: [sinistreId], references: [id])
   sinistreId                    Int            @unique

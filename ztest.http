@@ -1,20 +1,58 @@
+
 GET http://localhost:5000/api/users
 
 ###
+POST http://localhost:5000/api/users/add
+Content-Type: application/json
+
+{
+  "email": "super.admin@mail.com",
+  "nom": "super",
+  "prenom": "admin",
+  "mdp": "polm1213",
+  "role": "super_admin"
+}
+
+###
 GET http://localhost:5000/api/clients
+###
+DElETE http://localhost:5000/api/clients/3
 
 ###
 POST http://localhost:5000/api/clients/add
 Content-Type: application/json
 
 {
-    "nom": "dsqd",
-    "prenom": "dqsd",
-    "email": "sdsq@sqdsq.qsd",
-    "numTel": "1245",
-    "numContrat": "565656",
-    "nomDomain": "@sdqsd.qsd",
-    "numSiret": "123213",
-    "isActive": "oui",
-    "donneesCrypte": "non"
+    "nomClient": "lipsum",
+        "email": "lipsum@test.com",
+        "numTel": 65655665,
+        "numContrat": "56565665",
+        "nomDomaine": "@lipsum.com",
+        "numSiret": 565665,
+        "isActive": true,
+        "donneesCrypte": false,
+        "descriptifAssistance": "sdsqdsq",
+        "startDate": "2023-01-03",
+        "endDate": "2023-12-29",
+        "superAdminID": 1
 }
+
+
+###
+
+
+#   nomClient            String
+#   email                String
+#   numTel               Int
+#   numContrat           String
+#   numAssistance        Int?
+#   descriptifAssistance String?       @db.VarChar(1000)
+#   nomDomaine           String
+#   numSiret             Int
+#   nbreSociete          Int           @default(0)
+#   nbreSites            Int?          @default(0)
+#   nbreAdmins           Int?          @default(0)
+#   startDate            DateTime?
+#   endDate              DateTime?
+#   donneesCrypte        Boolean
+#   isActive      
