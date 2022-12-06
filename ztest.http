@@ -1,5 +1,5 @@
 
-GET http://localhost:5000/api/users
+GET http://51.83.77.61/api/users
 
 ###
 POST http://localhost:5000/api/users/add
@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/clients
+GET http://51.83.77.61/api/clients
 ###
 DElETE http://localhost:5000/api/clients/3
 
@@ -23,21 +23,40 @@ POST http://localhost:5000/api/clients/add
 Content-Type: application/json
 
 {
-    "nomClient": "lipsum",
-        "email": "lipsum@test.com",
-        "numTel": 65655665,
-        "numContrat": "56565665",
-        "nomDomaine": "@lipsum.com",
-        "numSiret": 565665,
-        "isActive": true,
-        "donneesCrypte": false,
-        "descriptifAssistance": "sdsqdsq",
-        "startDate": "2023-01-03",
-        "endDate": "2023-12-29",
-        "superAdminID": 1
+    "nomClient": "primever",
+    "email": "contact@primevr.fr",
+    "numTel": 445454456,
+    "adresse": "2500 dsfdfsd ds",
+    "numContrat": "565665666",
+    "nomDomaine": "@primever.fr",
+    "numSiret": "12345671234567",
+    "isActive": true,
+    "donneesCrypte": false,
+    "descriptifAssistance": "dsfdsfds dsf ds dsf fds dsfdsf dsfdsfds dsf ds dsf fds dsfdsf dsfdsfds dsf ds dsf fds dsfdsf",
+    "startDate": "2023-01-15",
+    "endDate": "2023-12-30",
+    "superAdminID": 1
 }
 
+###
+PUT http://localhost:5000/api/clients/:id
+Content-Type: application/json
 
+{
+    "nomClient": "pix",
+    "email": "opoop@pppo.fdfd",
+    "numTel": 565565565,
+    "adresse": "2500 fsdf",
+    "numContrat": "565",
+    "nomDomaine": "@ddffd.dfsd",
+    "numSiret": 12345671234567,
+    "isActive": true,
+    "donneesCrypte": false,
+    "descriptifAssistance": "dsfd dfsd  ds df dfdfdsfds dsd dsfd dfsd  ds df dfdfdsfds dsd",
+    "startDate": "2023-01-15",
+    "endDate": "2023-12-09",
+    "superAdminID": 1
+}
 ###
 
 

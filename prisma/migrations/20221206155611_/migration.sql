@@ -51,8 +51,8 @@ CREATE TABLE `AdminClient` (
 -- CreateTable
 CREATE TABLE `Manager` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `droits` ENUM('consulter', 'gerer') NOT NULL,
     `userId` INTEGER NOT NULL,
+    `droits` ENUM('consulter', 'gerer') NOT NULL,
 
     UNIQUE INDEX `Manager_userId_key`(`userId`),
     PRIMARY KEY (`id`)
@@ -77,22 +77,26 @@ CREATE TABLE `Client` (
     `nomClient` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `numTel` INTEGER NOT NULL,
+    `adresse` VARCHAR(191) NULL,
     `numContrat` VARCHAR(191) NOT NULL,
     `numAssistance` INTEGER NULL,
     `descriptifAssistance` VARCHAR(1000) NULL,
     `nomDomaine` VARCHAR(191) NOT NULL,
-    `numSiret` INTEGER NOT NULL,
+    `numSiret` VARCHAR(191) NULL,
     `nbreSociete` INTEGER NOT NULL DEFAULT 0,
     `nbreSites` INTEGER NULL DEFAULT 0,
     `nbreAdmins` INTEGER NULL DEFAULT 0,
-    `startDate` DATETIME(3) NULL,
-    `endDate` DATETIME(3) NULL,
+    `startDate` VARCHAR(191) NULL,
+    `endDate` VARCHAR(191) NULL,
     `donneesCrypte` BOOLEAN NOT NULL,
     `isActive` BOOLEAN NOT NULL,
+    `logo` LONGBLOB NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
     `superAdminID` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Client_email_key`(`email`),
+    UNIQUE INDEX `Client_numTel_key`(`numTel`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

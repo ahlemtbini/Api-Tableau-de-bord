@@ -29,6 +29,19 @@ exports.addClient = async (req, res, next) => {
         next(error)
     }
 }
+exports.addLogo = async (req, res, next) => {
+    console.log(req.body)
+    try {
+        const client = await prisma.client.create({
+            data: {
+                logo: Buffer.form([1, 2, 3])
+            }
+        })
+        res.json(client)
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.editClient = async (req, res, next) => {
     try {
