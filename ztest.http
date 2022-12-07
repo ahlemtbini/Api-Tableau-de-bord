@@ -24,10 +24,10 @@ Content-Type: application/json
 
 {
     "nomClient": "primever",
-    "email": "contact@primevr.fr",
-    "numTel": 445454456,
+    "email": "contact@primever.fr",
+    "numTel": 555201208,
     "adresse": "2500 dsfdfsd ds",
-    "numContrat": "565665666",
+    "numContrat": "555201208",
     "nomDomaine": "@primever.fr",
     "numSiret": "12345671234567",
     "isActive": true,
@@ -44,12 +44,12 @@ Content-Type: application/json
 
 {
     "nomClient": "pix",
-    "email": "opoop@pppo.fdfd",
-    "numTel": 565565565,
+    "email": "ommmjp@pppo.fdfd",
+    "numTel": 565563365,
     "adresse": "2500 fsdf",
     "numContrat": "565",
     "nomDomaine": "@ddffd.dfsd",
-    "numSiret": 12345671234567,
+    "numSiret": "12345671234567",
     "isActive": true,
     "donneesCrypte": false,
     "descriptifAssistance": "dsfd dfsd  ds df dfdfdsfds dsd dsfd dfsd  ds df dfdfdsfds dsd",

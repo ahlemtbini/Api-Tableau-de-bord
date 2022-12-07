@@ -26,7 +26,8 @@ exports.addClient = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        next(error)
+        res.json({ error: error })
+        // next(error)
     }
 }
 exports.addLogo = async (req, res, next) => {
@@ -65,6 +66,6 @@ exports.deleteClient = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        next(error)
+        res.json({ error: error })
     }
 }
