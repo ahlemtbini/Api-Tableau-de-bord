@@ -6,7 +6,7 @@ exports.getClients = async (req, res, next) => {
         const clients = await prisma.client.findMany({})
         res.json(clients)
     } catch (error) {
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 exports.getClient = async (req, res, next) => {
@@ -16,7 +16,8 @@ exports.getClient = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        next(error)
+        res.json({ error: error })
+
     }
 }
 exports.addClient = async (req, res, next) => {
@@ -40,7 +41,7 @@ exports.addLogo = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        next(error)
+        res.json({ error: error })
     }
 }
 
@@ -53,7 +54,7 @@ exports.editClient = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        next(error)
+        res.json({ error: error })
     }
 }
 

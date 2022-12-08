@@ -33,7 +33,8 @@ app.use("/api", userRoutes);
 
 
 app.use((req, res, next) => {
-  next(createError.NotFound());
+  // next(res.json({ error: "error" }));
+  createError.NotFound()
 });
 app.use((err, req, res, next) => {
   res.status(err.status || 500);

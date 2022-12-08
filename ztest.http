@@ -2,7 +2,7 @@
 GET http://51.83.77.61/api/users
 
 ###
-POST http://localhost:5000/api/users/add
+POST http://51.83.77.61/api/users/add
 Content-Type: application/json
 
 {
@@ -19,13 +19,13 @@ GET http://51.83.77.61/api/clients
 DElETE http://localhost:5000/api/clients/3
 
 ###
-POST http://localhost:5000/api/clients/add
+POST http://51.83.77.61/api/clients/add
 Content-Type: application/json
 
 {
-    "nomClient": "primever",
-    "email": "contact@primever.fr",
-    "numTel": 555201208,
+    "nomClient": "qqqqq",
+    "email": "contact@qqqqq.fr",
+    "numTel": 555201228,
     "adresse": "2500 dsfdfsd ds",
     "numContrat": "555201208",
     "nomDomaine": "@primever.fr",
