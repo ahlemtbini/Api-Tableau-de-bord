@@ -1,8 +1,8 @@
 
-GET http://51.83.77.61/api/users
+GET http://localhost:5000/api/users
 
 ###
-POST http://51.83.77.61/api/users/add
+POST http://localhost:5000/api/users/add
 Content-Type: application/json
 
 {
@@ -14,12 +14,12 @@ Content-Type: application/json
 }
 
 ###
-GET http://51.83.77.61/api/clients
+GET http://localhost:5000/api/clients
 ###
 DElETE http://localhost:5000/api/clients/3
 
 ###
-POST http://51.83.77.61/api/clients/add
+POST http://localhost:5000/api/clients/add
 Content-Type: application/json
 
 {

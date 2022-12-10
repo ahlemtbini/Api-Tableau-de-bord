@@ -151,7 +151,7 @@ model Client {
   endDate              String? 
   donneesCrypte        Boolean
   isActive             Boolean
-  logo                 Bytes?
+  logo                 String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime?     @updatedAt
   superAdmin           SuperAdmin    @relation(fields: [superAdminID], references: [userId])

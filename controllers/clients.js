@@ -27,25 +27,32 @@ exports.addClient = async (req, res, next) => {
         })
         res.json(client)
     } catch (error) {
-        res.json({ error: error })
-        // next(error)
+        res.status(500).json({ error: error })
+
     }
 }
 exports.addLogo = async (req, res, next) => {
-    console.log(req.body)
-    try {
-        const client = await prisma.client.create({
+
+    let logo = ""
+    if (req.files) {
+        const fName = req.files[0].filename;
+        logo = (`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
+
+        const client = await prisma.client.update({
+            where: { id: Number(req.params.id) },
             data: {
-                logo: Buffer.form([1, 2, 3])
+                logo: logo
             }
         })
         res.json(client)
-    } catch (error) {
-        res.json({ error: error })
+    } else {
+        next(error)
     }
+
 }
 
 exports.editClient = async (req, res, next) => {
+
     try {
         const { id } = req.params
         const client = await prisma.client.update({

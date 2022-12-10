@@ -28,14 +28,17 @@ app.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
 
-//app.use('/api', require('./routes/api.route'));
+app.use('/api/documents', express.static(path.join(__dirname, '/documents')));
 app.use("/api", userRoutes);
-
+// app.use('/api', require('./routes/api.route'));
+// app.post('/api/clients/addLogo', upload, (req, res, next) => {
+//   console.log(file)
+// });
 
 app.use((req, res, next) => {
-  // next(res.json({ error: "error" }));
   createError.NotFound()
 });
+
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send({
