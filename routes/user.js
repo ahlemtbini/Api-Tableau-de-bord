@@ -27,6 +27,8 @@ router.post('/clients/add', clientsCtrl.addClient)
 router.put('/clients/:id', clientsCtrl.editClient);
 router.delete('/clients/:id', clientsCtrl.deleteClient);
 router.post('/clients/addLogo/:id', upload, clientsCtrl.addLogo);
+router.post('/clients/importAll', clientsCtrl.importAllClients)
+
 
 
 

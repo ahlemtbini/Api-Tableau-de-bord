@@ -1,6 +1,8 @@
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+var XLSX = require("xlsx");
+
 exports.getClients = async (req, res, next) => {
     try {
         const clients = await prisma.client.findMany({})
@@ -32,7 +34,6 @@ exports.addClient = async (req, res, next) => {
     }
 }
 exports.addLogo = async (req, res, next) => {
-
     let logo = ""
     if (req.files) {
         const fName = req.files[0].filename;
@@ -48,7 +49,6 @@ exports.addLogo = async (req, res, next) => {
     } else {
         next(error)
     }
-
 }
 
 exports.editClient = async (req, res, next) => {
@@ -68,11 +68,29 @@ exports.editClient = async (req, res, next) => {
 exports.deleteClient = async (req, res, next) => {
     try {
         const { id } = req.params
-        console.log(id)
         const client = await prisma.client.delete({
             where: { id: parseInt(id) },
         })
         res.json(client)
+    } catch (error) {
+        res.json({ error: error })
+    }
+}
+exports.importAllClients = async (req, res, next) => {
+    if (req.files[0]) {
+
+        console.log(req.files)
+        console.log(req.file)
+        console.log(req.files[0].filename)
+    }
+    try {
+        const data = XLSX.utils.sheet_to_json(req.files[0])
+        console.log(data)
+        // const clients = await prisma.client.createMany({
+        //     data: data,
+        //     skipDuplicates: true
+        // })
+        res.json(data)
     } catch (error) {
         res.json({ error: error })
     }
