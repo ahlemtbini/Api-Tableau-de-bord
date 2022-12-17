@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `client` MODIFY `numTel` VARCHAR(191) NOT NULL,
+    MODIFY `isActive` BOOLEAN NOT NULL DEFAULT true;

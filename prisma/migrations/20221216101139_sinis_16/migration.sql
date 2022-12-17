@@ -61,11 +61,13 @@ CREATE TABLE `Manager` (
 -- CreateTable
 CREATE TABLE `Chauffeur` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(191) NOT NULL,
     `siteName` VARCHAR(191) NOT NULL,
     `region` VARCHAR(191) NOT NULL,
     `userId` INTEGER NOT NULL,
     `siteId` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Chauffeur_email_key`(`email`),
     UNIQUE INDEX `Chauffeur_userId_key`(`userId`),
     UNIQUE INDEX `Chauffeur_siteId_key`(`siteId`),
     PRIMARY KEY (`id`)
@@ -78,7 +80,6 @@ CREATE TABLE `Client` (
     `email` VARCHAR(191) NOT NULL,
     `numTel` INTEGER NOT NULL,
     `adresse` VARCHAR(191) NULL,
-    `numContrat` VARCHAR(191) NOT NULL,
     `numAssistance` INTEGER NULL,
     `descriptifAssistance` VARCHAR(1000) NULL,
     `nomDomaine` VARCHAR(191) NOT NULL,
@@ -90,13 +91,27 @@ CREATE TABLE `Client` (
     `endDate` VARCHAR(191) NULL,
     `donneesCrypte` BOOLEAN NOT NULL,
     `isActive` BOOLEAN NOT NULL,
-    `logo` LONGBLOB NULL,
+    `logo` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
     `superAdminID` INTEGER NOT NULL,
 
     UNIQUE INDEX `Client_email_key`(`email`),
     UNIQUE INDEX `Client_numTel_key`(`numTel`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Contrat` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `refContrat` VARCHAR(191) NOT NULL,
+    `typeContrat` VARCHAR(191) NULL,
+    `Assurance` VARCHAR(191) NULL,
+    `startDate` VARCHAR(191) NULL,
+    `endDate` VARCHAR(191) NULL,
+    `ClientID` INTEGER NULL,
+    `SocieteID` INTEGER NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -151,11 +166,67 @@ CREATE TABLE `Site` (
 -- CreateTable
 CREATE TABLE `Sinistre` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
-    `etat` ENUM('recu', 'enAttente', 'confirme', 'refuse') NOT NULL DEFAULT 'recu',
-    `chauffeurID` INTEGER NOT NULL,
+    `etat` ENUM('recu', 'enAttente', 'confirme', 'refuse') NULL DEFAULT 'recu',
+    `chauffeurEmail` VARCHAR(191) NULL,
+    `créer par` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
+    `id créateur` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `DeclarationSinistre` (
+    `sinistreId` INTEGER NOT NULL,
+    `Année` INTEGER NOT NULL,
+    `Ref Sinistre` INTEGER NOT NULL,
+    `Ref SATAR` VARCHAR(191) NOT NULL,
+    `Date récep.` VARCHAR(191) NOT NULL,
+    `Date Survenance.` VARCHAR(191) NOT NULL,
+    `Heure` ENUM('Entre_3h_6h', 'Entre_6h_9h', 'Entre_9h_11h', 'Entre_11h_13h', 'Entre_15h_17h', 'Entre_17h_19h', 'Entre_19h_22h', 'Entre_22h_3h') NOT NULL,
+    `CAS` ENUM('Arrêt', 'En Circulation', 'Manœuvre') NOT NULL,
+    `LIEU SINISTRE` VARCHAR(191) NOT NULL,
+    `SOCIETE A Facturer` VARCHAR(191) NOT NULL,
+    `Site` VARCHAR(191) NOT NULL,
+    `Région` VARCHAR(191) NOT NULL,
+    `Type Véhicule` ENUM('TRR', 'SR', 'VL', 'Camion') NOT NULL,
+    `Immatriculation` VARCHAR(191) NOT NULL,
+    `Marque` VARCHAR(191) NOT NULL,
+    `1ère MEC` VARCHAR(191) NOT NULL,
+    `Perte Fi` ENUM('oui', 'non') NOT NULL,
+    `Conducteur` VARCHAR(191) NOT NULL,
+    `%RC` INTEGER NOT NULL,
+    `Cas IDA` INTEGER NULL,
+    `Nature` ENUM('Etranger', 'Corpo', 'Non Auto') NOT NULL,
+    `Circonstances` TEXT NOT NULL,
+    `Dommages` VARCHAR(191) NOT NULL,
+    `Cie adv.` VARCHAR(191) NOT NULL,
+    `Conv.` ENUM('oui', 'non') NOT NULL,
+    `Mt Dom.` DOUBLE NOT NULL,
+    `Franchise` INTEGER NOT NULL,
+    `Date MISSIONNEMENT` VARCHAR(191) NOT NULL,
+    `Lieu expertise` VARCHAR(191) NOT NULL,
+    `Date EXPERTISE` VARCHAR(191) NOT NULL,
+    `Date RAPPORT` VARCHAR(191) NOT NULL,
+    `Ref expertise` INTEGER NOT NULL,
+    `Date RAPPORT DEFINITIF` VARCHAR(191) NOT NULL,
+    `coût expert` DOUBLE NOT NULL,
+    `REPARATION O/N` ENUM('oui', 'non') NOT NULL,
+    `CESSION/EPAVE` ENUM('oui', 'non') NOT NULL,
+    `Mt rec.` INTEGER NOT NULL,
+    `Pièces manquantes O/N` ENUM('oui', 'non') NOT NULL,
+    `Détail pièces manquantes` ENUM('Devis', 'CG', 'Permis', 'Facture', 'Déclaration Chauffeur', 'PV', 'Constat') NOT NULL,
+    `Date de relance pièces M` VARCHAR(191) NULL,
+    `Constat original O/N` ENUM('oui', 'non') NOT NULL,
+    `Date clot.` VARCHAR(191) NOT NULL,
+    `Charge Provisionnelle Solaris` DOUBLE NULL,
+    `Charge ajustée` DOUBLE NULL,
+    `Charge réelle` DOUBLE NULL,
+    `Etat` ENUM('En_cours', 'Clos') NOT NULL,
+    `Commentaires` TEXT NOT NULL,
+
+    UNIQUE INDEX `DeclarationSinistre_sinistreId_key`(`sinistreId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -216,58 +287,6 @@ CREATE TABLE `EntretienVehicule` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `DeclarationSinistre` (
-    `sinistreId` INTEGER NOT NULL,
-    `ref_Sinistre` INTEGER NOT NULL,
-    `ref_SATAR` INTEGER NOT NULL,
-    `Date_recep` DATETIME(3) NOT NULL,
-    `Date_Survenance` DATETIME(3) NOT NULL,
-    `Heure` DATETIME(3) NOT NULL,
-    `CAS` VARCHAR(191) NOT NULL,
-    `LIEU_SINISTRE` VARCHAR(191) NOT NULL,
-    `SOCIETE_A_Facturer` VARCHAR(191) NOT NULL,
-    `Site` VARCHAR(191) NOT NULL,
-    `Region` VARCHAR(191) NOT NULL,
-    `Type_Vehicule` VARCHAR(191) NOT NULL,
-    `Immatriculation` VARCHAR(191) NOT NULL,
-    `Marque` VARCHAR(191) NOT NULL,
-    `premiere_MEC` DATETIME(3) NOT NULL,
-    `Perte_Fi` BOOLEAN NOT NULL,
-    `Conducteur` VARCHAR(191) NOT NULL,
-    `pourcentage_RC` INTEGER NOT NULL,
-    `Cas_IDA` INTEGER NULL,
-    `Nature` ENUM('ETRANGER', 'Corpo', 'Non_Auto') NOT NULL,
-    `Circonstances` TEXT NOT NULL,
-    `Dommages` VARCHAR(191) NOT NULL,
-    `Cie_adv` VARCHAR(191) NOT NULL,
-    `Conv` BOOLEAN NOT NULL,
-    `Mt_Dom` DOUBLE NOT NULL,
-    `Franchise` INTEGER NOT NULL,
-    `Date_MISSIONNEMENT` DATETIME(3) NOT NULL,
-    `Lieu_expertise` VARCHAR(191) NOT NULL,
-    `Date_EXPERTISE` DATETIME(3) NOT NULL,
-    `Date_RAPPORT` DATETIME(3) NOT NULL,
-    `Ref_expertise` INTEGER NOT NULL,
-    `Date_RAPPORT_DEFINITIF` DATETIME(3) NOT NULL,
-    `cout_expert` DOUBLE NOT NULL,
-    `REPARATION_oui_non` BOOLEAN NOT NULL,
-    `CESSION_EPAVE` BOOLEAN NOT NULL,
-    `Mt_rec` INTEGER NOT NULL,
-    `Pieces_manquantes_Oui_Non` BOOLEAN NOT NULL,
-    `Detail_pieces_manquantes` VARCHAR(191) NOT NULL,
-    `Date_de_relance_pieces_M` DATETIME(3) NULL,
-    `Constat_original_O_N` BOOLEAN NOT NULL,
-    `Date_clot` DATETIME(3) NOT NULL,
-    `Charge_Provisionnelle_Solaris` DOUBLE NULL,
-    `Charge_ajustee` DOUBLE NULL,
-    `Charge_reelle` DOUBLE NULL,
-    `Etat` ENUM('En_cours', 'Clos') NOT NULL,
-    `Commentaires` TEXT NOT NULL,
-
-    UNIQUE INDEX `DeclarationSinistre_sinistreId_key`(`sinistreId`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `_ManagerToSociete` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
@@ -301,6 +320,12 @@ ALTER TABLE `Chauffeur` ADD CONSTRAINT `Chauffeur_siteId_fkey` FOREIGN KEY (`sit
 ALTER TABLE `Client` ADD CONSTRAINT `Client_superAdminID_fkey` FOREIGN KEY (`superAdminID`) REFERENCES `SuperAdmin`(`userId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_ClientID_fkey` FOREIGN KEY (`ClientID`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_SocieteID_fkey` FOREIGN KEY (`SocieteID`) REFERENCES `Societe`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Country` ADD CONSTRAINT `Country_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Client`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -313,16 +338,16 @@ ALTER TABLE `Societe` ADD CONSTRAINT `Societe_regionID_fkey` FOREIGN KEY (`regio
 ALTER TABLE `Site` ADD CONSTRAINT `Site_companyID_fkey` FOREIGN KEY (`companyID`) REFERENCES `Societe`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Sinistre` ADD CONSTRAINT `Sinistre_chauffeurID_fkey` FOREIGN KEY (`chauffeurID`) REFERENCES `Chauffeur`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Sinistre` ADD CONSTRAINT `Sinistre_chauffeurEmail_fkey` FOREIGN KEY (`chauffeurEmail`) REFERENCES `Chauffeur`(`email`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DeclarationSinistre` ADD CONSTRAINT `DeclarationSinistre_sinistreId_fkey` FOREIGN KEY (`sinistreId`) REFERENCES `Sinistre`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `EntretienPostAccident` ADD CONSTRAINT `EntretienPostAccident_chauffeurID_fkey` FOREIGN KEY (`chauffeurID`) REFERENCES `Chauffeur`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `EntretienVehicule` ADD CONSTRAINT `EntretienVehicule_chauffeurID_fkey` FOREIGN KEY (`chauffeurID`) REFERENCES `Chauffeur`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DeclarationSinistre` ADD CONSTRAINT `DeclarationSinistre_sinistreId_fkey` FOREIGN KEY (`sinistreId`) REFERENCES `Sinistre`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_ManagerToSociete` ADD CONSTRAINT `_ManagerToSociete_A_fkey` FOREIGN KEY (`A`) REFERENCES `Manager`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

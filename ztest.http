@@ -23,11 +23,10 @@ POST http://localhost:5000/api/clients/add
 Content-Type: application/json
 
 {
-    "nomClient": "qqqqq",
-    "email": "contact@qqqqq.fr",
-    "numTel": 555201228,
+    "nomClient": "aaaa",
+    "email": "contact@gggg.fr",
+    "numTel": "555201228",
     "adresse": "2500 dsfdfsd ds",
-    "numContrat": "555201208",
     "nomDomaine": "@primever.fr",
     "numSiret": "12345671234567",
     "isActive": true,
@@ -47,10 +46,8 @@ Content-Type: application/json
     "email": "ommmjp@pppo.fdfd",
     "numTel": 565563365,
     "adresse": "2500 fsdf",
-    "numContrat": "565",
     "nomDomaine": "@ddffd.dfsd",
     "numSiret": "12345671234567",
-    "isActive": true,
     "donneesCrypte": false,
     "descriptifAssistance": "dsfd dfsd  ds df dfdfdsfds dsd dsfd dfsd  ds df dfdfdsfds dsd",
     "startDate": "2023-01-15",
@@ -59,19 +56,65 @@ Content-Type: application/json
 }
 ###
 
+GET http://localhost:5000/api/sinistres
+###
+DElETE http://localhost:5000/api/sinistres/3
 
-#   nomClient            String
-#   email                String
-#   numTel               Int
-#   numContrat           String
-#   numAssistance        Int?
-#   descriptifAssistance String?       @db.VarChar(1000)
-#   nomDomaine           String
-#   numSiret             Int
-#   nbreSociete          Int           @default(0)
-#   nbreSites            Int?          @default(0)
-#   nbreAdmins           Int?          @default(0)
-#   startDate            DateTime?
-#   endDate              DateTime?
-#   donneesCrypte        Boolean
-#   isActive      
+###
+POST http://localhost:5000/api/sinistres/add
+Content-Type: application/json
+
+{
+  "sinistre" : {
+    "creatorId": "1",
+    "creatorRole": "super_admin"
+  },
+  "decSinistre" :{
+    "Annee": 2022,
+    "ref_Sinistre": 15658545,
+    "ref_SATAR": "sdqsdsqd",
+    "Date_recep": "2022-12-16",
+    "Date_Survenance": "2022-12-05",
+    "Heure": "Entre_11h_13h",
+    "CAS": "Arret",
+    "LIEU_SINISTRE": "BORDEAUX LAC",
+    "SOCIETE_A_Facturer": "STSO",
+    "Site": "SAMAZAN", 
+    "Region": "Sud-Ouest",
+    "Type_Vehicule": "TRR",
+    "Immatriculation": "FF-933-SP",
+    "Marque": "RENAULT",
+    "premiere_MEC": "2018-12-16",
+    "Perte_Fi": "oui",
+    "Conducteur": "FETEGUE CISSE",
+    "pourcentage_RC": 100,
+    "Cas_IDA": 40,
+    "Nature": "Non_Auto",
+    "Circonstances": "Notre assuré a percuté le poteau et le porche du magasin AUCHAN LAC",
+    "Dommages": "LATERAL DROIT",
+    "Cie_adv": "MMA",
+    "Conv": "oui",
+    "Mt_Dom": 950.2,
+    "Franchise": 0,
+    "Date_MISSIONNEMENT": "11-01-2022",
+    "Lieu_expertise": "VOLVO SELVA SAMAZAN",
+    "Date_EXPERTISE"            :"11-01-2022",
+    "Date_RAPPORT"             :"11-01-2022",
+    "Ref_expertise": 32565656,
+    "Date_RAPPORT_DEFINITIF"   :"11-01-2022",
+    "cout_expert": 208.5,
+    "REPARATION_oui_non": "oui",
+    "CESSION_EPAVE": "non",
+    "Mt_rec": 150,
+    "Pieces_manquantes_Oui_Non": "oui",
+    "Detail_pieces_manquantes": "DC",
+    "Date_de_relance_pieces_M":"17-03-2022",
+    "Constat_original_O_N": "oui",
+    "Date_clot": "05-09-2022",
+    "Charge_Provisionnelle_Solaris": 107.4,
+    "Charge_ajustee": 255.2,
+    "Charge_reelle": 202.75,
+    "Etat": "En_cours",
+    "Commentaires": "Expertise demandée PRE RAPPORT RENDU DDE FCATURE à Alexandrine REG FAIT"
+  }
+}

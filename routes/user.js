@@ -5,10 +5,13 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
 })
-const userCtrl = require("../controllers/user");
-const clientsCtrl = require("../controllers/clients");
+
 const multer = require("multer")
 const upload = require("../middlewares/multer-config")
+
+const userCtrl = require("../controllers/user");
+const clientsCtrl = require("../controllers/clients");
+const sinistresCtrl = require("../controllers/sinistres");
 
 
 // user controller
@@ -29,6 +32,10 @@ router.delete('/clients/:id', clientsCtrl.deleteClient);
 router.post('/clients/addLogo/:id', upload, clientsCtrl.addLogo);
 router.post('/clients/importAll', clientsCtrl.importAllClients)
 
+// sinistres
+router.get('/sinistres', sinistresCtrl.getSinistres)
+router.post('/sinistres/add', sinistresCtrl.addSinistre)
+router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre);
 
 
 
