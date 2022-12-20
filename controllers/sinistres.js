@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 var XLSX = require("xlsx");
 
-
 exports.getSinistres = async (req, res, next) => {
     try {
         const sinistres = await prisma.sinistre.findMany({
@@ -10,20 +9,22 @@ exports.getSinistres = async (req, res, next) => {
                 declarationSinistre: true
             }
         })
-        // const arr = []
-        // for (let id in sinistres) {
-        //     console.log(id)
-        //     let sins = { ...sinistres[id] }
-        //     delete sins.declarationSinistre
-        //     sins = { ...sins, ...sinistres[id].declarationSinistre }
-        //     arr.push(sins)
-        // }
         res.json(sinistres)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
+exports.getDecSinistres = async (req, res, next) => {
+    try {
+        const sinistres = await prisma.declarationSinistre.findMany({})
+        res.json(sinistres)
+    } catch (error) {
+        res.json({ error: error })
+        // next(error)
+    }
+}
+
 
 exports.addSinistre = async (req, res, next) => {
     try {
@@ -40,7 +41,7 @@ exports.addSinistre = async (req, res, next) => {
                 declarationSinistre: true,
             }
         })
-        res.json(sinis)
+        return res.json(sinis)
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
@@ -50,11 +51,38 @@ exports.addSinistre = async (req, res, next) => {
 exports.deleteSinistre = async (req, res, next) => {
     try {
         const { id } = req.params
-        const sinistre = await prisma.sinistre.delete({
+        const sinis = await prisma.sinistre.delete({
             where: { id: parseInt(id) },
         })
-        res.json(sinistre)
+        return res.status(200).json(sinis)
     } catch (error) {
-        res.json({ error: error })
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.deleteDecSinistre = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const sinistre = await prisma.declarationSinistre.delete({
+            where: { Dossier: parseInt(id) },
+        })
+        deleteSinis(id)
+        return res.status(200).json(sinistre)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+const deleteSinis = async (id) => {
+    try {
+        const { id } = req.params
+        const sinistre = await prisma.sinistre.delete({
+            where: { id: parseInt(id) },
+
+        })
+        return { res: "success" }
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }

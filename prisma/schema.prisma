@@ -135,6 +135,8 @@ model Client {
   nomClient            String
   email                String        @unique
   numTel               String           @unique
+  ville              String?
+  codePostale              String?  @map("code postale")
   adresse              String?
   numAssistance        Int?
   descriptifAssistance String?       @db.VarChar(1000)
@@ -159,8 +161,8 @@ model Client {
 model Contrat {
   id                   Int                   @id @default(autoincrement())
   refContrat String
+  Assureur String
   typeContrat String?
-  Assurance String?
   startDate            String?  
   endDate              String? 
   Client             Client?                    @relation(fields: [ClientID], references: [id])
@@ -217,26 +219,29 @@ enum VehiculeTypeEnum {
 }
 
 enum CasSinistre {
-Arret @map("Arrêt")
-En_Circulation @map("En Circulation")
-Manoeuvre @map("Manœuvre")
+Arret 
+En_Circulation
+Manoeuvre 
 }
-
+//@map("Arrêt")
+// @map("En Circulation")
+// @map("Manœuvre")
 enum NatureSinistre {
   Etranger
   Corpo
-  Non_Auto @map("Non Auto")
+  Non_Auto 
 }
-
+//@map("Non Auto")
 enum DPMenum {
   Devis
   CG
   Permis
   Facture
-  DC @map("Déclaration Chauffeur")
+  DC 
   PV
   Constat
 }
+//@map("Déclaration Chauffeur")
 enum BolType {
   oui
   non
@@ -244,66 +249,70 @@ enum BolType {
 
 
 model Sinistre {
-  id                   Int                   @id @default(autoincrement())
+  id                   Int                    @id @default(autoincrement())
   etat                 Etat?                  @default(recu)
-  chauffeur             Chauffeur? @relation(fields: [chauffeurEmail], references: [email])
-  chauffeurEmail           String?
-  creatorRole Role @map("créer par")
-  creatorId String @map("id créateur")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime @default(now())
-  declarationSinistre DeclarationSinistre?
+  chauffeur            Chauffeur?             @relation(fields: [chauffeurEmail], references: [email])
+  chauffeurEmail       String?
+  creatorRole          Role                   @map("créer par")
+  creatorId            String                 @map("id créateur")
+  createdAt            DateTime?              @default(now())
+  updatedAt            DateTime               @default(now())
+  declarationSinistre  DeclarationSinistre?
 }
 
 model DeclarationSinistre {
-  sinistre                      Sinistre       @relation(fields: [sinistreId], references: [id])
-  sinistreId                    Int            @unique
-  Annee                         Int @map("Année")
-  ref_Sinistre                  Int    @map("Ref Sinistre")
-  ref_SATAR                     String @map("Ref SATAR")
-  Date_recep                    String @map("Date récep.")
-  Date_Survenance               String @map("Date Survenance.")
-  Heure                         intervalle_des_heures 
-  CAS                           CasSinistre
-  LIEU_SINISTRE                 String @map("LIEU SINISTRE")
-  SOCIETE_A_Facturer            String  @map("SOCIETE A Facturer")
-  Site                          String 
-  Region                        String  @map("Région")
+  sinistre                      Sinistre       @relation(fields: [Dossier], references: [id], onDelete: Cascade)
+  Dossier                       Int            @unique
+  DossierClient                 String?        @map("Dossier Client")
+  NumClient                     String?       @map("Numéro Client")
+  Annee                         String?          @map("Année")
+  ASSUREUR                      String?
+  numContart                    String?       @map("Numéro Contrat")
+  Amiable                       String?
+  ref_Sinistre                  String?       @map("Ref Sinistre Assureur")
+  Date_recep                    String        @map("Date récep.")
+  Date_Survenance               String        @map("Date Survenance.")
+  Heure                         intervalle_des_heures?
+  CAS                           CasSinistre?
+  LIEU_SINISTRE                 String          @map("LIEU SINISTRE")
+  SOCIETE_A_Facturer            String?        @map("SOCIETE")
+  Site                          String?
+  Region                        String?          @map("Région")
   Type_Vehicule                 VehiculeTypeEnum @map("Type Véhicule")
-  Immatriculation               String @map("Immatriculation")
-  Marque                        String
+  Immatriculation               String           @map("Immatriculation")
+  Marque                        String?
   premiere_MEC                  String @map("1ère MEC")
-  Perte_Fi                      BolType @map("Perte Fi")
+  Perte_Fi                      BolType? @map("Perte Fi")
   Conducteur                    String
-  pourcentage_RC                Int @map("%RC")
-  Cas_IDA                       Int? @map("Cas IDA")
-  Nature                        NatureSinistre
-  Circonstances                 String         @db.Text
-  Dommages                      String
-  Cie_adv                       String  @map("Cie adv.")
-  Conv                          BolType @map("Conv.")
-  Mt_Dom                        Float @map("Mt Dom.")
-  Franchise                     Int
-  Date_MISSIONNEMENT            String @map("Date MISSIONNEMENT")
-  Lieu_expertise                String @map("Lieu expertise")
-  Date_EXPERTISE                String @map("Date EXPERTISE")
-  Date_RAPPORT                  String @map("Date RAPPORT")
-  Ref_expertise                 Int @map("Ref expertise")
-  Date_RAPPORT_DEFINITIF        String @map("Date RAPPORT DEFINITIF")
-  cout_expert                   Float @map("coût expert")
-  REPARATION_oui_non            BolType @map("REPARATION O/N")
-  CESSION_EPAVE                 BolType @map("CESSION/EPAVE")
-  Mt_rec                        Int @map("Mt rec.")
-  Pieces_manquantes_Oui_Non     BolType @map("Pièces manquantes O/N")
-  Detail_pieces_manquantes      DPMenum @map("Détail pièces manquantes")
+  pourcentage_RC                String? @map("%RC")
+  Cas_IDA                       String? @map("Cas IDA")
+  Nature                        NatureSinistre?
+  Circonstances                 String?         @db.Text
+  Dommages                      String?
+  Cie_adv                       String?  @map("Cie adv.")
+  Conv                          BolType? @map("Conv.")
+  Mt_Dom                        String? @map("Mt Dom.")
+  Franchise                     String?
+  Date_MISSIONNEMENT            String? @map("Date MISSIONNEMENT")
+  Lieu_expertise                String? @map("Lieu expertise")
+  Date_EXPERTISE                String? @map("Date EXPERTISE")
+  Date_RAPPORT                  String? @map("Date RAPPORT")
+  Ref_expertise                 String? @map("Ref expertise")
+  Date_RAPPORT_DEFINITIF        String? @map("Date RAPPORT DEFINITIF")
+  cout_expert                   String? @map("coût expert")
+  REPARATION_oui_non            BolType? @map("REPARATION O/N")
+  CESSION_EPAVE                 BolType? @map("CESSION/EPAVE")
+  Mt_rec                        String? @map("Mt rec.")
+  Pieces_manquantes_Oui_Non     BolType? @map("Pièces manquantes O/N")
+  Detail_pieces_manquantes      DPMenum? @map("Détail pièces manquantes")
   Date_de_relance_pieces_M      String?   @map("Date de relance pièces M")
-  Constat_original_O_N          BolType @map("Constat original O/N")
-  Date_clot                     String @map("Date clot.")
-  Charge_Provisionnelle_Solaris Float?  @map("Charge Provisionnelle Solaris")
-  Charge_ajustee                Float?  @map("Charge ajustée")
-  Charge_reelle                 Float?  @map("Charge réelle")
-  Etat                          EtatSinistre  
-  Commentaires                  String         @db.Text
+  Constat_original_O_N          BolType? @map("Constat original O/N")
+  Date_clot                     String? @map("Date clot.")
+  Charge_Provisionnelle_Solaris String?  @map("Charge Provisionnelle Solaris")
+  Charge_ajustee                String?  @map("Charge ajustée")
+  Charge_reelle                 String?  @map("Charge réelle")
+  Etat                          EtatSinistre?  
+  Commentaires                  String?         @db.Text
 }
 model EntretienPostAccident {
   id                                                              Int                          @id @default(autoincrement())
