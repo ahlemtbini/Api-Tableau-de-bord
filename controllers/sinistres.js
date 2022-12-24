@@ -15,16 +15,17 @@ exports.getSinistres = async (req, res, next) => {
         // next(error)
     }
 }
-exports.getDecSinistres = async (req, res, next) => {
+exports.getSinistre = async (req, res, next) => {
     try {
-        const sinistres = await prisma.declarationSinistre.findMany({})
-        res.json(sinistres)
+        const dec = await prisma.declarationSinistre.findUnique({
+            where: { id: req.params.id },
+        })
+        res.json(dec)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
         // next(error)
     }
 }
-
 
 exports.addSinistre = async (req, res, next) => {
     try {
@@ -58,6 +59,30 @@ exports.deleteSinistre = async (req, res, next) => {
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
+    }
+}
+exports.editSinistre = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        console.log(id, req.body)
+        const sinis = await prisma.declarationSinistre.update({
+            where: { Dossier: parseInt(id) },
+            data: req.body
+        })
+        return res.status(200).json(sinis)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+
+exports.getDecSinistres = async (req, res, next) => {
+    try {
+        const sinistres = await prisma.declarationSinistre.findMany({})
+        res.json(sinistres)
+    } catch (error) {
+        res.json({ error: error })
+        // next(error)
     }
 }
 exports.deleteDecSinistre = async (req, res, next) => {

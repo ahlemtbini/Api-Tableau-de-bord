@@ -9,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//enum role
+
 
 enum Role {
   super_admin

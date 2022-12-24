@@ -93,3 +93,37 @@ exports.importAllClients = async (req, res, next) => {
         res.json({ error: error })
     }
 }
+
+exports.addContrat = async (req, res, next) => {
+    try {
+        const contrat = await prisma.contrat.create({
+            data: req.body
+        })
+        res.json(contrat)
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.getContrats = async (req, res, next) => {
+    try {
+        const contrats = await prisma.contrat.findMany({
+            where: { ClientID: Number(req.params.id) }
+        })
+        res.json(contrats)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.deleteContrat = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const contrat = await prisma.contrat.delete({
+            where: { id: parseInt(id) },
+        })
+        res.json(contrat)
+    } catch (error) {
+        res.json({ error: error })
+    }
+}

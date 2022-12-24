@@ -32,10 +32,18 @@ router.delete('/clients/:id', clientsCtrl.deleteClient);
 router.post('/clients/addLogo/:id', upload, clientsCtrl.addLogo);
 router.post('/clients/importAll', clientsCtrl.importAllClients)
 
+router.post('/clients/contrats', clientsCtrl.addContrat)
+router.delete('/clients/contrats/:id', clientsCtrl.deleteContrat)
+router.get('/clients/contrats/:id', clientsCtrl.getContrats)
+
+
+
 // sinistres
 router.get('/sinistres', sinistresCtrl.getSinistres)
+router.get('/sinistres/:id', sinistresCtrl.getSinistre)
 router.post('/sinistres/add', sinistresCtrl.addSinistre)
 router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre)
+router.put('/sinistres/:id', sinistresCtrl.editSinistre);
 router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 

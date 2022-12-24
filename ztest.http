@@ -2,7 +2,7 @@
 GET http://localhost:5000/api/users
 
 ###
-POST http://localhost:5000/api/users/add
+POST http://51.83.77.61/api/users/add
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ GET http://localhost:5000/api/clients
 DElETE http://localhost:5000/api/clients/1
 
 ###
-POST http://localhost:5000/api/clients/add
+POST http://51.83.77.61/api/clients/add
 Content-Type: application/json
 
 {
@@ -36,6 +36,27 @@ Content-Type: application/json
     "endDate": "2023-12-30",
     "superAdminID": 1
 }
+
+### contrat
+GET http://localhost:5000/api/clients/contrats/2
+###
+
+DElETE http://localhost:5000/api/clients/contrats/4
+
+###
+POST http://localhost:5000/api/clients/contrats
+Content-Type: application/json
+
+{
+    "ClientID": 2,
+    "refContrat": "ffffff",
+    "Assureur": "fdg",
+    "typeContrat": "dfds",
+    "startDate": "2022-12-02",
+    "endDate": "2022-12-31"
+}
+
+
 
 ###
 PUT http://localhost:5000/api/clients/:id
@@ -63,7 +84,7 @@ GET http://localhost:5000/api/sinistres
 DELETE http://localhost:5000/api/sinistres/7
 
 ###
-POST http://localhost:5000/api/sinistres/add
+POST http://51.83.77.61/api/sinistres/add
 Content-Type: application/json
 
 {
