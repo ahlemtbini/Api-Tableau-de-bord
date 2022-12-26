@@ -44,8 +44,7 @@ exports.addSinistre = async (req, res, next) => {
         })
         return res.json(sinis)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 
@@ -57,8 +56,7 @@ exports.deleteSinistre = async (req, res, next) => {
         })
         return res.status(200).json(sinis)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 exports.editSinistre = async (req, res, next) => {
@@ -71,8 +69,7 @@ exports.editSinistre = async (req, res, next) => {
         })
         return res.status(200).json(sinis)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 
@@ -81,7 +78,7 @@ exports.getDecSinistres = async (req, res, next) => {
         const sinistres = await prisma.declarationSinistre.findMany({})
         res.json(sinistres)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
         // next(error)
     }
 }
@@ -94,8 +91,7 @@ exports.deleteDecSinistre = async (req, res, next) => {
         deleteSinis(id)
         return res.status(200).json(sinistre)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 const deleteSinis = async (id) => {
@@ -107,7 +103,31 @@ const deleteSinis = async (id) => {
         })
         return { res: "success" }
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
     }
+}
+
+exports.importExcel = async (req, res, next) => {
+    req.body.map(async (el) => {
+        try {
+            const sinis = await prisma.sinistre.create({
+                data: {
+                    ...el.sinistre,
+                    declarationSinistre: {
+                        create: {
+                            ...el.decSinistre
+                        }
+                    }
+                },
+                // skipDuplicates: false,
+                include: {
+                    declarationSinistre: true,
+                }
+            })
+            return res.status(200).json(sinis)
+        } catch (error) {
+            // res.status(404).json({ error: error })
+            return next(error)
+        }
+    })
 }

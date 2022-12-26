@@ -135,10 +135,10 @@ model Client {
   nomClient            String
   email                String        @unique
   numTel               String           @unique
-  ville              String?
-  codePostale              String?  @map("code postale")
+  ville                String?
+  codePostale          String?  @map("code postale")
   adresse              String?
-  numAssistance        Int?
+  numAssistance        String?
   descriptifAssistance String?       @db.VarChar(1000)
   nomDomaine           String
   numSiret             String?   
@@ -165,7 +165,7 @@ model Contrat {
   typeContrat String?
   startDate            String?  
   endDate              String? 
-  Client             Client?                    @relation(fields: [ClientID], references: [id])
+  Client             Client?                    @relation(fields: [ClientID], references: [id], onDelete: Cascade)
   ClientID           Int?
   Societe             Societe?                 @relation(fields: [SocieteID], references: [id])
   SocieteID           Int?
@@ -253,8 +253,8 @@ model Sinistre {
   etat                 Etat?                  @default(recu)
   chauffeur            Chauffeur?             @relation(fields: [chauffeurEmail], references: [email])
   chauffeurEmail       String?
-  creatorRole          Role                   @map("créer par")
-  creatorId            String                 @map("id créateur")
+  creatorRole          Role?                   @map("créer par")
+  creatorId            String?                 @map("id créateur")
   createdAt            DateTime?              @default(now())
   updatedAt            DateTime               @default(now())
   declarationSinistre  DeclarationSinistre?

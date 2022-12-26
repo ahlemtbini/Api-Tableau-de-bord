@@ -5,7 +5,7 @@ var XLSX = require("xlsx");
 exports.getClients = async (req, res, next) => {
     try {
         const clients = await prisma.client.findMany({})
-        res.json(clients)
+        res.status(200).json(clients)
     } catch (error) {
         res.status(404).json({ error: error })
     }
@@ -15,10 +15,9 @@ exports.getClient = async (req, res, next) => {
         const client = await prisma.client.findUnique({
             where: { id: req.params.id },
         })
-        res.json(client)
+        res.status(200).json(client)
     } catch (error) {
-        res.json({ error: error })
-
+        res.status(404).json({ error: error })
     }
 }
 exports.addClient = async (req, res, next) => {
@@ -26,8 +25,9 @@ exports.addClient = async (req, res, next) => {
         const client = await prisma.client.create({
             data: req.body
         })
-        res.json(client)
+        res.status(200).json(client)
     } catch (error) {
+        // res.status(404).json({ error: error })
         next(error)
     }
 }
@@ -43,9 +43,9 @@ exports.addLogo = async (req, res, next) => {
                 logo: logo
             }
         })
-        res.json(client)
+        res.status(200).json(client)
     } else {
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 
@@ -57,9 +57,9 @@ exports.editClient = async (req, res, next) => {
             where: { id: Number(id) },
             data: req.body,
         })
-        res.json(client)
+        res.status(200).json(client)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
     }
 }
 
@@ -69,9 +69,9 @@ exports.deleteClient = async (req, res, next) => {
         const client = await prisma.client.delete({
             where: { id: parseInt(id) },
         })
-        res.json(client)
+        res.status(200).json(client)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
     }
 }
 exports.importAllClients = async (req, res, next) => {
@@ -88,9 +88,9 @@ exports.importAllClients = async (req, res, next) => {
         //     data: data,
         //     skipDuplicates: true
         // })
-        res.json(data)
+        res.status(200).json(data)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
     }
 }
 
@@ -99,9 +99,9 @@ exports.addContrat = async (req, res, next) => {
         const contrat = await prisma.contrat.create({
             data: req.body
         })
-        res.json(contrat)
+        res.status(200).json(contrat)
     } catch (error) {
-        next(error)
+        res.status(404).json({ error: error })
     }
 }
 
@@ -110,10 +110,10 @@ exports.getContrats = async (req, res, next) => {
         const contrats = await prisma.contrat.findMany({
             where: { ClientID: Number(req.params.id) }
         })
-        res.json(contrats)
+        res.status(200).json(contrats)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+
     }
 }
 exports.deleteContrat = async (req, res, next) => {
@@ -122,8 +122,8 @@ exports.deleteContrat = async (req, res, next) => {
         const contrat = await prisma.contrat.delete({
             where: { id: parseInt(id) },
         })
-        res.json(contrat)
+        res.status(200).json(contrat)
     } catch (error) {
-        res.json({ error: error })
+        res.status(404).json({ error: error })
     }
 }

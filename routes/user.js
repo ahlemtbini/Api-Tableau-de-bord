@@ -46,6 +46,8 @@ router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre)
 router.put('/sinistres/:id', sinistresCtrl.editSinistre);
 router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
+router.post('/sinistres/import', sinistresCtrl.importExcel)
+
 
 
 
