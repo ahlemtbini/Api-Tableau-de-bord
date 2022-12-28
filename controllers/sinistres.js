@@ -108,8 +108,8 @@ const deleteSinis = async (id) => {
 }
 
 exports.importExcel = async (req, res, next) => {
-    req.body.map(async (el) => {
-        try {
+    try {
+        req.body.map(async (el) => {
             const sinis = await prisma.sinistre.create({
                 data: {
                     ...el.sinistre,
@@ -124,10 +124,10 @@ exports.importExcel = async (req, res, next) => {
                     declarationSinistre: true,
                 }
             })
-            return res.status(200).json(sinis)
-        } catch (error) {
-            // res.status(404).json({ error: error })
-            return next(error)
-        }
-    })
+        })
+        return res.status(200).json("le fichier excel est bien importé")
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        return next(error)
+    }
 }

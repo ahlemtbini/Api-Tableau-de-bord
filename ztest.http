@@ -1,5 +1,5 @@
 
-GET http://localhost:5000/api/users
+GET http://51.83.77.61/api/users
 
 ###
 POST http://51.83.77.61/api/users/add
