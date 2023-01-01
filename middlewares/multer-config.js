@@ -3,6 +3,7 @@ const multer = require('multer')
 const MIME_TYPES = {
     'application/pdf': 'pdf',
     'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
     'image/png': 'png',
     'image/jpeg': 'jpeg',
 }

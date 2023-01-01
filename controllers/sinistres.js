@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+const excelToJson = require('convert-excel-to-json');
 var XLSX = require("xlsx");
+const fse =require("fs-extra")
 
 exports.getSinistres = async (req, res, next) => {
     try {
@@ -64,12 +66,13 @@ exports.editSinistre = async (req, res, next) => {
         const { id } = req.params
         console.log(id, req.body)
         const sinis = await prisma.declarationSinistre.update({
-            where: { Dossier: parseInt(id) },
+            where: { DOSSIER: parseInt(id) },
             data: req.body
         })
         return res.status(200).json(sinis)
     } catch (error) {
-        res.status(404).json({ error: error })
+        next(error)
+        // res.status(404).json({ error: error })
     }
 }
 
@@ -86,7 +89,7 @@ exports.deleteDecSinistre = async (req, res, next) => {
     try {
         const { id } = req.params
         const sinistre = await prisma.declarationSinistre.delete({
-            where: { Dossier: parseInt(id) },
+            where: { DOSSIER: parseInt(id) },
         })
         deleteSinis(id)
         return res.status(200).json(sinistre)
@@ -106,28 +109,78 @@ const deleteSinis = async (id) => {
         res.status(404).json({ error: error })
     }
 }
+exports.deleteAll = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const sinistre = await prisma.sinistre.deleteMany({})
+        return res.status(200).json({ message: "tous les sinistres ont été supprimés" })
+    } catch (error) {
+        res.status(404).json({ error: error })
+    }
+}
 
 exports.importExcel = async (req, res, next) => {
-    try {
-        req.body.map(async (el) => {
-            const sinis = await prisma.sinistre.create({
-                data: {
-                    ...el.sinistre,
-                    declarationSinistre: {
-                        create: {
-                            ...el.decSinistre
-                        }
+console.log('myexcel',req.files[0])
+console.log('el',req.file)
+    if (req.files[0]) {
+        const fName = req.files[0].filename;
+        excel = (`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
+          var filePath = './documents/' + fName
+            console.log(filePath)
+          const excelData = excelToJson({
+            sourceFile: filePath,
+            header: {rows:1,},
+            columnToKey:{
+              "*": "{{columnHeader}}",
+            },
+          })
+    
+          const arr=excelData.MySheet1
+          arr.map((el) => {
+              if(el["NUMERO CLIENT"] ){
+                  el["NUMERO_CLIENT"]= el["NUMERO CLIENT"] ? el["NUMERO CLIENT"] : ""
+                  delete el["NUMERO CLIENT"]
+                }
+              if(el["DATE PRE_RAPPORT"] ){
+                  el["DATE_PRE_RAPPORT"]= el["DATE PRE_RAPPORT"] ? el["DATE PRE_RAPPORT"]: ""
+                  delete el["DATE PRE_RAPPORT"]
+                }
+                delete el.DOSSIER
+                for(let key in el){
+                    if(typeof el[key] === 'number' || typeof el[key] !== 'float' ){
+                        el[key] = el[key].toString()
                     }
-                },
-                // skipDuplicates: false,
-                include: {
-                    declarationSinistre: true,
                 }
             })
-        })
-        return res.status(200).json("le fichier excel est bien importé")
-    } catch (error) {
-        // res.status(404).json({ error: error })
-        return next(error)
-    }
+            // console.log("arr",arr)
+            // res.status(200).json({arr})
+            try {
+                arr.map(async (el,id) => {
+                    const sinis = await prisma.sinistre.create({
+                        data: {
+                            creatorId: "1",
+                            creatorRole: "super_admin",
+                            declarationSinistre: {
+                                create: {
+                                    ...el
+                                }
+                            }
+                        },
+                        // skipDuplicates: false,
+                        include: {
+                            declarationSinistre: true,
+                        }
+                    })
+                })
+                    fse.remove(filePath)
+                return res.status(200).json("le fichier excel est bien importé")
+            } catch (error) {
+                // res.status(404).json({ error: error })
+                return next(error)
+            }
+
+        } else {
+        return res.status(400).json({ error: "no file" })
+        }
+
 }

@@ -2,7 +2,7 @@
 GET http://51.83.77.61/api/users
 
 ###
-POST http://51.83.77.61/api/users/add
+POST http://localhost:5000/api/users/add
 Content-Type: application/json
 
 {
@@ -84,77 +84,85 @@ GET http://localhost:5000/api/sinistres
 DELETE http://localhost:5000/api/sinistres/7
 
 ###
-POST http://51.83.77.61/api/sinistres/add
+DElETE http://localhost:5000/api/sinistres
+
+###
+POST http://localhost:5000/api/sinistres/add
 Content-Type: application/json
 
 {
-  "sinistre" : {
-    "creatorId": "1",
-    "creatorRole": "super_admin"
-  },
-  "decSinistre" :{
-    "Cie_adv" : "sdfsdf",
-    "NumClient" : "",
-    "Conducteur" : "dsfds",
-    "Date_Survenance" : "2022-12-10",
-    "Date_recep" : "2022-12-03",
-    "Immatriculation" : "dsfdsf",
-    "LIEU_SINISTRE" : "dfsdf",
-    "premiere_MEC" : "dsqdqs",
-    "Type_Vehicule" : "SR"
-  }
+    "sinistre": {
+        "creatorId": "1",
+        "creatorRole": "super_admin"
+    },
+    "decSinistre": {
+        "NUMERO_CLIENT": "1",
+        "ANNEE": "",
+        "ASSUREUR": "sdsq",
+        "NUMERO_CONTRAT": "ssd",
+        "AMIABLE": "oui",
+        "REF_SINISTRE_ASUREUR": "sdsq",
+        "DATE_RECEPTION": "2022-12-17",
+        "DATE_SURVENANCE": "2022-12-25",
+        "HEURE": "Entre_3h_6h",
+        "CAS": "Arret",
+        "LIEU_SINISTRE": "qsdsqd",
+        "REGION": "kklkk",
+        "SOCIETE": "klklkl",
+        "SITE": "kklk",
+        "COMMENTAIRES": "kkl",
+        "TYPE_VEHICULE": "TRR",
+        "IMMATRICULATION": "klk",
+        "MARQUE": "kklk",
+        "PREMIERE_MEC": "klkl",
+        "PERTE_FI": "oui",
+        "CONDUCTEUR": "kklk",
+        "POURCENTAGE_RC": "25",
+        "CAS_IDA": "kk",
+        "NATURE": "Etranger",
+        "CIRCONSTANCE": "nngj",
+        "DOMMAGES": "kklkl",
+        "ASSUREUR_ADV": "kkl",
+        "CONVENTION": "oui",
+        "MONTANT_DOM": "2.3",
+        "FRANCHISE": "252",
+        "DATE_MISSIONNEMENT": "2022-12-03",
+        "LIEU_EXPERTISE": "dsfds",
+        "DATE_EXPERTISE": "2022-12-25",
+        "DATE_PRE_RAPPORT": "2022-12-16",
+        "REF_EXPERTISE": "ssd",
+        "DATE_RAPPORT_DEFINITIF": "12/12/2022",
+        "COUT_EXPERT": "350.5",
+        "REPARATION": "oui",
+        "CESSION_EPAVE": "oui",
+        "MONTANT_RECOURS": "63",
+        "PIECES_MANQUANTES": "oui",
+        "DETAIL_PIECES_MANQUANTES": "Devis",
+        "DATE_RELANCE_PIECES_MANQUANTES": "2022-12-30",
+        "CONSTAT_ORIGINAL": "oui",
+        "DATE_CLOTURE": "2022-12-24",
+        "CHARGE_PROVISIONNELLE_ASSUREUR": "2.3",
+        "CHARGE_REELLE": "4.2",
+        "CHARGE_AJUSTEE": "4.2",
+        "ETAT": "En_cours"
+    }
 }
 
 
-
-###
-  #  "Annee": 2022,
-  #   "DossierClient" : "2",
-  #   "NumClient": "1",
-  #   "ASSUREUR": "assureur",
-  #   "numContart": "6556",
-  #   "Amiable": "oui",
-  #   "ref_Sinistre": "15658545",
-  #   "Date_recep": "2022-12-16",
-  #   "Date_Survenance": "2022-12-05",
-  #   "Heure": "Entre_11h_13h",
-  #   "CAS": "Arret",
-  #   "LIEU_SINISTRE": "BORDEAUX LAC",
-  #   "SOCIETE_A_Facturer": "STSO",
-  #   "Site": "SAMAZAN", 
-  #   "Region": "Sud-Ouest",
-  #   "Type_Vehicule": "TRR",
-  #   "Immatriculation": "FF-933-SP",
-  #   "Marque": "RENAULT",
-  #   "premiere_MEC": "2018-12-16",
-  #   "Perte_Fi": "oui",
-  #   "Conducteur": "FETEGUE CISSE",
-  #   "pourcentage_RC": 100,
-  #   "Cas_IDA": 40,
-  #   "Nature": "Non_Auto",
-  #   "Circonstances": "Notre assuré a percuté le poteau et le porche du magasin AUCHAN LAC",
-  #   "Dommages": "LATERAL DROIT",
-  #   "Cie_adv": "MMA",
-  #   "Conv": "oui",
-  #   "Mt_Dom": 950.2,
-  #   "Franchise": 0,
-  #   "Date_MISSIONNEMENT": "11-01-2022",
-  #   "Lieu_expertise": "VOLVO SELVA SAMAZAN",
-  #   "Date_EXPERTISE"            :"11-01-2022",
-  #   "Date_RAPPORT"             :"11-01-2022",
-  #   "Ref_expertise": 32565656,
-  #   "Date_RAPPORT_DEFINITIF"   :"11-01-2022",
-  #   "cout_expert": 208.5,
-  #   "REPARATION_oui_non": "oui",
-  #   "CESSION_EPAVE": "non",
-  #   "Mt_rec": 150,
-  #   "Pieces_manquantes_Oui_Non": "oui",
-  #   "Detail_pieces_manquantes": "DC",
-  #   "Date_de_relance_pieces_M":"17-03-2022",
-  #   "Constat_original_O_N": "oui",
-  #   "Date_clot": "05-09-2022",
-  #   "Charge_Provisionnelle_Solaris": 107.4,
-  #   "Charge_ajustee": 255.2,
-  #   "Charge_reelle": 202.75,
-  #   "Etat": "En_cours",
-  #   "Commentaires": "Expertise demandée PRE RAPPORT RENDU DDE FCATURE à Alexandrine REG FAIT"
+# {
+#   "sinistre" : {
+#     "creatorId": "1",
+#     "creatorRole": "super_admin"
+#   },
+#   "decSinistre" :{
+#     "Cie_adv" : "sdfsdf",
+#     "NumClient" : "",
+#     "Conducteur" : "dsfds",
+#     "Date_Survenance" : "2022-12-10",
+#     "Date_recep" : "2022-12-03",
+#     "Immatriculation" : "dsfdsf",
+#     "LIEU_SINISTRE" : "dfsdf",
+#     "premiere_MEC" : "dsqdqs",
+#     "Type_Vehicule" : "SR"
+#   }
+# }

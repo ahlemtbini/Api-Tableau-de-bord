@@ -227,7 +227,7 @@ Manoeuvre
 // @map("En Circulation")
 // @map("Manœuvre")
 enum NatureSinistre {
-  Etranger
+  ETRANGER
   Corpo
   Non_Auto 
 }
@@ -261,61 +261,61 @@ model Sinistre {
 }
 
 model DeclarationSinistre {
-  sinistre                      Sinistre       @relation(fields: [Dossier], references: [id], onDelete: Cascade)
-  Dossier                       Int            @unique
-  DossierClient                 String?        @map("Dossier Client")
-  NumClient                     String?       @map("Numéro Client")
-  Annee                         String?          @map("Année")
+  sinistre                      Sinistre       @relation(fields: [DOSSIER], references: [id], onDelete: Cascade)
+  NUMERO_CLIENT                 String?        //@map("Numéro Client")
+  DOSSIER                       Int            @unique
+  DOSSIER_CLIENT                String?        //@map("Dossier Client")
+  ANNEE                         String?        //@map("Année")
   ASSUREUR                      String?
-  numContart                    String?       @map("Numéro Contrat")
-  Amiable                       String?
-  ref_Sinistre                  String?       @map("Ref Sinistre Assureur")
-  Date_recep                    String        @map("Date récep.")
-  Date_Survenance               String        @map("Date Survenance.")
-  Heure                         intervalle_des_heures?
-  CAS                           CasSinistre?
-  LIEU_SINISTRE                 String          @map("LIEU SINISTRE")
-  SOCIETE_A_Facturer            String?        @map("SOCIETE")
-  Site                          String?
-  Region                        String?          @map("Région")
-  Type_Vehicule                 VehiculeTypeEnum @map("Type Véhicule")
-  Immatriculation               String           @map("Immatriculation")
-  Marque                        String?
-  premiere_MEC                  String @map("1ère MEC")
-  Perte_Fi                      BolType? @map("Perte Fi")
-  Conducteur                    String
-  pourcentage_RC                String? @map("%RC")
-  Cas_IDA                       String? @map("Cas IDA")
-  Nature                        NatureSinistre?
-  Circonstances                 String?         @db.Text
-  Dommages                      String?
-  Cie_adv                       String?  @map("Cie adv.")
-  Conv                          BolType? @map("Conv.")
-  Mt_Dom                        String? @map("Mt Dom.")
-  Franchise                     String?
-  Date_MISSIONNEMENT            String? @map("Date MISSIONNEMENT")
-  Lieu_expertise                String? @map("Lieu expertise")
-  Date_EXPERTISE                String? @map("Date EXPERTISE")
-  Date_RAPPORT                  String? @map("Date RAPPORT")
-  Ref_expertise                 String? @map("Ref expertise")
-  Date_RAPPORT_DEFINITIF        String? @map("Date RAPPORT DEFINITIF")
-  cout_expert                   String? @map("coût expert")
-  REPARATION_oui_non            BolType? @map("REPARATION O/N")
-  CESSION_EPAVE                 BolType? @map("CESSION/EPAVE")
-  Mt_rec                        String? @map("Mt rec.")
-  Pieces_manquantes_Oui_Non     BolType? @map("Pièces manquantes O/N")
-  Detail_pieces_manquantes      DPMenum? @map("Détail pièces manquantes")
-  Date_de_relance_pieces_M      String?   @map("Date de relance pièces M")
-  Constat_original_O_N          BolType? @map("Constat original O/N")
-  Date_clot                     String? @map("Date clot.")
-  Charge_Provisionnelle_Solaris String?  @map("Charge Provisionnelle Solaris")
-  Charge_ajustee                String?  @map("Charge ajustée")
-  Charge_reelle                 String?  @map("Charge réelle")
-  Etat                          EtatSinistre?  
-  Commentaires                  String?         @db.Text
+  NUMERO_CONTRAT                String?        //@map("Numéro Contrat")
+  AMIABLE                       String?
+  REF_SINISTRE_ASUREUR          String?        //@map("Ref Sinistre Assureur")
+  DATE_RECEPTION                String?        //@map("Date récep.")
+  DATE_SURVENANCE               String?        //@map("Date Survenance.")
+  HEURE                         String?  // intervalle_des_heures
+  CAS                           String?  // CasSinistre
+  LIEU_SINISTRE                 String?        //@map("LIEU SINISTRE")
+  REGION                        String?        //@map("Région")
+  SOCIETE                       String?        //@map("SOCIETE")
+  SITE                          String?
+  TYPE_VEHICULE                 String? // VehiculeTypeEnum? @map("Type Véhicule")
+  IMMATRICULATION               String?   //@map("Immatriculation")
+  MARQUE                        String?
+  PREMIERE_MEC                  String?   //@map("1ère MEC")
+  PERTE_FI                      String? // BolType?  //@map("Perte Fi")
+  CONDUCTEUR                    String?
+  POURCENTAGE_RC                String?   //@map("%RC")
+  CAS_IDA                       String?   //@map("Cas IDA")
+  NATURE                        String? // NatureSinistre
+  CIRCONSTANCE                  String?         @db.Text
+  DOMMAGES                      String?
+  ASSUREUR_ADV                  String?  //@map("Cie adv.")
+  CONVENTION                    String?  // BolType? //@map("Conv.")
+  FRANCHISE                     String?
+  MONTANT_DOM                   String? //@map("Mt Dom.")
+  DATE_MISSIONNEMENT            String? //@map("Date MISSIONNEMENT")
+  LIEU_EXPERTISE                String? //@map("Lieu expertise")
+  DATE_EXPERTISE                String? //@map("Date EXPERTISE")
+  DATE_PRE_RAPPORT              String? //@map("Date RAPPORT")
+  REF_EXPERTISE                 String? //@map("Ref expertise")
+  DATE_RAPPORT_DEFINITIF        String? //@map("Date RAPPORT DEFINITIF")
+  COUT_EXPERT                   String? //@map("coût expert")
+  REPARATION                    String? //@map("REPARATION O/N")
+  CESSION_EPAVE                 String? // BolType? //@map("CESSION/EPAVE")
+  MONTANT_RECOURS               String? //@map("Mt rec.")
+  PIECES_MANQUANTES             String? //@map("Pièces manquantes O/N")
+  DETAIL_PIECES_MANQUANTES      String? //DPMenum? //@map("Détail pièces manquantes")
+  DATE_RELANCE_PIECES_MANQUANTES      String?   //@map("Date de relance pièces M")
+  CONSTAT_ORIGINAL              String? //BolType? //@map("Constat original O/N")
+  DATE_CLOTURE                     String? //@map("Date clot.")
+  CHARGE_PROVISIONNELLE_ASSUREUR String?  //@map("Charge Provisionnelle Solaris")
+  CHARGE_REELLE                 String?  //@map("Charge réelle")
+  ETAT                          String?  //EtatSinistre?  
+  CHARGE_AJUSTEE                String?  //@map("Charge ajustée")
+  COMMENTAIRES                  String?         @db.Text
 }
 model EntretienPostAccident {
-  id                                                              Int                          @id @default(autoincrement())
+  id                           Int           @id @default(autoincrement())
   // 1 - Identification
   societe                                                         String
   Entite                                                          String

@@ -1,5 +1,4 @@
 const express = require("express");
-//const router = require('express').Router();
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient({
@@ -9,9 +8,11 @@ const prisma = new PrismaClient({
 const multer = require("multer")
 const upload = require("../middlewares/multer-config")
 
+
 const userCtrl = require("../controllers/user");
 const clientsCtrl = require("../controllers/clients");
 const sinistresCtrl = require("../controllers/sinistres");
+const { findSync } = require("@prisma/client/runtime");
 
 
 // user controller
@@ -36,20 +37,16 @@ router.post('/clients/contrats', clientsCtrl.addContrat)
 router.delete('/clients/contrats/:id', clientsCtrl.deleteContrat)
 router.get('/clients/contrats/:id', clientsCtrl.getContrats)
 
-
-
 // sinistres
 router.get('/sinistres', sinistresCtrl.getSinistres)
 router.get('/sinistres/:id', sinistresCtrl.getSinistre)
 router.post('/sinistres/add', sinistresCtrl.addSinistre)
 router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre)
+router.delete('/sinistres/', sinistresCtrl.deleteAll)
 router.put('/sinistres/:id', sinistresCtrl.editSinistre);
 router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
-router.post('/sinistres/import', sinistresCtrl.importExcel)
-
-
-
+router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 
 
 /*
