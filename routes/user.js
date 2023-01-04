@@ -4,6 +4,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
 })
+const { findSync } = require("@prisma/client/runtime");
 
 const multer = require("multer")
 const upload = require("../middlewares/multer-config")
@@ -12,8 +13,7 @@ const upload = require("../middlewares/multer-config")
 const userCtrl = require("../controllers/user");
 const clientsCtrl = require("../controllers/clients");
 const sinistresCtrl = require("../controllers/sinistres");
-const { findSync } = require("@prisma/client/runtime");
-
+const adminsCtrl = require("../controllers/admins");
 
 // user controller
 router.get('/profile', userCtrl.getProfile);
@@ -23,6 +23,9 @@ router.post('/users/add', userCtrl.createUser);
 router.put('/users/:id', userCtrl.editUser);
 router.delete('/users/:id', userCtrl.deleteUser);
 router.delete('/profile/:id', userCtrl.deleteProfile);
+
+router.post('/login', userCtrl.login)
+router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
 
 // clients controller
 router.get('/clients', clientsCtrl.getClients)
@@ -48,6 +51,13 @@ router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 
+// admins
+router.get('/admins', adminsCtrl.getAdmins)
+// router.get('/admins/:id', adminsCtrl.getAdmin)
+router.post('/admins/add', adminsCtrl.add)
+router.delete('/admins/:id', adminsCtrl.delete)
+router.delete('/admins/', adminsCtrl.deleteAll)
+router.put('/admins/:id', adminsCtrl.edit);
 
 /*
 async function main() {

@@ -46,7 +46,8 @@ exports.addSinistre = async (req, res, next) => {
         })
         return res.json(sinis)
     } catch (error) {
-        res.status(404).json({ error: error })
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 
@@ -120,8 +121,6 @@ exports.deleteAll = async (req, res, next) => {
 }
 
 exports.importExcel = async (req, res, next) => {
-console.log('myexcel',req.files[0])
-console.log('el',req.file)
     if (req.files[0]) {
         const fName = req.files[0].filename;
         excel = (`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
@@ -152,7 +151,7 @@ console.log('el',req.file)
                     }
                 }
             })
-            // console.log("arr",arr)
+            console.log("arr",arr.length)
             // res.status(200).json({arr})
             try {
                 arr.map(async (el,id) => {
