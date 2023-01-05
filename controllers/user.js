@@ -59,12 +59,13 @@ const createRole = async (role, id, roleData) => {
 
 exports.createUser = async (req, res, next) => {
   try {
+    console.log(req.body)
     const user = await prisma.user.create({
       data: {
         ...req.body.user,
       }
     })
-    // createRole(user.role, user.id, req.body.roleData)
+    createRole(user.role, user.id, req.body.roleData)
     res.json(user)
   } catch (error) {
     next(error)

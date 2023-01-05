@@ -1,5 +1,10 @@
 
+GET http://51.83.77.61/api/users
+
 GET http://localhost:5000/api/users
+
+###
+DELETE http://51.83.77.61/api/users/1
 
 ###
 POST http://51.83.77.61/api/users/add
@@ -15,14 +20,15 @@ Content-Type: application/json
 
 ###
 POST http://localhost:5000/api/users/add
-
 Content-Type: application/json
+
 {
     "user": {
-        "email": "david@test.com",
-        "nom": "david",
-        "prenom": "test",
-        "role": "client_admin",
+        "email": "super.admisn@mail.com",
+        "nom": "super",
+        "prenom": "admin",
+        "mdp": "polm1213",
+        "role": "super_admin"
     },
     "roleData": {
         "clientID": "1"

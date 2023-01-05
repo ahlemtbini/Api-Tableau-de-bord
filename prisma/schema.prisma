@@ -77,7 +77,7 @@ model User {
   nom           String
   prenom        String
   mdp           String       @default("default")
-  role          String
+  role          Role
   resetLink     String       @default("")
   aciveInactive Boolean      @default(true)
   profile       Profile?
