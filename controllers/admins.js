@@ -5,7 +5,11 @@ const jwt = require("jsonwebtoken");
 
 exports.getAdmins = async (req, res, next) => {
     try {
-        const admins = await prisma.adminClient.findMany()
+        const admins = await prisma.user.findMany({
+          where: {
+            role: "client_admin"
+          }
+        })
         res.status(200).json(admins)
     } catch (error) {
         // res.status(404).json({ error: error })
