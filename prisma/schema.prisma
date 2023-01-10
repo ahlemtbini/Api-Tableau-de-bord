@@ -74,10 +74,11 @@ enum intervalle_de_temps_conduite {
 model User {
   id            Int          @id @default(autoincrement())
   email         String       @unique
-  nom           String
-  prenom        String
-  mdp           String       @default("default")
+  nom           String?
+  prenom        String?
+  mdp           String?       @default("default")
   role          Role
+  numTel        String?
   resetLink     String       @default("")
   aciveInactive Boolean      @default(true)
   profile       Profile?
@@ -87,7 +88,7 @@ model User {
   chauffeur     Chauffeur?
 }
 model Profile {
-  numTel            Int?
+  numTel            String?
   date_de_naissance DateTime?      @db.Date
   typeContrat       ContractType?
   dateEmbauche      DateTime?
@@ -99,16 +100,16 @@ model Profile {
 }
 model SuperAdmin {
   id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [userId], references: [id])
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int      @unique
   clients Client[]
 }
 model AdminClient {
   id       Int    @id @default(autoincrement())
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int    @unique
-  client   Client @relation(fields: [clientID], references: [id])
-  clientID Int    @unique
+  client   Client? @relation(fields: [clientID], references: [id])
+  clientID Int?   
 }
 model Manager {
   id       Int       @id @default(autoincrement())
@@ -119,13 +120,13 @@ model Manager {
 }
 model Chauffeur {
   id                     Int                     @id @default(autoincrement())
-  email                  String        @unique
+  email                  String                  @unique
   siteName               String
   region                 String
   user                   User                    @relation(fields: [userId], references: [id])
   userId                 Int                     @unique
   site                   Site                    @relation(fields: [siteId], references: [id])
-  siteId                 Int                     @unique
+  siteId                 Int                    
   sinistres              Sinistre[]
   entretienPostAciidents EntretienPostAccident[]
   entretienVehicules     EntretienVehicule[]
@@ -134,7 +135,7 @@ model Client {
   id                   Int           @id @default(autoincrement())
   nomClient            String
   email                String        @unique
-  numTel               String           @unique
+  numTel               String        
   ville                String?
   codePostale          String?  @map("code postale")
   adresse              String?
@@ -154,7 +155,7 @@ model Client {
   updatedAt            DateTime?     @updatedAt
   superAdmin           SuperAdmin    @relation(fields: [superAdminID], references: [userId])
   superAdminID         Int
-  adminClients         AdminClient[]
+  adminClient         AdminClient[]
   countrys             Country[]
   contrats Contrat[]
 }
@@ -165,7 +166,7 @@ model Contrat {
   typeContrat String?
   startDate            String?  
   endDate              String? 
-  Client             Client?                    @relation(fields: [ClientID], references: [id], onDelete: Cascade)
+  Client             Client?                    @relation(fields: [ClientID], references: [id])
   ClientID           Int?
   Societe             Societe?                 @relation(fields: [SocieteID], references: [id])
   SocieteID           Int?

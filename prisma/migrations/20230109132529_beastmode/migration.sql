@@ -2,10 +2,12 @@
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
-    `nom` VARCHAR(191) NOT NULL,
-    `prenom` VARCHAR(191) NOT NULL,
-    `mdp` VARCHAR(191) NOT NULL DEFAULT 'default',
-    `role` VARCHAR(191) NOT NULL,
+    `nom` VARCHAR(191) NULL,
+    `prenom` VARCHAR(191) NULL,
+    `mdp` VARCHAR(191) NULL DEFAULT 'default',
+    `role` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
+    `numTel` VARCHAR(191) NULL,
+    `resetLink` VARCHAR(191) NOT NULL DEFAULT '',
     `aciveInactive` BOOLEAN NOT NULL DEFAULT true,
 
     UNIQUE INDEX `User_email_key`(`email`),
@@ -14,18 +16,16 @@ CREATE TABLE `User` (
 
 -- CreateTable
 CREATE TABLE `Profile` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `numTel` INTEGER NULL,
-    `date_de_naissance` DATE NOT NULL,
+    `numTel` VARCHAR(191) NULL,
+    `date_de_naissance` DATE NULL,
     `typeContrat` ENUM('CDI', 'CDD', 'Interimaire', 'Stagiaire') NULL,
     `dateEmbauche` DATETIME(3) NULL,
     `creerPar` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL DEFAULT 'manager',
     `permisConduire` LONGBLOB NULL,
-    `picture` LONGBLOB NULL,
+    `photo` VARCHAR(191) NULL,
     `userId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Profile_userId_key`(`userId`),
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `Profile_userId_key`(`userId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -172,7 +172,7 @@ CREATE TABLE `Sinistre` (
     `chauffeurEmail` VARCHAR(191) NULL,
     `créer par` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NULL,
     `id créateur` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -180,56 +180,56 @@ CREATE TABLE `Sinistre` (
 
 -- CreateTable
 CREATE TABLE `DeclarationSinistre` (
-    `Numéro Client` VARCHAR(191) NULL,
+    `NUMERO_CLIENT` VARCHAR(191) NULL,
     `DOSSIER` INTEGER NOT NULL,
-    `Dossier Client` VARCHAR(191) NULL,
-    `Année` INTEGER NULL,
+    `DOSSIER_CLIENT` VARCHAR(191) NULL,
+    `ANNEE` VARCHAR(191) NULL,
     `ASSUREUR` VARCHAR(191) NULL,
-    `Numéro Contrat` INTEGER NULL,
+    `NUMERO_CONTRAT` VARCHAR(191) NULL,
     `AMIABLE` VARCHAR(191) NULL,
-    `Ref Sinistre Assureur` INTEGER NULL,
-    `Date récep.` VARCHAR(191) NULL,
-    `Date Survenance.` VARCHAR(191) NULL,
+    `REF_SINISTRE_ASUREUR` VARCHAR(191) NULL,
+    `DATE_RECEPTION` VARCHAR(191) NULL,
+    `DATE_SURVENANCE` VARCHAR(191) NULL,
     `HEURE` VARCHAR(191) NULL,
     `CAS` VARCHAR(191) NULL,
-    `LIEU SINISTRE` VARCHAR(191) NULL,
-    `Région` VARCHAR(191) NULL,
+    `LIEU_SINISTRE` VARCHAR(191) NULL,
+    `REGION` VARCHAR(191) NULL,
     `SOCIETE` VARCHAR(191) NULL,
     `SITE` VARCHAR(191) NULL,
-    `Type Véhicule` ENUM('TRR', 'SR', 'VL', 'Camion') NULL,
-    `Immatriculation` VARCHAR(191) NULL,
+    `TYPE_VEHICULE` VARCHAR(191) NULL,
+    `IMMATRICULATION` VARCHAR(191) NULL,
     `MARQUE` VARCHAR(191) NULL,
-    `1ère MEC` VARCHAR(191) NULL,
-    `Perte Fi` ENUM('oui', 'non') NULL,
+    `PREMIERE_MEC` VARCHAR(191) NULL,
+    `PERTE_FI` VARCHAR(191) NULL,
     `CONDUCTEUR` VARCHAR(191) NULL,
-    `%RC` INTEGER NULL,
-    `Cas IDA` VARCHAR(191) NULL,
-    `NATURE` ENUM('Etranger', 'Corpo', 'Non_Auto') NULL,
+    `POURCENTAGE_RC` VARCHAR(191) NULL,
+    `CAS_IDA` VARCHAR(191) NULL,
+    `NATURE` VARCHAR(191) NULL,
     `CIRCONSTANCE` TEXT NULL,
     `DOMMAGES` VARCHAR(191) NULL,
-    `Cie adv.` VARCHAR(191) NULL,
-    `Conv.` ENUM('oui', 'non') NULL,
+    `ASSUREUR_ADV` VARCHAR(191) NULL,
+    `CONVENTION` VARCHAR(191) NULL,
     `FRANCHISE` VARCHAR(191) NULL,
-    `Mt Dom.` VARCHAR(191) NULL,
-    `Date MISSIONNEMENT` VARCHAR(191) NULL,
-    `Lieu expertise` VARCHAR(191) NULL,
-    `Date EXPERTISE` VARCHAR(191) NULL,
-    `Date RAPPORT` VARCHAR(191) NULL,
-    `Ref expertise` VARCHAR(191) NULL,
-    `Date RAPPORT DEFINITIF` VARCHAR(191) NULL,
-    `coût expert` VARCHAR(191) NULL,
-    `REPARATION O/N` ENUM('oui', 'non') NULL,
-    `CESSION/EPAVE` ENUM('oui', 'non') NULL,
-    `Mt rec.` VARCHAR(191) NULL,
-    `Pièces manquantes O/N` ENUM('oui', 'non') NULL,
-    `Détail pièces manquantes` ENUM('Devis', 'CG', 'Permis', 'Facture', 'DC', 'PV', 'Constat') NULL,
-    `Date de relance pièces M` VARCHAR(191) NULL,
-    `Constat original O/N` ENUM('oui', 'non') NULL,
-    `Date clot.` VARCHAR(191) NULL,
-    `Charge Provisionnelle Solaris` VARCHAR(191) NULL,
-    `Charge réelle` DOUBLE NULL,
-    `ETAT` ENUM('En_cours', 'Clos') NULL,
-    `Charge ajustée` VARCHAR(191) NULL,
+    `MONTANT_DOM` VARCHAR(191) NULL,
+    `DATE_MISSIONNEMENT` VARCHAR(191) NULL,
+    `LIEU_EXPERTISE` VARCHAR(191) NULL,
+    `DATE_EXPERTISE` VARCHAR(191) NULL,
+    `DATE_PRE_RAPPORT` VARCHAR(191) NULL,
+    `REF_EXPERTISE` VARCHAR(191) NULL,
+    `DATE_RAPPORT_DEFINITIF` VARCHAR(191) NULL,
+    `COUT_EXPERT` VARCHAR(191) NULL,
+    `REPARATION` VARCHAR(191) NULL,
+    `CESSION_EPAVE` VARCHAR(191) NULL,
+    `MONTANT_RECOURS` VARCHAR(191) NULL,
+    `PIECES_MANQUANTES` VARCHAR(191) NULL,
+    `DETAIL_PIECES_MANQUANTES` VARCHAR(191) NULL,
+    `DATE_RELANCE_PIECES_MANQUANTES` VARCHAR(191) NULL,
+    `CONSTAT_ORIGINAL` VARCHAR(191) NULL,
+    `DATE_CLOTURE` VARCHAR(191) NULL,
+    `CHARGE_PROVISIONNELLE_ASSUREUR` VARCHAR(191) NULL,
+    `CHARGE_REELLE` VARCHAR(191) NULL,
+    `ETAT` VARCHAR(191) NULL,
+    `CHARGE_AJUSTEE` VARCHAR(191) NULL,
     `COMMENTAIRES` TEXT NULL,
 
     UNIQUE INDEX `DeclarationSinistre_DOSSIER_key`(`DOSSIER`)
@@ -305,10 +305,10 @@ CREATE TABLE `_ManagerToSociete` (
 ALTER TABLE `Profile` ADD CONSTRAINT `Profile_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SuperAdmin` ADD CONSTRAINT `SuperAdmin_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `SuperAdmin` ADD CONSTRAINT `SuperAdmin_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_clientID_fkey` FOREIGN KEY (`clientID`) REFERENCES `Client`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -326,7 +326,7 @@ ALTER TABLE `Chauffeur` ADD CONSTRAINT `Chauffeur_siteId_fkey` FOREIGN KEY (`sit
 ALTER TABLE `Client` ADD CONSTRAINT `Client_superAdminID_fkey` FOREIGN KEY (`superAdminID`) REFERENCES `SuperAdmin`(`userId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_ClientID_fkey` FOREIGN KEY (`ClientID`) REFERENCES `Client`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_ClientID_fkey` FOREIGN KEY (`ClientID`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_SocieteID_fkey` FOREIGN KEY (`SocieteID`) REFERENCES `Societe`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
