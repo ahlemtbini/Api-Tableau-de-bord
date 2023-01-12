@@ -21,9 +21,9 @@ router.get('/users', userCtrl.getUsers);
 router.get('/users/:id', userCtrl.getUser);
 router.post('/users/add', userCtrl.createUser);
 router.put('/users/:id', userCtrl.editUser);
+router.delete('/users/deleteAll', userCtrl.deleteAll);
 router.delete('/users/:id', userCtrl.deleteUser);
 router.delete('/profile/:id', userCtrl.deleteProfile);
-router.delete('/users/deleteAll', userCtrl.deleteAll);
 
 router.post('/users/login', userCtrl.login)
 router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
@@ -54,6 +54,7 @@ router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 
 // admins
 router.get('/admins', adminsCtrl.getAdmins)
+router.get('/admins/clients/:id', adminsCtrl.getAdminClients)
 router.post('/admins/add', adminsCtrl.createAdmin)
 router.post('/admins/addClient', adminsCtrl.addClient)
 

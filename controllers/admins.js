@@ -8,9 +8,32 @@ exports.getAdmins = async (req, res, next) => {
         const admins = await prisma.user.findMany({
           where: {
             role: "client_admin"
+          },
+          include: {
+            admin_client : true
+          },
+          include: {
+            profile:true,
           }
         })
         res.status(200).json(admins)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.getAdminClients = async (req, res, next) => {
+    try {
+      const { id } = req.params
+      console.dir(id)
+        const admin = await prisma.adminClient.findUnique({
+          where:{
+            id: parseInt(id)
+          },select: {
+            client:true
+          }
+        })
+        res.status(200).json(admin)
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
@@ -44,7 +67,7 @@ exports.createAdmin = (req, res, next) => {
 exports.addClient = async (req, res, next) => {
     try {
         const adminClient = await prisma.adminClient.update({
-            where: { id: req.body.id },
+            where: { userId: req.body.id },
             data: {
                 clientID: req.body.clientID
             }

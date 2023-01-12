@@ -41,10 +41,9 @@ CREATE TABLE `SuperAdmin` (
 CREATE TABLE `AdminClient` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
-    `clientID` INTEGER NOT NULL,
+    `clientID` INTEGER NULL,
 
     UNIQUE INDEX `AdminClient_userId_key`(`userId`),
-    UNIQUE INDEX `AdminClient_clientID_key`(`clientID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -69,7 +68,6 @@ CREATE TABLE `Chauffeur` (
 
     UNIQUE INDEX `Chauffeur_email_key`(`email`),
     UNIQUE INDEX `Chauffeur_userId_key`(`userId`),
-    UNIQUE INDEX `Chauffeur_siteId_key`(`siteId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -99,7 +97,6 @@ CREATE TABLE `Client` (
     `superAdminID` INTEGER NOT NULL,
 
     UNIQUE INDEX `Client_email_key`(`email`),
-    UNIQUE INDEX `Client_numTel_key`(`numTel`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -311,7 +308,7 @@ ALTER TABLE `SuperAdmin` ADD CONSTRAINT `SuperAdmin_userId_fkey` FOREIGN KEY (`u
 ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_clientID_fkey` FOREIGN KEY (`clientID`) REFERENCES `Client`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_clientID_fkey` FOREIGN KEY (`clientID`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Manager` ADD CONSTRAINT `Manager_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -15,9 +15,9 @@ const createRole = async (role, id, roleData) => {
         const role = await prisma.superAdmin.create({data: obj})
         return role
     }
-    case "client_admin": {    
-        const role = await prisma.adminClient.create(
-        {
+    case "client_admin": {
+      try {
+        const role = await prisma.adminClient.create({
           data: {
             user: {
               connect:{
@@ -25,9 +25,12 @@ const createRole = async (role, id, roleData) => {
               }
             },
           }
-        }
-        )
-        return role
+        })
+        console.log('role',role)
+       return role
+      } catch (error) {
+        next(error)
+      }      
     }
     case "manager": {
         const role = await prisma.manager.create({data: obj})
@@ -54,13 +57,16 @@ exports.createUser = (req, res, next) => {
       const result =await createRole(user.role, user.id, req.body.roleData)
       console.log(result)
       if(result.error){
-        return res.status(404).json(result.error)
+        return res.status(404).json({error: result.error})
       }
-      return res.status(200).json(result.role)
+      return res.status(200).json(user)
     })
-    .catch(error=>next(error))
+    .catch(error=>{
+      return res.status(400).json("ce email existe déja!")
+    })
     // .catch((error)=>res.status(404).json({error}))
   } catch (error) {
+    // return res.status(400).json("ce email existe déja!")
     next(error)
   }
 }
@@ -71,6 +77,9 @@ exports.getUsers = async (req, res, next) => {
       include: {
         super_admin: true,
       },
+      include: {
+        profile: true,
+      }
     })
     res.json(users)
   } catch (error) {

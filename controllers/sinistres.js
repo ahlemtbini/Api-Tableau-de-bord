@@ -7,6 +7,10 @@ const fse =require("fs-extra")
 exports.getSinistres = async (req, res, next) => {
     try {
         const sinistres = await prisma.sinistre.findMany({
+            orderBy: 
+                {
+                    id: 'desc',
+                },
             include: {
                 declarationSinistre: true
             }
