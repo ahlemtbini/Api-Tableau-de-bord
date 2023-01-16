@@ -206,35 +206,35 @@ exports.login = async (req, res, next) => {
 }
 
 
-// exports.refreshUser = (req, res, next) => {
-//   if (req.body.reToken) {
-//     oldToken = req.body.reToken
-//     const data = decode(oldToken, process.env.SECRET_KEY);
-//     User.findOne({ _id: data.userId })
-//       .then(user => {
-//         if (!user) {
-//           return res.status(401).json({ error: "couldnt refresh" });
-//         }
-//         res.status(200).json({
-//           token: jwt.sign(
-//             {
-//               userId: user._id,
-//               userRole: user.role,
-//               nom: user.nom,
-//               prenom: user.prenom,
-//               tel: user.tel,
-//               email: user.email,
-//               expiresIn: 3600
-//             },
-//             process.env.SECRET_KEY,
-//             { algorithm: "HS256" }
-//           ),
-//         });
+ exports.refreshUser = (req, res, next) => {
+   if (req.body.reToken) {
+     oldToken = req.body.reToken
+     const data = decode(oldToken, process.env.SECRET_KEY);
+     User.findOne({ _id: data.userId })
+       .then(user => {
+         if (!user) {
+           return res.status(401).json({ error: "couldnt refresh" });
+         }
+         res.status(200).json({
+           token: jwt.sign(
+             {
+               userId: user._id,
+               userRole: user.role,
+               nom: user.nom,
+               prenom: user.prenom,
+               tel: user.tel,
+               email: user.email,
+               expiresIn: 3600
+             },
+             process.env.SECRET_KEY,
+             { algorithm: "HS256" }
+           ),
+         });
 
-//       })
-//       .catch(error => res.status(401).json({ error: "couldnt refresh" }))
-//   }
-// }
+       })
+       .catch(error => res.status(401).json({ error: "couldnt refresh" }))
+   }
+ }
 
 // exports.forgotPassword = (req, res, next) => {
 //   const { email } = req.body;

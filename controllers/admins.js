@@ -10,7 +10,7 @@ exports.getAdmins = async (req, res, next) => {
             role: "client_admin"
           },
           include: {
-            admin_client : true
+            admin_client: true
           },
           include: {
             profile:true,
@@ -29,8 +29,24 @@ exports.getAdminClients = async (req, res, next) => {
         const admin = await prisma.adminClient.findUnique({
           where:{
             id: parseInt(id)
-          },select: {
+          },include: {
             client:true
+          }
+        })
+        res.status(200).json(admin)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.getSaClients = async (req, res, next) => {
+    try {
+      const { id } = req.params
+        const admin = await prisma.superAdmin.findUnique({
+          where:{
+            id: parseInt(id)
+          },select: {
+            clients:true
           }
         })
         res.status(200).json(admin)

@@ -124,6 +124,16 @@ exports.deleteAll = async (req, res, next) => {
     }
 }
 
+const getDate=(date)=>{
+    let arr =[]
+    arr =date.split(' ')
+    const month= new Date(date).getMonth()
+    const d=arr[2]+"-"+month+"-"+arr[3]
+    return d
+}
+const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
+"DATE_EXPERTISE","DATE_PRE_RAPPORT","DATE PRE_RAPPORT","DATE_RAPPORT_DEFINITIF","DATE_CLOTURE"]
+
 exports.importExcel = async (req, res, next) => {
     if (req.files[0]) {
         const fName = req.files[0].filename;
@@ -139,12 +149,13 @@ exports.importExcel = async (req, res, next) => {
           })
     
           const arr=excelData.MySheet1
+          
           arr.map((el) => {
-              if(el["NUMERO CLIENT"] ){
+                if(el["NUMERO CLIENT"] ){
                   el["NUMERO_CLIENT"]= el["NUMERO CLIENT"] ? el["NUMERO CLIENT"] : ""
                   delete el["NUMERO CLIENT"]
                 }
-              if(el["DATE PRE_RAPPORT"] ){
+                if(el["DATE PRE_RAPPORT"] ){
                   el["DATE_PRE_RAPPORT"]= el["DATE PRE_RAPPORT"] ? el["DATE PRE_RAPPORT"]: ""
                   delete el["DATE PRE_RAPPORT"]
                 }
@@ -153,7 +164,16 @@ exports.importExcel = async (req, res, next) => {
                     if(typeof el[key] === 'number' || typeof el[key] !== 'float' ){
                         el[key] = el[key].toString()
                     }
+                    if(datesArr.indexOf(el[key]) !== -1){
+                       el[key]= getDate(el[key])
+                    }
                 }
+                Object.keys(el).map((element)=>{
+                    if((datesArr.indexOf(element) !== -1)  && (el[element].length > 10)){
+                        el[element]= getDate(el[element])
+                     }               
+                })
+      
             })
             console.log("arr",arr.length)
             // res.status(200).json({arr})

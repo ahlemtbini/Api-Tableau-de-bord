@@ -257,7 +257,7 @@ model Sinistre {
   creatorRole          Role?                   @map("créer par")
   creatorId            String?                 @map("id créateur")
   createdAt            DateTime              @default(now())
-  updatedAt            DateTime               @default(now())
+  updatedAt            DateTime              @updatedAt
   declarationSinistre  DeclarationSinistre?
 }
 
@@ -288,8 +288,9 @@ model DeclarationSinistre {
   POURCENTAGE_RC                String?   //@map("%RC")
   CAS_IDA                       String?   //@map("Cas IDA")
   NATURE                        String? // NatureSinistre
-  CIRCONSTANCE                  String?         @db.Text
+  CIRCONSTANCE                  String?   @db.Text
   DOMMAGES                      String?
+  DOMMAGES_SAISIE8_LIBRE        String?   @db.Text
   ASSUREUR_ADV                  String?  //@map("Cie adv.")
   CONVENTION                    String?  // BolType? //@map("Conv.")
   FRANCHISE                     String?
