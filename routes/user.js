@@ -52,6 +52,7 @@ router.put('/sinistres/:id', sinistresCtrl.editSinistre);
 router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
+router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
 
 // admins
 router.get('/admins', adminsCtrl.getAdmins)
@@ -75,5 +76,20 @@ main()
     process.exit(1)
   })
 */
-
+// router.get('/profile', async (req, res, next) => {
+//   try {
+//     const { id } = req.params
+//       const admin = await prisma.superAdmin.findUnique({
+//         where:{
+//           id: parseInt(id)
+//         },select: {
+//           clients:true
+//         }
+//       })
+//       res.status(200).json(admin)
+//   } catch (error) {
+//       // res.status(404).json({ error: error })
+//       next(error)
+//   }
+// });
 module.exports = router;

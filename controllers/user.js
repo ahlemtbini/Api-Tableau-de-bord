@@ -143,6 +143,7 @@ exports.getProfile = async (req, res, next) => {
     next(error)
   }
 }
+
 exports.deleteProfile = async (req, res, next) => {
   try {
     const { id } = req.params

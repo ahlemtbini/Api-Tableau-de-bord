@@ -205,5 +205,30 @@ exports.importExcel = async (req, res, next) => {
         } else {
         return res.status(400).json({ error: "no file" })
         }
+    }
 
-}
+    
+    exports.getFiltredData = async (req, res, next) => {
+        let obj={}
+        req.body.map((el,id)=>{
+            if(el.value !== ""){
+                obj ={...obj, [el.name]: el.value}
+            }
+        })
+        console.log(obj)
+
+        try {
+            const sinistres = await prisma.declarationSinistre.findMany({
+                where:{
+                    ANNEE: obj.ANNEE,
+                    DATE_SURVENANCE: obj.DATE_SURVENANCE,
+                    REGION: obj.REGION ,
+                    SOCIETE: obj.SOCIETE,
+                }
+            })
+            res.json(sinistres)
+        } catch (error) {
+            res.status(404).json({ error: error })
+            // next(error)
+        }
+    }
