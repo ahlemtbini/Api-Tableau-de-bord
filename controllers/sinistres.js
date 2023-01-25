@@ -127,8 +127,10 @@ exports.deleteAll = async (req, res, next) => {
 const getDate=(date)=>{
     let arr =[]
     arr =date.split(' ')
-    const month= new Date(date).getMonth()
-    const d=arr[2]+"-"+month+"-"+arr[3]
+    const month= new Date(arr).getMonth()
+    const month1= new Date(date).getMonth()
+    const d=arr[2] + "-0" + String(month1+1)  + "-" + arr[3]
+    console.log('arr',month,'date',month1)
     return d
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
