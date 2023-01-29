@@ -146,3 +146,54 @@ exports.addClient = async (req, res, next) => {
         // next(error)
     }
 }
+
+const forgotPassword = async(email, res) => {
+  try {
+      const user = await prisma.user.findUnique({
+        where:{
+          email: email
+        }
+      })
+      const token =  jwt.sign({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          expiresIn: 3600
+        },
+        process.env.ENCRYPT_KEY,
+        { algorithm: "HS256" }
+        )
+        console.log(token)
+      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+  
+      updateUser(user.id,token)
+
+      const options = {
+        to: email,
+        from: '<contact@fleetrisk.fr>',
+        subject: "Mot de passe",
+        html: `<div style="background:#fff;
+        height:300px; display:flex;justify-content:center;align-items: center;">
+          <div style="background:#33373A;padding:30px;height:fit-content">
+            <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
+            <a style="background: #61892F;
+            padding: 10px 20px;
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;    width: 40%;
+            margin: auto;
+            display: block;text-align:center"
+               href=${link}>cliquer ici</a>
+          </div>
+        </div>`,
+      };
+
+      const resEmail = await send_mail(options, email)
+      console.log(resEmail)
+      // .catch(console.error)
+      //  console.log(resEmail, 'resEma');
+      return res.status(200).json({ message: "mail de restauration a été envoyé" })
+  } catch (error) {
+      res.status(401).json({ error: "user not found" })
+  }
+};

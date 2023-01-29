@@ -307,20 +307,7 @@ exports.forgotPassword = async(req, res, next) => {
 };
 
 
-const updateMdp = async(id,hash)=>{
-  try {
-    const user = await prisma.user.update({
-      where: { id: id },
-      data:{
-        mdp: hash,
-      }
-    })
-    console.log(true)
-    return res.status(200).json("mot de passe modifié")
-  } catch (error) {
-    next(error)
-  }
- }
+
 exports.resetPassword = (req, res, next) => {
   console.log(req.body)
   const { resetLink, newPass } = req.body;
@@ -332,7 +319,6 @@ exports.resetPassword = (req, res, next) => {
       console.log('decoded',decoded)
       bcrypt.hash(newPass, 10)
       .then(async(hash) => {
-        // updateMdp(decoded.id,hash)
         try {
           const user = await prisma.user.update({
             where: { id: decoded.id },

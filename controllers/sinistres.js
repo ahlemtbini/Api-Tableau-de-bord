@@ -116,7 +116,6 @@ const deleteSinis = async (id) => {
 }
 exports.deleteAll = async (req, res, next) => {
     try {
-        const { id } = req.params
         const sinistre = await prisma.sinistre.deleteMany({})
         return res.status(200).json({ message: "tous les sinistres ont été supprimés" })
     } catch (error) {
@@ -179,6 +178,8 @@ exports.importExcel = async (req, res, next) => {
             })
             // console.log("arr",arr.length)
             // res.status(200).json({arr})
+            const sinistre = await prisma.sinistre.deleteMany({})
+
             try {
                 arr.map(async (el,id) => {
                     const sinis = await prisma.sinistre.create({
@@ -239,9 +240,3 @@ exports.importExcel = async (req, res, next) => {
             next(error)
         }
     }
-    // {
-    //     ANNEE: {in: [...obj.ANNEE]},
-    //     // DATE_SURVENANCE: {contains : { in: obj.DATE_SURVENANCE}},
-    //     REGION: {in: obj.REGION} ,
-    //     SOCIETE: {in: obj.SOCIETE},
-    // }
