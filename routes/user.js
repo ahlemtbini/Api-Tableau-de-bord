@@ -27,6 +27,8 @@ router.delete('/profile/:id', userCtrl.deleteProfile);
 
 router.post('/users/login', userCtrl.login)
 router.post('/users/refreshUser', userCtrl.refreshUser)
+router.post('/users/forgotPass', userCtrl.forgotPassword)
+router.post('/users/resetPass', userCtrl.resetPassword)
 router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
 
 // clients controller
@@ -56,9 +58,11 @@ router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
 
 // admins
 router.get('/admins', adminsCtrl.getAdmins)
+router.get('/admins/sinistres/:id', adminsCtrl.getAdminSinistres)
 router.get('/admins/clients/:id', adminsCtrl.getAdminClients)
 router.get('/admins/saClients/:id', adminsCtrl.getSaClients)
 router.post('/admins/add', adminsCtrl.createAdmin)
+router.put('/admins/:id', adminsCtrl.editAdmin);
 router.post('/admins/addClient', adminsCtrl.addClient)
 
 /*

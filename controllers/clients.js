@@ -27,8 +27,8 @@ exports.addClient = async (req, res, next) => {
         })
         res.status(200).json(client)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.addLogo = async (req, res, next) => {

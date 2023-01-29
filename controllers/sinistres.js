@@ -9,7 +9,7 @@ exports.getSinistres = async (req, res, next) => {
         const sinistres = await prisma.sinistre.findMany({
             orderBy: 
                 {
-                    id: 'desc',
+                    id: 'asc',
                 },
             include: {
                 declarationSinistre: true
@@ -50,8 +50,8 @@ exports.addSinistre = async (req, res, next) => {
         })
         return res.json(sinis)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 
@@ -76,8 +76,8 @@ exports.editSinistre = async (req, res, next) => {
         })
         return res.status(200).json(sinis)
     } catch (error) {
-        next(error)
-        // res.status(404).json({ error: error })
+        // next(error)
+        res.status(404).json({ error: error })
     }
 }
 
@@ -177,7 +177,7 @@ exports.importExcel = async (req, res, next) => {
                 })
       
             })
-            console.log("arr",arr.length)
+            // console.log("arr",arr.length)
             // res.status(200).json({arr})
             try {
                 arr.map(async (el,id) => {
@@ -200,8 +200,8 @@ exports.importExcel = async (req, res, next) => {
                     fse.remove(filePath)
                 return res.status(200).json("le fichier excel est bien importé")
             } catch (error) {
-                // res.status(404).json({ error: error })
-                return next(error)
+                res.status(404).json({ error: error })
+                // return next(error)
             }
 
         } else {
@@ -210,27 +210,38 @@ exports.importExcel = async (req, res, next) => {
     }
 
     
-    exports.getFiltredData = async (req, res, next) => {
+    exports.getFiltredData =  async(req, res, next) => {
         let obj={}
         req.body.map((el,id)=>{
-            if(el.value !== ""){
-                obj ={...obj, [el.name]: el.value}
+            if(el.value.length > 0){
+                if(el.name=== "DATE_SURVENANCE"){
+                    const arr = []
+                    el.value.map((val)=>{
+                        arr.push({[el.name]: {contains: `-${val}-`}})
+                    })
+                    console.log(arr)
+                    obj ={...obj, OR: arr}
+                } else {
+                    obj ={...obj, [el.name]: {in: el.value}}
+                }
             }
         })
-        console.log(obj)
-
+         console.log(obj)
         try {
             const sinistres = await prisma.declarationSinistre.findMany({
-                where:{
-                    ANNEE: obj.ANNEE,
-                    DATE_SURVENANCE: obj.DATE_SURVENANCE,
-                    REGION: obj.REGION ,
-                    SOCIETE: obj.SOCIETE,
-                }
+                where: obj
             })
+        // console.log(sinistres)
+            
             res.json(sinistres)
         } catch (error) {
-            res.status(404).json({ error: error })
-            // next(error)
+            // res.status(404).json({ error: "requete non valide" })
+            next(error)
         }
     }
+    // {
+    //     ANNEE: {in: [...obj.ANNEE]},
+    //     // DATE_SURVENANCE: {contains : { in: obj.DATE_SURVENANCE}},
+    //     REGION: {in: obj.REGION} ,
+    //     SOCIETE: {in: obj.SOCIETE},
+    // }

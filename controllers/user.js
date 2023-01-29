@@ -4,6 +4,9 @@ const prisma = new PrismaClient()
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const { decode } = require('jsonwebtoken')
+const send_mail = require("../utility/sendEmail");
+require("dotenv").config();
+
 
 const createRole = async (role, id, roleData) => {
   const obj = {
@@ -91,7 +94,6 @@ exports.getUser = async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: { id: Number(req.params.id) },
       include: {
-        posts: true,
         profile: true
       }
     })
@@ -218,17 +220,15 @@ exports.login = async (req, res, next) => {
          }
          res.status(200).json({
            token: jwt.sign(
-             {
-               userId: user._id,
-               userRole: user.role,
-               nom: user.nom,
-               prenom: user.prenom,
-               tel: user.tel,
-               email: user.email,
-               expiresIn: 3600
-             },
-             process.env.SECRET_KEY,
-             { algorithm: "HS256" }
+            {token: jwt.sign({
+              id: user.id,
+              email: user.email,
+              role: user.role,
+              expiresIn: 3600
+            },
+            process.env.ENCRYPT_KEY,
+            { algorithm: "HS256" }
+            )}
            ),
          });
 
@@ -237,73 +237,119 @@ exports.login = async (req, res, next) => {
    }
  }
 
-// exports.forgotPassword = (req, res, next) => {
-//   const { email } = req.body;
-//   User.findOne({ email })
-//     .then((user) => {
-//       const token = jwt.sign(
-//         { userId: user._id, email: user.email },
-//         process.env.RESET_PASS_KEY,
-//         {
-//           expiresIn: "20m",
-//         }
-//       );
-//       const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
-//       user
-//         .updateOne({ resetLink: token })
-//         .then(() => {
-//           const options = {
-//             to: email,
-//             from: '<contact@crops-advice.com>',
-//             subject: "Mot de passe",
-//             html: `<div style="background:#fff;
-//             height:300px; display:flex;justify-content:center;align-items: center;">
-//               <div style="background:#33373A;padding:30px;height:fit-content">
-//                 <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
-//                 <a style="background: #61892F;
-//                 padding: 10px 20px;
-//                 color: #000;
-//                 text-decoration: none;
-//                 border-radius: 25px;    width: 40%;
-//                 margin: auto;
-//                 display: block;text-align:center"
-//                    href=${link}>cliquer ici</a>
-//               </div>
-//             </div>`,
-//           };
+ const updateUser = async(id,token)=>{
+  try {
+    const user = await prisma.user.update({
+      where: { id: id },
+      data:{
+        resetLink: token,
+      }
+    })
+    console.log(true)
+    // return true
+  } catch (error) {
+    console.log(error)
+  }
+ }
 
-//           const resEmail = send_mail(options, email)
-//           // .catch(console.error)
-//           //  console.log(resEmail, 'resEma');
-//           return res.status(200).json({ message: "mail de restauration a été envoyé" })
-//         })
-//     })
-//     .catch(error => {
-//       res.status(401).json({ error: "user not found" })
-//     })
-// };
+exports.forgotPassword = async(req, res, next) => {
+  const { email } = req.body;
+  try {
+      const user = await prisma.user.findUnique({
+        where:{
+          email: email
+        }
+      })
+      const token =  jwt.sign({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          expiresIn: 3600
+        },
+        process.env.ENCRYPT_KEY,
+        { algorithm: "HS256" }
+        )
+        console.log(token)
+      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+  
+      updateUser(user.id,token)
 
-// exports.resetPassword = (req, res, next) => {
-//   const { resetLink, newPass } = req.body;
-//   if (resetLink) {
-//     jwt.verify(resetLink, process.env.RESET_PASS_KEY, (err, decoded) => {
-//       if (err) {
-//         res.status(401).json({ error: "token incorrect or expired" })
-//       }
-//       User.findOne({ resetLink })
-//         .then(user => {
-//           bcrypt.hash(newPass, 10)
-//             .then((hash) => {
-//               user.updateOne(
-//                 { password: hash }
-//               )
-//                 .then(() => res.status(200).json({ message: "password updated" }))
-//             })
-//             .catch((error) => res.status(500).json({ error: "server error" }));
-//         })
-//         .catch((error) => res.status(401).json({ error: "token incorrect or expired" }));
-//     })
-//   } else {
-//     res.status(401).json({ error: "authentication error" });
-//   }
-// };
+      const options = {
+        to: email,
+        from: '<contact@fleetrisk.fr>',
+        subject: "Mot de passe",
+        html: `<div style="background:#fff;
+        height:300px; display:flex;justify-content:center;align-items: center;">
+          <div style="background:#33373A;padding:30px;height:fit-content">
+            <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
+            <a style="background: #61892F;
+            padding: 10px 20px;
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;    width: 40%;
+            margin: auto;
+            display: block;text-align:center"
+               href=${link}>cliquer ici</a>
+          </div>
+        </div>`,
+      };
+
+      const resEmail = await send_mail(options, email)
+      console.log(resEmail)
+      // .catch(console.error)
+      //  console.log(resEmail, 'resEma');
+      return res.status(200).json({ message: "mail de restauration a été envoyé" })
+  } catch (error) {
+      res.status(404).json({ error: error })
+      // next(error)
+      // res.status(401).json({ error: "user not found" })
+  }
+};
+
+
+const updateMdp = async(id,hash)=>{
+  try {
+    const user = await prisma.user.update({
+      where: { id: id },
+      data:{
+        mdp: hash,
+      }
+    })
+    console.log(true)
+    return res.status(200).json("mot de passe modifié")
+  } catch (error) {
+    next(error)
+  }
+ }
+exports.resetPassword = (req, res, next) => {
+  console.log(req.body)
+  const { resetLink, newPass } = req.body;
+  if (resetLink) {
+    jwt.verify(resetLink, process.env.ENCRYPT_KEY,  (err, decoded) => {
+      if (err) {
+        res.status(401).json({ error: "token incorrect or expired" })
+      }
+      console.log('decoded',decoded)
+      bcrypt.hash(newPass, 10)
+      .then(async(hash) => {
+        // updateMdp(decoded.id,hash)
+        try {
+          const user = await prisma.user.update({
+            where: { id: decoded.id },
+            data:{
+              mdp: hash,
+            }
+          })
+          console.log(true)
+          return res.status(200).json("mot de passe modifié")
+        } catch (error) {
+          next(error)
+        }
+      })
+      .catch((error) => res.status(500).json({ error: "server error" }));
+
+    })
+  } else {
+    res.status(401).json({ error: "not allowed" });
+  }
+}

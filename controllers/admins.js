@@ -5,18 +5,19 @@ const jwt = require("jsonwebtoken");
 
 exports.getAdmins = async (req, res, next) => {
     try {
-        const admins = await prisma.user.findMany({
-          where: {
-            role: "client_admin"
+        const admins = await prisma.adminClient.findMany({
+          include: {
+            client:true
           },
           include: {
-            admin_client: true
-          },
-          include: {
-            profile:true,
+            user:true,
           }
         })
-        res.status(200).json(admins)
+        const arr= []
+        admins.map(admin=>{
+          arr.push({...admin.user,userId:admin.userId, clientID:admin.clientID,id:admin.id})
+        })
+        res.status(200).json(arr)
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
@@ -28,15 +29,35 @@ exports.getAdminClients = async (req, res, next) => {
       console.dir(id)
         const admin = await prisma.adminClient.findUnique({
           where:{
-            id: parseInt(id)
+            userId: parseInt(id)
           },include: {
+            user:true
+          }, include:{
             client:true
           }
         })
         res.status(200).json(admin)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
+    }
+}
+exports.getAdminSinistres = async (req, res, next) => {
+    try {
+      const { id } = req.params
+      console.dir(id)
+        const sinis = await prisma.sinistre.findMany({
+          where:{
+            creatorId : id
+          },
+          select : {
+            declarationSinistre: true
+          }
+        })
+        res.status(200).json(sinis)
+    } catch (error) {
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.getSaClients = async (req, res, next) => {
@@ -51,8 +72,8 @@ exports.getSaClients = async (req, res, next) => {
         })
         res.status(200).json(admin)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.createAdmin = (req, res, next) => {
@@ -73,12 +94,39 @@ exports.createAdmin = (req, res, next) => {
         })
         return res.status(200).json(admin)
       })
-      .catch(error=>next(error))
+      .catch(error=>res.status(404).json({error}))
       // .catch((error)=>res.status(404).json({error}))
     } catch (error) {
-      next(error)
+      res.status(404).json({error})
     }
   }
+
+  exports.editAdmin = async (req, res, next) => {
+    // console.dir(req.body)
+    try {
+        const { id } = req.params
+        const admin = await prisma.adminClient.update({
+            where: { id: Number(id) },
+            data: {
+              clientID: Number(req.body.clientID),
+            }
+        })
+        delete req.body.clientID
+        try {
+        const user = await prisma.user.update({
+          where: { id: admin.userId},
+          data: req.body
+        })
+        } catch (error) {
+          // res.status(404).json({ error: "email exise déja" })
+          next(error)
+        }
+        res.status(200).json("client a été modifié avec succès")
+    } catch (error) {
+        // res.status(404).json({ error: "email exise déja" })
+        next(error)
+    }
+}
   
 exports.addClient = async (req, res, next) => {
     try {
@@ -90,7 +138,7 @@ exports.addClient = async (req, res, next) => {
         })
         res.status(200).json(adminClient)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }

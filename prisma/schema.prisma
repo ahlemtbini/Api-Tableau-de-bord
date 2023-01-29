@@ -79,7 +79,7 @@ model User {
   mdp           String?       @default("default")
   role          Role
   numTel        String?
-  resetLink     String       @default("")
+  resetLink     String?       @db.Text 
   aciveInactive Boolean      @default(true)
   profile       Profile?
   super_admin   SuperAdmin?

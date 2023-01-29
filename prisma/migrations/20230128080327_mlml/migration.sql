@@ -7,7 +7,7 @@ CREATE TABLE `User` (
     `mdp` VARCHAR(191) NULL DEFAULT 'default',
     `role` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
     `numTel` VARCHAR(191) NULL,
-    `resetLink` VARCHAR(191) NOT NULL DEFAULT '',
+    `resetLink` TEXT NOT NULL,
     `aciveInactive` BOOLEAN NOT NULL DEFAULT true,
 
     UNIQUE INDEX `User_email_key`(`email`),
@@ -170,7 +170,7 @@ CREATE TABLE `Sinistre` (
     `créer par` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NULL,
     `id créateur` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -204,6 +204,7 @@ CREATE TABLE `DeclarationSinistre` (
     `NATURE` VARCHAR(191) NULL,
     `CIRCONSTANCE` TEXT NULL,
     `DOMMAGES` VARCHAR(191) NULL,
+    `DOMMAGES_SAISIE8_LIBRE` TEXT NULL,
     `ASSUREUR_ADV` VARCHAR(191) NULL,
     `CONVENTION` VARCHAR(191) NULL,
     `FRANCHISE` VARCHAR(191) NULL,
