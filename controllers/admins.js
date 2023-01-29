@@ -45,19 +45,23 @@ exports.getAdminClients = async (req, res, next) => {
 exports.getAdminSinistres = async (req, res, next) => {
     try {
       const { id } = req.params
-      console.dir(id)
-        const sinis = await prisma.sinistre.findMany({
-          where:{
+      const sinis = await prisma.sinistre.findMany({
+        where:{
             creatorId : id
           },
           select : {
             declarationSinistre: true
           }
         })
-        res.status(200).json(sinis)
+        const arr=[]
+        sinis.map(el=>{
+          arr.push(el.declarationSinistre)
+        })
+        console.dir(arr)
+        res.status(200).json(arr)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 exports.getSaClients = async (req, res, next) => {

@@ -50,8 +50,8 @@ exports.addSinistre = async (req, res, next) => {
         })
         return res.json(sinis)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 
