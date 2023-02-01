@@ -34,6 +34,7 @@ router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
 // clients controller
 router.get('/clients', clientsCtrl.getClients)
 router.get('/clients/:id', clientsCtrl.getClient)
+router.get('/admin/clients/:id', clientsCtrl.getAdminClient)
 router.post('/clients/add', clientsCtrl.addClient)
 router.put('/clients/:id', clientsCtrl.editClient);
 router.delete('/clients/:id', clientsCtrl.deleteClient);

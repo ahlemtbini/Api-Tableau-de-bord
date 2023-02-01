@@ -131,6 +131,18 @@ exports.createAdmin = (req, res, next) => {
         next(error)
     }
 }
+
+exports.deleteAdmin = async (req, res, next) => {
+  try {
+      const { id } = req.params
+      const admin = await prisma.adminClient.delete({
+          where: { id: parseInt(id) },
+      })
+      res.status(200).json(admin)
+  } catch (error) {
+      res.status(404).json({ error: error })
+  }
+}
   
 exports.addClient = async (req, res, next) => {
     try {
