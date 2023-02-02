@@ -4,7 +4,11 @@ var XLSX = require("xlsx");
 
 exports.getClients = async (req, res, next) => {
     try {
-        const clients = await prisma.client.findMany({})
+        const clients = await prisma.client.findMany({
+            include: {
+                contrats: true,
+            }
+        })
         res.status(200).json(clients)
     } catch (error) {
         res.status(404).json({ error: error })

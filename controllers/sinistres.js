@@ -128,7 +128,12 @@ const getDate=(date)=>{
     arr =date.split(' ')
     const month= new Date(arr).getMonth()
     const month1= new Date(date).getMonth()
-    const d=arr[2] + "-0" + String(month1+1)  + "-" + arr[3]
+    let d=""
+    if(String(month1+1) <10 ){
+         d=arr[2] + "-0" + String(month1+1)  + "-" + arr[3]
+    }else{
+        d=arr[2] + "-" + String(month1+1)  + "-" + arr[3]
+    }
     console.log('arr',month,'date',month1)
     return d
 }
