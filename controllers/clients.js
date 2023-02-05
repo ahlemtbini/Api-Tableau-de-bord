@@ -24,8 +24,8 @@ exports.getClient = async (req, res, next) => {
         })
         res.status(200).json(client)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.getAdminClient = async (req, res, next) => {
@@ -42,8 +42,8 @@ exports.getAdminClient = async (req, res, next) => {
         })
         res.status(200).json({...client.client})
     } catch (error) {
-        next(error)
-        // res.status(404).json({ error: error })
+        // next(error)
+        res.status(404).json({ error: error })
     }
 }
 exports.addClient = async (req, res, next) => {

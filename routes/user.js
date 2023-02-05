@@ -29,6 +29,7 @@ router.post('/users/login', userCtrl.login)
 router.post('/users/refreshUser', userCtrl.refreshUser)
 router.post('/users/forgotPass', userCtrl.forgotPassword)
 router.post('/users/resetPass', userCtrl.resetPassword)
+router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
 router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
 
 // clients controller

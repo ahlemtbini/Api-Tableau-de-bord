@@ -29,10 +29,11 @@ const createRole = async (role, id, roleData) => {
             },
           }
         })
-        console.log('role',role)
+        // console.log('role',role)
        return role
       } catch (error) {
-        next(error)
+        return res.status(400).json({error})
+        // next(error)
       }      
     }
     case "manager": {
@@ -69,8 +70,8 @@ exports.createUser = (req, res, next) => {
     })
     // .catch((error)=>res.status(404).json({error}))
   } catch (error) {
-    // return res.status(400).json("ce email existe déja!")
-    next(error)
+    return res.status(400).json("ce email existe déja!")
+    // next(error)
   }
 }
 
@@ -86,7 +87,9 @@ exports.getUsers = async (req, res, next) => {
     })
     res.json(users)
   } catch (error) {
-    next(error)
+    // next(error)
+    return res.status(400).json({error})
+
   }
 }
 exports.getUser = async (req, res, next) => {
@@ -99,7 +102,8 @@ exports.getUser = async (req, res, next) => {
     })
     res.json(user)
   } catch (error) {
-    next(error)
+    return res.status(400).json({error})
+    // next(error)
   }
 }
 exports.editUser = async (req, res, next) => {
@@ -111,6 +115,7 @@ exports.editUser = async (req, res, next) => {
     })
     res.json(user)
   } catch (error) {
+    return res.status(400).json({error})
     next(error)
   }
 }
@@ -119,7 +124,7 @@ exports.deleteAll = async (req, res, next) => {
       const users = await prisma.user.deleteMany()
       return res.status(200).json({ users })
   } catch (error) {
-      // res.status(404).json({ error: error })
+      res.status(404).json({ error: error })
       next(error)
   }
 }
@@ -130,8 +135,9 @@ exports.deleteUser = async (req, res, next) => {
     const user = await prisma.user.delete({
       where: { id: parseInt(id) },
     })
-    res.json(user)
+    return res.json(user)
   } catch (error) {
+    return res.status(404).json({ error: error })
     next(error)
   }
 }
@@ -140,8 +146,9 @@ exports.deleteUser = async (req, res, next) => {
 exports.getProfile = async (req, res, next) => {
   try {
     const profile = await prisma.profile.findMany({})
-    res.json(profile)
+    return res.json(profile)
   } catch (error) {
+    return res.status(404).json({ error: error })
     next(error)
   }
 }
@@ -154,11 +161,13 @@ exports.deleteProfile = async (req, res, next) => {
     })
     res.json(profile)
   } catch (error) {
-    next(error)
+    return res.status(404).json({ error: error })
+    // next(error)
   }
 }
 
 exports.addPhoto = async (req, res, next) => {
+  console.log(req.params)
   let photo = ""
   if (req.files) {
       const fName = req.files[0].filename;
@@ -169,9 +178,10 @@ exports.addPhoto = async (req, res, next) => {
               photo: photo
           }
       })
-      res.status(200).json(profile)
+     return res.status(200).json(profile)
   } else {
-      res.status(404).json({ error: error })
+     return res.status(404).json({ error: error })
+      next(errorreturn)
   }
 }
 //auth
@@ -201,13 +211,12 @@ exports.login = async (req, res, next) => {
       { algorithm: "HS256" }
       )})
     })
-    .catch((error) => res.status(401).json({ error: "Mot de passe incorrect !" }));
+    .catch((error) => res.status(404).json({ error: "Mot de passe incorrect !" }));
   } catch (error) {
-    // res.status(401).json({ error: 'email ou mot de passe non valide' })
-    next(error)
+    return res.status(404).json({ error: 'email ou mot de passe non valide' })
+    // next(error)
   }
 }
-
 
  exports.refreshUser = (req, res, next) => {
    if (req.body.reToken) {

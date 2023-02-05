@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const send_mail = require("../utility/sendEmail");
 
 exports.getAdmins = async (req, res, next) => {
     try {
@@ -19,8 +20,8 @@ exports.getAdmins = async (req, res, next) => {
         })
         res.status(200).json(arr)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.getAdminClients = async (req, res, next) => {
@@ -60,8 +61,8 @@ exports.getAdminSinistres = async (req, res, next) => {
         console.dir(arr)
         res.status(200).json(arr)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.getSaClients = async (req, res, next) => {
@@ -96,10 +97,10 @@ exports.createAdmin = (req, res, next) => {
             userId: user.id,
           }
         })
+
         return res.status(200).json(admin)
       })
       .catch(error=>res.status(404).json({error}))
-      // .catch((error)=>res.status(404).json({error}))
     } catch (error) {
       res.status(404).json({error})
     }
@@ -127,8 +128,8 @@ exports.createAdmin = (req, res, next) => {
         }
         res.status(200).json("client a été modifié avec succès")
     } catch (error) {
-        // res.status(404).json({ error: "email exise déja" })
-        next(error)
+        res.status(404).json({ error: "email exise déja" })
+        // next(error)
     }
 }
 
@@ -152,6 +153,7 @@ exports.addClient = async (req, res, next) => {
                 clientID: req.body.clientID
             }
         })
+        forgotPassword(req.body.id, res)
         res.status(200).json(adminClient)
     } catch (error) {
         res.status(404).json({ error: error })
@@ -159,11 +161,11 @@ exports.addClient = async (req, res, next) => {
     }
 }
 
-const forgotPassword = async(email, res) => {
+const forgotPassword = async(adminId, res) => {
   try {
       const user = await prisma.user.findUnique({
         where:{
-          email: email
+          id: adminId
         }
       })
       const token =  jwt.sign({
@@ -175,10 +177,10 @@ const forgotPassword = async(email, res) => {
         process.env.ENCRYPT_KEY,
         { algorithm: "HS256" }
         )
-        console.log(token)
-      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+        const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+        console.log(token,link,user.email)
   
-      updateUser(user.id,token)
+      // updateUser(user.id,token)
 
       const options = {
         to: email,
@@ -200,12 +202,13 @@ const forgotPassword = async(email, res) => {
         </div>`,
       };
 
-      const resEmail = await send_mail(options, email)
+      const resEmail = await send_mail(options, user.email)
       console.log(resEmail)
       // .catch(console.error)
       //  console.log(resEmail, 'resEma');
       return res.status(200).json({ message: "mail de restauration a été envoyé" })
   } catch (error) {
-      res.status(401).json({ error: "user not found" })
+      res.status(401).json({ error})
+      // next(error)
   }
 };
