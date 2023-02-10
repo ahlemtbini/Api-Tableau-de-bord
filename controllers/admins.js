@@ -148,67 +148,88 @@ exports.deleteAdmin = async (req, res, next) => {
 exports.addClient = async (req, res, next) => {
     try {
         const adminClient = await prisma.adminClient.update({
-            where: { userId: req.body.id },
+            where: { userId: Number(req.body.id) },
             data: {
                 clientID: req.body.clientID
             }
         })
-        forgotPassword(req.body.id, res)
-        res.status(200).json(adminClient)
+        // const result= await forgotPassword(req.body.id)
+        // if(result.error){
+        // return {error:"email n'a pas pu etre envoyé"}
+        // }
+        return res.status(201).json({adminClient})
     } catch (error) {
-        res.status(404).json({ error: error })
+       return res.status(404).json({ error: error })
         // next(error)
     }
 }
 
-const forgotPassword = async(adminId, res) => {
-  try {
-      const user = await prisma.user.findUnique({
-        where:{
-          id: adminId
-        }
-      })
-      const token =  jwt.sign({
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          expiresIn: 3600
-        },
-        process.env.ENCRYPT_KEY,
-        { algorithm: "HS256" }
-        )
-        const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
-        console.log(token,link,user.email)
+// const updateUser = async(id,token)=>{
+//   try {
+//     const user = await prisma.user.update({
+//       where: { id: id },
+//       data:{
+//         resetLink: token,
+//       }
+//     })
+//     console.log(user.resetLink)
+//     return true
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+// const forgotPassword = async(adminId) => {
+//   try {
+//       const user = await prisma.user.findUnique({
+//         where:{
+//           id: adminId
+//         }
+//       })
+//       const token =  jwt.sign({
+//           id: user.id,
+//           email: user.email,
+//           role: user.role,
+//           expiresIn: 3600
+//         },
+//         process.env.ENCRYPT_KEY,
+//         { algorithm: "HS256" }
+//         )
+//         const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+//         console.log(token,link,user.email)
   
-      // updateUser(user.id,token)
+//       const userUp = await updateUser(user.id,token)
 
-      const options = {
-        to: email,
-        from: '<contact@fleetrisk.fr>',
-        subject: "Mot de passe",
-        html: `<div style="background:#fff;
-        height:300px; display:flex;justify-content:center;align-items: center;">
-          <div style="background:#33373A;padding:30px;height:fit-content">
-            <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
-            <a style="background: #61892F;
-            padding: 10px 20px;
-            color: #000;
-            text-decoration: none;
-            border-radius: 25px;    width: 40%;
-            margin: auto;
-            display: block;text-align:center"
-               href=${link}>cliquer ici</a>
-          </div>
-        </div>`,
-      };
+//       const options = {
+//         to: email,
+//         from: '<contact@fleetrisk.fr>',
+//         subject: "Mot de passe",
+//         html: `<div style="background:#fff;
+//         height:300px; display:flex;justify-content:center;align-items: center;">
+//           <div style="background:#33373A;padding:30px;height:fit-content">
+//             <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
+//             <a style="background: #61892F;
+//             padding: 10px 20px;
+//             color: #000;
+//             text-decoration: none;
+//             border-radius: 25px;    width: 40%;
+//             margin: auto;
+//             display: block;text-align:center"
+//                href=${link}>cliquer ici</a>
+//           </div>
+//         </div>`,
+//       };
 
-      const resEmail = await send_mail(options, user.email)
-      console.log(resEmail)
-      // .catch(console.error)
-      //  console.log(resEmail, 'resEma');
-      return res.status(200).json({ message: "mail de restauration a été envoyé" })
-  } catch (error) {
-      res.status(401).json({ error})
-      // next(error)
-  }
-};
+//       const resEmail = await send_mail(options, user.email)
+//       console.log('resEmail',resEmail)
+//       if(resEmail.info){
+//         return  "mail de restauration a été envoyé"
+//       }
+//       return {error: resEmail}
+//       // .catch(console.error)
+//       //  console.log(resEmail, 'resEma');
+//   } catch (error) {
+//       res.status(401).json({ error})
+//       // next(error)
+//   }
+// };

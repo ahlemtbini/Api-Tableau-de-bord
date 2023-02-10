@@ -290,11 +290,11 @@ model DeclarationSinistre {
   NATURE                        String? // NatureSinistre
   CIRCONSTANCE                  String?   @db.Text
   DOMMAGES                      String?
-  DOMMAGES_SAISIE8_LIBRE        String?   @db.Text
+  DOMMAGES_SAISIE8_LIBRE        String?   @db.Text // n'existe plus
   ASSUREUR_ADV                  String?  //@map("Cie adv.")
   CONVENTION                    String?  // BolType? //@map("Conv.")
   FRANCHISE                     String?
-  MONTANT_DOM                   String? //@map("Mt Dom.")
+  MONTANT_DOM                   String? //@map("Mt Dom.") n'existe plus
   DATE_MISSIONNEMENT            String? //@map("Date MISSIONNEMENT")
   LIEU_EXPERTISE                String? //@map("Lieu expertise")
   DATE_EXPERTISE                String? //@map("Date EXPERTISE")
@@ -313,7 +313,7 @@ model DeclarationSinistre {
   CHARGE_PROVISIONNELLE_ASSUREUR String?  //@map("Charge Provisionnelle Solaris")
   CHARGE_REELLE                 String?  //@map("Charge réelle")
   ETAT                          String?  //EtatSinistre?  
-  CHARGE_AJUSTEE                String?  //@map("Charge ajustée")
+  CHARGE_AJUSTEE                String?  //@map("Charge ajustée") // n'existe plus
   COMMENTAIRES                  String?         @db.Text
 }
 model EntretienPostAccident {

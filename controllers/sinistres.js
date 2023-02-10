@@ -134,7 +134,7 @@ const getDate=(date)=>{
     }else{
         d=arr[2] + "-" + String(month1+1)  + "-" + arr[3]
     }
-    console.log('arr',month,'date',month1)
+    // console.log('arr',month,'date',month1)
     return d
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
@@ -241,7 +241,7 @@ exports.importExcel = async (req, res, next) => {
             
             res.json(sinistres)
         } catch (error) {
-            // res.status(404).json({ error: "requete non valide" })
-            next(error)
+            res.status(404).json({ error: "requete non valide" })
+            // next(error)
         }
     }

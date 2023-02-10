@@ -1,7 +1,8 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 // async..await is not allowed in global scope, must use a wrapper
-async function send_mail(mailOptions, recipient) {
+ function send_mail(mailOptions, recipient) {
+  console.log('send mail fc')
   let transporter = nodemailer.createTransport({
     host: "ssl0.ovh.net",
     port: 465,
@@ -15,10 +16,11 @@ async function send_mail(mailOptions, recipient) {
     }
   });
   // send mail with defined transport object
-  let info = await transporter.sendMail(mailOptions);
-  console.log("Message sent:", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-  return info.messageId
+  return transporter.sendMail(mailOptions)
+  // let info = await transporter.sendMail(mailOptions);
+  // console.log("Message sent:", info);
+  // // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+  // return info
 }
 
 //send_mail().catch(console.error);

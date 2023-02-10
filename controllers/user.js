@@ -130,14 +130,15 @@ exports.deleteAll = async (req, res, next) => {
 }
 
 exports.deleteUser = async (req, res, next) => {
+  // console.log(req.params)
   try {
     const { id } = req.params
     const user = await prisma.user.delete({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
     })
     return res.json(user)
   } catch (error) {
-    return res.status(404).json({ error: error })
+    // return res.status(404).json({ error: error })
     next(error)
   }
 }
@@ -167,7 +168,7 @@ exports.deleteProfile = async (req, res, next) => {
 }
 
 exports.addPhoto = async (req, res, next) => {
-  console.log(req.params)
+  console.log(req.params,req.files)
   let photo = ""
   if (req.files) {
       const fName = req.files[0].filename;
@@ -180,18 +181,18 @@ exports.addPhoto = async (req, res, next) => {
       })
      return res.status(200).json(profile)
   } else {
-     return res.status(404).json({ error: error })
-      next(errorreturn)
+    next(error)
+    //  return res.status(404).json({ error: error })
   }
 }
 //auth
 
 exports.login = async (req, res, next) => {
   try {
-    console.log(req.body)
     const user = await prisma.user.findUnique({
       where: { email: req.body.email },
     })
+    console.dir(req.body)
     if (!user) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
     }
@@ -305,11 +306,12 @@ exports.forgotPassword = async(req, res, next) => {
 
       const resEmail = await send_mail(options, email)
       console.log(resEmail)
-      // .catch(console.error)
-      //  console.log(resEmail, 'resEma');
+      if(resEmail.rejected.length > 0){
+        return res.error("mail de restauration n'a pas pu être envoyé" )
+      }
       return res.status(200).json({ message: "mail de restauration a été envoyé" })
   } catch (error) {
-      res.status(404).json({ error: error })
+      res.status(404).json({ error: "adresse mail n'est pas trouvé" })
       // next(error)
       // res.status(401).json({ error: "user not found" })
   }
