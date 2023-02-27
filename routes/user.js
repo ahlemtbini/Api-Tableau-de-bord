@@ -14,6 +14,9 @@ const userCtrl = require("../controllers/user");
 const clientsCtrl = require("../controllers/clients");
 const sinistresCtrl = require("../controllers/sinistres");
 const adminsCtrl = require("../controllers/admins");
+const societesCtrl = require("../controllers/societes");
+const sitesCtrl = require("../controllers/sites");
+const managersCtrl = require("../controllers/managers");
 
 // user controller
 router.get('/profile', userCtrl.getProfile);
@@ -66,6 +69,16 @@ router.get('/admins/saClients/:id', adminsCtrl.getSaClients)
 router.post('/admins/add', adminsCtrl.createAdmin)
 router.put('/admins/:id', adminsCtrl.editAdmin);
 router.post('/admins/addClient', adminsCtrl.addClient)
+
+// societes
+router.get('/societes', societesCtrl.getSocietes)
+
+// sites
+router.get('/sites', sitesCtrl.getSites)
+
+// managers
+router.get('/managers', managersCtrl.getManagers)
+
 
 /*
 async function main() {

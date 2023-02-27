@@ -6,6 +6,12 @@ const fse =require("fs-extra")
 
 exports.getSinistres = async (req, res, next) => {
     try {
+        // const sinistres = await prisma.$queryRaw`
+        // select sins.*
+        // from "Sinistre" sins
+        // join "DeclarationSinistre" dec on dec.DOSSIER = sinis."id"
+        // order by dec.DATE_SURVENANCE desc
+        // `
         const sinistres = await prisma.sinistre.findMany({
             orderBy: 
                 {
@@ -81,13 +87,44 @@ exports.editSinistre = async (req, res, next) => {
     }
 }
 
+
+  const compareDatesFr =(a,b)=>{
+    const el1 = (a.split('-')[0].length) === 4 ? a.split('-')[0] + a.split('-')[1] + a.split('-')[2] : a.split('-')[2] + a.split('-')[1] + a.split('-')[0]
+    const el2 = (b.split('-')[0].length) === 4 ? b.split('-')[0] + b.split('-')[1] + b.split('-')[2] : b.split('-')[2] + b.split('-')[1] + b.split('-')[0]
+    // console.log(Number(el1) >Number(el2))
+    if(Number(el1) > Number(el2)){
+       return true
+    } else {
+        return false
+    }
+  }
+  const dateToNumber=(a)=>{
+   return (a.split('-')[0].length) === 4 ? a.split('-')[0] + a.split('-')[1] + a.split('-')[2] : a.split('-')[2] + a.split('-')[1] + a.split('-')[0]
+  }
+
 exports.getDecSinistres = async (req, res, next) => {
     try {
-        const sinistres = await prisma.declarationSinistre.findMany({})
+        const sin = await prisma.declarationSinistre.findMany({})
+    
+        let sinistres = [...sin]
+        
+            let n=sinistres.length
+             for (let i = 0; i < n-1; i++){
+                 for (let j = 0; j< n-i-1; j++) {
+                    if (sinistres[j+1].DATE_SURVENANCE && sinistres[j].DATE_SURVENANCE && compareDatesFr(sinistres[j+1].DATE_SURVENANCE , sinistres[j].DATE_SURVENANCE)){
+                        // console.log(sinistres[j+1] , sinistres[j])
+                        const t=sinistres[j+1]
+                        sinistres[j+1]=sinistres[j]
+                        sinistres[j]=t
+                    }
+                }
+            }
+          console.dir(sinistres.length)
         res.json(sinistres)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        console.log(error)
+        next(error)
     }
 }
 exports.deleteDecSinistre = async (req, res, next) => {
