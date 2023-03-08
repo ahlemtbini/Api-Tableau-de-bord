@@ -113,7 +113,7 @@ model AdminClient {
 }
 model Manager {
   id       Int       @id @default(autoincrement())
-  user     User      @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int       @unique
   droits   Droits
   societes Societe[]
@@ -168,7 +168,7 @@ model Contrat {
   endDate              String? 
   Client             Client?                    @relation(fields: [ClientID], references: [id])
   ClientID           Int?
-  Societe             Societe?                 @relation(fields: [SocieteID], references: [id])
+  Societe             Societe?                 @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
   SocieteID           Int?
 }
 model Country {
@@ -183,19 +183,18 @@ model Region {
   name      String
   country   Country   @relation(fields: [countryID], references: [id])
   countryID Int
-  societes  Societe[]
+  // societes  Societe[]
 }
 model Societe {
   id         Int       @id @default(autoincrement())
   name       String
   email      String
-  numTel     Int
-  numSiret   Int?
+  numTel     String?
+  numSiret   String?
   nmbreSites Int       @default(0)
   creerPar   Role
-  isActive   Boolean
-  region     Region    @relation(fields: [regionID], references: [id])
-  regionID   Int       @unique
+  isActive   Boolean @default(true)
+  region     String?
   managers   Manager[]
   sites      Site[]
   contrats Contrat[]
@@ -207,8 +206,8 @@ model Site {
   nbrChauffeur Int         @default(0)
   creerPar     Role
   isActive     Boolean
-  societe      Societe     @relation(fields: [companyID], references: [id])
-  companyID    Int         @unique
+  Societe      Societe?    @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  SocieteID    Int?
   chuaffeurs   Chauffeur[]
 }
 

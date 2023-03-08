@@ -88,38 +88,33 @@ exports.editSinistre = async (req, res, next) => {
 }
 
 
-  const compareDatesFr =(a,b)=>{
-    const el1 = (a.split('-')[0].length) === 4 ? a.split('-')[0] + a.split('-')[1] + a.split('-')[2] : a.split('-')[2] + a.split('-')[1] + a.split('-')[0]
-    const el2 = (b.split('-')[0].length) === 4 ? b.split('-')[0] + b.split('-')[1] + b.split('-')[2] : b.split('-')[2] + b.split('-')[1] + b.split('-')[0]
-    // console.log(Number(el1) >Number(el2))
-    if(Number(el1) > Number(el2)){
-       return true
-    } else {
-        return false
-    }
-  }
-  const dateToNumber=(a)=>{
-   return (a.split('-')[0].length) === 4 ? a.split('-')[0] + a.split('-')[1] + a.split('-')[2] : a.split('-')[2] + a.split('-')[1] + a.split('-')[0]
-  }
+const dateToNumber=(a)=>{
+ return ((a.split('-')[0].length) === 4) ? a.split('-')[0] + a.split('-')[1] + a.split('-')[2] : a.split('-')[2] + a.split('-')[1] + a.split('-')[0]
+}
+const compareDatesFr =(a,b)=>{
+    const el1 = Number(dateToNumber(a))
+    const el2 = Number(dateToNumber(b))
+    if(el2 > el1){
+        return true
+    } 
+    return false
+}
+
 
 exports.getDecSinistres = async (req, res, next) => {
     try {
-        const sin = await prisma.declarationSinistre.findMany({})
-    
+        const sin = await prisma.declarationSinistre.findMany({orderBy:{DATE_SURVENANCE: 'desc'}})
         let sinistres = [...sin]
-        
             let n=sinistres.length
              for (let i = 0; i < n-1; i++){
                  for (let j = 0; j< n-i-1; j++) {
-                    if (sinistres[j+1].DATE_SURVENANCE && sinistres[j].DATE_SURVENANCE && compareDatesFr(sinistres[j+1].DATE_SURVENANCE , sinistres[j].DATE_SURVENANCE)){
-                        // console.log(sinistres[j+1] , sinistres[j])
+                    if (sinistres[j+1].DATE_SURVENANCE && sinistres[j].DATE_SURVENANCE && compareDatesFr(sinistres[j].DATE_SURVENANCE,sinistres[j+1].DATE_SURVENANCE )){
                         const t=sinistres[j+1]
                         sinistres[j+1]=sinistres[j]
                         sinistres[j]=t
                     }
                 }
             }
-          console.dir(sinistres.length)
         res.json(sinistres)
     } catch (error) {
         // res.status(404).json({ error: error })
@@ -127,6 +122,7 @@ exports.getDecSinistres = async (req, res, next) => {
         next(error)
     }
 }
+
 exports.deleteDecSinistre = async (req, res, next) => {
     try {
         const { id } = req.params
@@ -163,6 +159,7 @@ exports.deleteAll = async (req, res, next) => {
 const getDate=(date)=>{
     let arr =[]
     arr =date.split(' ')
+    console.log(date)
     const month= new Date(arr).getMonth()
     const month1= new Date(date).getMonth()
     let d=""
@@ -176,6 +173,37 @@ const getDate=(date)=>{
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
 "DATE_EXPERTISE","DATE_PRE_RAPPORT","DATE PRE_RAPPORT","DATE_RAPPORT_DEFINITIF","DATE_CLOTURE"]
+exports.reparerDateFormat = async (req, res, next) => {
+    try {
+        const sin = await prisma.declarationSinistre.findMany({})
+        const arr=[...sin]
+        arr.map(async (el,id) => {
+            for(let key in el){
+                if( datesArr.includes(key)){
+                    if(el[key] && el[key]?.split('-')[0].length== 4 ){
+                        console.log(el[key])
+                        el[key]= el[key]?.split('-')[2]+'-'+el[key]?.split('-')[1]+'-'+ el[key].split('-')[0]
+                        try {
+                            const sinis = await prisma.declarationSinistre.update({
+                                where: { DOSSIER: parseInt(el.DOSSIER) },
+                                data: el
+                            })
+                            
+                        } catch (error) {
+                            console.log(error)
+                            next(error)
+                        }
+                    }
+                 }
+            }
+        })
+        res.json('format date modifié')
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        console.log(error)
+        next(error)
+    }
+}
 
 exports.importExcel = async (req, res, next) => {
     if (req.files[0]) {

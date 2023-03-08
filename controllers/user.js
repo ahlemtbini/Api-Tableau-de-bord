@@ -206,7 +206,7 @@ exports.login = async (req, res, next) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        expiresIn: 3600
+        expiresIn: 36000
       },
       process.env.ENCRYPT_KEY,
       { algorithm: "HS256" }
@@ -234,7 +234,7 @@ exports.login = async (req, res, next) => {
               id: user.id,
               email: user.email,
               role: user.role,
-              expiresIn: 3600
+              expiresIn: 36000
             },
             process.env.ENCRYPT_KEY,
             { algorithm: "HS256" }
@@ -274,7 +274,7 @@ exports.forgotPassword = async(req, res, next) => {
           id: user.id,
           email: user.email,
           role: user.role,
-          expiresIn: 3600
+          expiresIn: 36000
         },
         process.env.ENCRYPT_KEY,
         { algorithm: "HS256" }

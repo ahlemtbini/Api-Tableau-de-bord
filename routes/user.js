@@ -48,6 +48,11 @@ router.post('/clients/importAll', clientsCtrl.importAllClients)
 router.post('/clients/contrats', clientsCtrl.addContrat)
 router.delete('/clients/contrats/:id', clientsCtrl.deleteContrat)
 router.get('/clients/contrats/:id', clientsCtrl.getContrats)
+router.post('/clients/country', clientsCtrl.addCountry)
+router.delete('/clients/countries/:id', clientsCtrl.deleteCountry)
+router.get('/clients/countries/:id', clientsCtrl.getCountries)
+router.post('/clients/region', clientsCtrl.addRegion)
+router.delete('/clients/regions/:id', clientsCtrl.deleteRegion)
 
 // sinistres
 router.get('/sinistres', sinistresCtrl.getSinistres)
@@ -60,6 +65,7 @@ router.get('/decSinistres', sinistresCtrl.getDecSinistres)
 router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
+router.get('/reparer', sinistresCtrl.reparerDateFormat)
 
 // admins
 router.get('/admins', adminsCtrl.getAdmins)
@@ -72,6 +78,15 @@ router.post('/admins/addClient', adminsCtrl.addClient)
 
 // societes
 router.get('/societes', societesCtrl.getSocietes)
+router.get('/societes/:id', societesCtrl.getSociete)
+router.post('/societes/add', societesCtrl.addSociete)
+router.put('/societes/:id', societesCtrl.editSociete);
+router.delete('/societes/:id', societesCtrl.deleteSociete);
+// router.post('/societes/addLogo/:id', upload, societesCtrl.addLogo);
+// router.post('/societes/importAll', societesCtrl.importAllSocietes)
+// router.post('/societes/contrats', societesCtrl.addContrat)
+// router.delete('/societes/contrats/:id', societesCtrl.deleteContrat)
+// router.get('/societes/contrats/:id', societesCtrl.getContrats)
 
 // sites
 router.get('/sites', sitesCtrl.getSites)

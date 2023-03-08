@@ -7,6 +7,7 @@ exports.getClients = async (req, res, next) => {
         const clients = await prisma.client.findMany({
             include: {
                 contrats: true,
+                countrys: true
             }
         })
         res.status(200).json(clients)
@@ -122,11 +123,12 @@ exports.importAllClients = async (req, res, next) => {
 exports.addContrat = async (req, res, next) => {
     try {
         const contrat = await prisma.contrat.create({
-            data: req.body
+            data: {...req.body}
         })
         res.status(200).json(contrat)
     } catch (error) {
-        res.status(404).json({ error: error })
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 
@@ -148,6 +150,64 @@ exports.deleteContrat = async (req, res, next) => {
             where: { id: parseInt(id) },
         })
         res.status(200).json(contrat)
+    } catch (error) {
+        res.status(404).json({ error: error })
+    }
+}
+exports.addCountry = async (req, res, next) => {
+    try {
+        const country = await prisma.country.create({
+            data: req.body
+        })
+        res.status(200).json(country)
+    } catch (error) {
+        res.status(404).json({ error: error })
+    }
+}
+
+exports.getCountries = async (req, res, next) => {
+    try {
+        const countries = await prisma.country.findMany({
+            where: { clientId: Number(req.params.id) },
+            include: {
+                regions: true
+            }
+        })
+        res.status(200).json(countries)
+    } catch (error) {
+        res.status(404).json({ error: error })
+
+    }
+}
+exports.deleteCountry = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const country = await prisma.country.delete({
+            where: { id: parseInt(id) },
+        })
+        res.status(200).json(country)
+    } catch (error) {
+        res.status(404).json({ error: error })
+    }
+}
+exports.addRegion = async (req, res, next) => {
+    try {
+        const region = await prisma.region.create({
+            data: req.body
+        })
+        res.status(200).json(region)
+    } catch (error) {
+        res.status(404).json({ error: error })
+    }
+}
+
+exports.deleteRegion = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const region = await prisma.region.delete({
+            where: { id: parseInt(id) },
+        })
+        res.status(200).json(region)
     } catch (error) {
         res.status(404).json({ error: error })
     }
