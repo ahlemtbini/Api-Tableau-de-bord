@@ -79,6 +79,7 @@ router.post('/admins/addClient', adminsCtrl.addClient)
 // societes
 router.get('/societes', societesCtrl.getSocietes)
 router.get('/societes/:id', societesCtrl.getSociete)
+router.get('/countries/:id', societesCtrl.getCountry)
 router.post('/societes/add', societesCtrl.addSociete)
 router.put('/societes/:id', societesCtrl.editSociete);
 router.delete('/societes/:id', societesCtrl.deleteSociete);
@@ -93,7 +94,10 @@ router.get('/sites', sitesCtrl.getSites)
 
 // managers
 router.get('/managers', managersCtrl.getManagers)
-
+router.post('/managers/add', managersCtrl.createManager)
+router.post('/managers/coonetSocietes', managersCtrl.connectSocietes)
+router.put('/managers/edit/:id', managersCtrl.editManager);
+router.delete('/managers/:id', managersCtrl.deleteManager);
 
 /*
 async function main() {

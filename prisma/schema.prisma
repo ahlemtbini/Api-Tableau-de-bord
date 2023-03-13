@@ -79,7 +79,7 @@ model User {
   mdp           String?       @default("default")
   role          Role
   numTel        String?
-  resetLink     String?       @db.Text 
+  resetLink     String?       @db.Text
   aciveInactive Boolean      @default(true)
   profile       Profile?
   super_admin   SuperAdmin?
@@ -115,8 +115,9 @@ model Manager {
   id       Int       @id @default(autoincrement())
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int       @unique
-  droits   Droits
-  societes Societe[]
+  clientId Int?
+  droits   Droits?
+  societes SocieteManager[]
 }
 model Chauffeur {
   id                     Int                     @id @default(autoincrement())
@@ -158,6 +159,7 @@ model Client {
   adminClient         AdminClient[]
   countrys             Country[]
   contrats Contrat[]
+  societes  Societe[]
 }
 model Contrat {
   id                   Int                   @id @default(autoincrement())
@@ -177,13 +179,14 @@ model Country {
   client   Client   @relation(fields: [clientId], references: [id])
   clientId Int
   regions  Region[]
+  societes  Societe[]
 }
 model Region {
   id        Int       @id @default(autoincrement())
   name      String
   country   Country   @relation(fields: [countryID], references: [id])
   countryID Int
-  // societes  Societe[]
+  societes  Societe[]
 }
 model Societe {
   id         Int       @id @default(autoincrement())
@@ -194,10 +197,22 @@ model Societe {
   nmbreSites Int       @default(0)
   creerPar   Role
   isActive   Boolean @default(true)
-  region     String?
-  managers   Manager[]
+  region   Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId Int
+  country   Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId Int  
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId Int   
+  managers   SocieteManager[]
   sites      Site[]
   contrats Contrat[]
+}
+model SocieteManager {
+  id           Int         @id @default(autoincrement())
+  manager   Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  managerId Int
+  societe   Societe   @relation(fields: [societeId], references: [id], onDelete: Cascade)
+  societeId Int
 }
 model Site {
   id           Int         @id @default(autoincrement())

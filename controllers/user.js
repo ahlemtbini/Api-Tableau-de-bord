@@ -7,7 +7,6 @@ const { decode } = require('jsonwebtoken')
 const send_mail = require("../utility/sendEmail");
 require("dotenv").config();
 
-
 const createRole = async (role, id, roleData) => {
   const obj = {
     userId: id
@@ -29,7 +28,6 @@ const createRole = async (role, id, roleData) => {
             },
           }
         })
-        // console.log('role',role)
        return role
       } catch (error) {
         return res.status(400).json({error})
@@ -37,8 +35,22 @@ const createRole = async (role, id, roleData) => {
       }      
     }
     case "manager": {
-        const role = await prisma.manager.create({data: obj})
-        return role
+      try {
+        const role = await prisma.manager.create({
+          data: {
+            ...roleData,
+            user: {
+              connect:{
+                id:id
+              }
+            },
+          }
+        })
+       return role
+      } catch (error) {
+        return res.status(400).json({error})
+        // next(error)
+      } 
     }
     case "chauffeur": {
         const role = await prisma.chauffeur.create({data: obj})
@@ -66,9 +78,9 @@ exports.createUser = (req, res, next) => {
       return res.status(200).json(user)
     })
     .catch(error=>{
-      return res.status(400).json("ce email existe déja!")
+      next(error)
+      // return res.status(400).json("ce email existe déja!")
     })
-    // .catch((error)=>res.status(404).json({error}))
   } catch (error) {
     return res.status(400).json("ce email existe déja!")
     // next(error)

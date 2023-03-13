@@ -7,7 +7,8 @@ exports.getClients = async (req, res, next) => {
         const clients = await prisma.client.findMany({
             include: {
                 contrats: true,
-                countrys: true
+                countrys: true,
+                societes: true
             }
         })
         res.status(200).json(clients)
@@ -36,7 +37,8 @@ exports.getAdminClient = async (req, res, next) => {
             select:{
                 client : {
                     include: {
-                        contrats:true
+                        contrats:true,
+                        countrys: true
                     }
                 },
             },
