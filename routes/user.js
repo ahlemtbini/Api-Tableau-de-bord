@@ -89,9 +89,6 @@ router.delete('/societes/:id', societesCtrl.deleteSociete);
 // router.delete('/societes/contrats/:id', societesCtrl.deleteContrat)
 // router.get('/societes/contrats/:id', societesCtrl.getContrats)
 
-// sites
-router.get('/sites', sitesCtrl.getSites)
-
 // managers
 router.get('/managers', managersCtrl.getManagers)
 router.post('/managers/add', managersCtrl.createManager)
@@ -99,6 +96,12 @@ router.post('/managers/coonetSocietes', managersCtrl.connectSocietes)
 router.put('/managers/edit/:id', managersCtrl.editManager);
 router.delete('/managers/:id', managersCtrl.deleteManager);
 
+// sites
+router.get('/sites', sitesCtrl.getSites)
+router.post('/sites/add', sitesCtrl.createSite)
+router.post('/sites/coonetSocietes', sitesCtrl.connectSites)
+router.put('/sites/edit/:id', sitesCtrl.editSite);
+router.delete('/sites/:id', sitesCtrl.deleteSite);
 /*
 async function main() {
   // ... you will write your Prisma Client queries here

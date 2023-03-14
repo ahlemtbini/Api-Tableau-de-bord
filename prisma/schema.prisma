@@ -216,11 +216,15 @@ model SocieteManager {
 }
 model Site {
   id           Int         @id @default(autoincrement())
-  name         String
+  nom         String
+  email         String
+  tel         String
   adresse      String
+  numSiret      String?
   nbrChauffeur Int         @default(0)
   creerPar     Role
-  isActive     Boolean
+  isActive     Boolean     @default(true)
+  clientId      Int
   Societe      Societe?    @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
   SocieteID    Int?
   chuaffeurs   Chauffeur[]
