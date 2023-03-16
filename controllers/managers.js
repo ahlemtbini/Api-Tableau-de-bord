@@ -34,15 +34,9 @@ exports.connectSocietes = async (req, res, next) => {
                 }
             })
         })
-        console.log(arr)
-        const managers = await prisma.manager.create({
+        const managers = await prisma.manager.update({
+            where:{userId: req.body.id},
             data: {
-                clientId: Number(req.body.clientId),
-                user: {
-                    connect:{
-                    id:req.body.id,
-                    }
-                },
                 societes: {
                     create: arr
                 }
@@ -57,27 +51,32 @@ exports.connectSocietes = async (req, res, next) => {
 
 exports.createManager = (req, res, next) => {
     try {
-      const unhasheMdp = req.body.user.mdp ? req.body.user.mdp :"default"
+      const unhasheMdp = "default"
       bcrypt.hash(unhasheMdp, 10)
       .then(async(hash)=>{
         const user = await prisma.user.create({
             data: {
               ...req.body.user,
-              mdp: hash
+              mdp: hash,
             }
         })
-        // console.log( user.id,req.body.roleData.clientId)
-        // const manager =await prisma.manager.create({
-        //   data: {
-        //     // userId: user.id,
-        //     clientId: req.body.roleData.clientId,
-        //     user: {
-        //         connect:{
-        //           id:user.id
-        //         }
-        //     }
-        //   }
-        // })
+        console.log( req.body,user.id)
+        const manager = await prisma.manager.create({
+            data: {
+                // clientId: Number(req.body.clientId),
+                user: {
+                    connect:{
+                    id:user.id,
+                    }
+                },
+                client: {
+                    connect: {
+                        id:Number(req.body.clientId)
+                    }
+                }
+            }
+        })
+        console.log(manager)
         return res.status(200).json(user)
       })
       .catch(error=>res.status(404).json({error}))

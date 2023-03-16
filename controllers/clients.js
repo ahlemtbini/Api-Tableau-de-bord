@@ -30,6 +30,39 @@ exports.getClient = async (req, res, next) => {
         // next(error)
     }
 }
+exports.getUserClient = async (req, res, next) => {
+    try {
+        const user= await prisma.user.findUnique({
+            where: {
+                id: Number(req.params.id),
+            },
+            include:{
+                admin_client: {
+                    include: {
+                        client: true
+                    }
+                },
+                manager: {
+                    include: {
+                        client: true
+                    }
+                }
+            }
+        })
+        let client = {}
+        if(user.role === "client_admin"){
+            client= user.admin_client.client
+        }
+        if(user.role === "manager"){
+            client= user.manager.client
+        }
+        console.log(client)
+        res.status(200).json(client)
+    } catch (error) {
+        next(error)
+        // res.status(404).json({ error: error })
+    }
+}
 exports.getAdminClient = async (req, res, next) => {
     try {
         const client = await prisma.adminClient.findUnique({

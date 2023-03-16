@@ -115,7 +115,8 @@ model Manager {
   id       Int       @id @default(autoincrement())
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int       @unique
-  clientId Int?
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId Int
   droits   Droits?
   societes SocieteManager[]
 }
@@ -160,6 +161,7 @@ model Client {
   countrys             Country[]
   contrats Contrat[]
   societes  Societe[]
+  managers Manager[]
 }
 model Contrat {
   id                   Int                   @id @default(autoincrement())

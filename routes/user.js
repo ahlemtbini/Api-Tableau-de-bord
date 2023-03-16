@@ -24,7 +24,7 @@ router.get('/users', userCtrl.getUsers);
 router.get('/users/:id', userCtrl.getUser);
 router.post('/users/add', userCtrl.createUser);
 router.put('/users/:id', userCtrl.editUser);
-router.delete('/users/deleteAll', userCtrl.deleteAll);
+// router.delete('/users/deleteAll', userCtrl.deleteAll);
 router.delete('/users/:id', userCtrl.deleteUser);
 router.delete('/profile/:id', userCtrl.deleteProfile);
 
@@ -39,6 +39,7 @@ router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
 router.get('/clients', clientsCtrl.getClients)
 router.get('/clients/:id', clientsCtrl.getClient)
 router.get('/admin/clients/:id', clientsCtrl.getAdminClient)
+router.get('/clients/user_client/:id', clientsCtrl.getUserClient)
 router.post('/clients/add', clientsCtrl.addClient)
 router.put('/clients/:id', clientsCtrl.editClient);
 router.delete('/clients/:id', clientsCtrl.deleteClient);
@@ -92,7 +93,7 @@ router.delete('/societes/:id', societesCtrl.deleteSociete);
 // managers
 router.get('/managers', managersCtrl.getManagers)
 router.post('/managers/add', managersCtrl.createManager)
-router.post('/managers/coonetSocietes', managersCtrl.connectSocietes)
+router.post('/managers/connetSocietes', managersCtrl.connectSocietes)
 router.put('/managers/edit/:id', managersCtrl.editManager);
 router.delete('/managers/:id', managersCtrl.deleteManager);
 

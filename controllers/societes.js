@@ -7,6 +7,13 @@ exports.getSocietes = async (req, res, next) => {
         const societes = await prisma.societe.findMany({
             include: {
                 contrats: true,
+                country: true,
+                region:true,
+                managers: {
+                    select:{
+                        manager:true
+                    }
+                }
             }
         })
         res.status(200).json(societes)
