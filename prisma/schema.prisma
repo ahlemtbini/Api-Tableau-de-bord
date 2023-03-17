@@ -178,7 +178,7 @@ model Contrat {
 model Country {
   id       Int      @id @default(autoincrement())
   name     String
-  client   Client   @relation(fields: [clientId], references: [id])
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId Int
   regions  Region[]
   societes  Societe[]
@@ -186,7 +186,7 @@ model Country {
 model Region {
   id        Int       @id @default(autoincrement())
   name      String
-  country   Country   @relation(fields: [countryID], references: [id])
+  country   Country   @relation(fields: [countryID], references: [id], onDelete: Cascade)
   countryID Int
   societes  Societe[]
 }

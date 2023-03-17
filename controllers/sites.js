@@ -13,6 +13,73 @@ exports.getSites = async(req, res, next) => {
         next(error)
     }
 }
+exports.getUserSites = async(req, res, next) => {
+    try {        
+        const user = await prisma.user.findUnique({
+            where: {
+                id: Number(req.params.id)
+            },
+            include: {
+                manager: {
+                    select:{
+                        societes:  {
+                            select: {
+                                societe:{
+                                    select: {
+                                        sites: {
+                                            include: {Societe:true}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                admin_client: {
+                    select: {
+                        client:{
+                            select: {
+                                societes: {
+                                    select: {
+                                        sites: {
+                                            include: {Societe:true}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            }
+        })
+
+    var filteredSites = []
+    if(user.role === "manager"){
+        user.manager?.societes?.map(soc=>{
+            console.log(soc)
+            soc.societe.sites.map(site=>  filteredSites.push(site))
+        })
+    }
+    if(user.role === "client_admin"){
+        console.log(user.admin_client)
+        user.admin_client?.client?.societes?.map(soc=>{
+            console.log(soc)
+            soc.sites.map(site=>  filteredSites.push(site))
+        })
+    } else {
+        const sites= await prisma.site.findMany({
+            include: {
+                Societe: true
+            }
+        })
+        filteredSites = sites
+    }
+   
+        return res.status(200).json(filteredSites)
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.connectSites = async (req, res, next) => {
     try {

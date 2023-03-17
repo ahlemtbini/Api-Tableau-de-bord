@@ -218,7 +218,7 @@ exports.deleteCountry = async (req, res, next) => {
     try {
         const { id } = req.params
         const country = await prisma.country.delete({
-            where: { id: parseInt(id) },
+            where: { id: Number(id) },
         })
         res.status(200).json(country)
     } catch (error) {
