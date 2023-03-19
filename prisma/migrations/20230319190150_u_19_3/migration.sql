@@ -7,7 +7,7 @@ CREATE TABLE `User` (
     `mdp` VARCHAR(191) NULL DEFAULT 'default',
     `role` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
     `numTel` VARCHAR(191) NULL,
-    `resetLink` TEXT NOT NULL,
+    `resetLink` TEXT NULL,
     `aciveInactive` BOOLEAN NOT NULL DEFAULT true,
 
     UNIQUE INDEX `User_email_key`(`email`),
@@ -51,7 +51,8 @@ CREATE TABLE `AdminClient` (
 CREATE TABLE `Manager` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
-    `droits` ENUM('consulter', 'gerer') NOT NULL,
+    `clientId` INTEGER NOT NULL,
+    `droits` ENUM('consulter', 'gerer') NULL,
 
     UNIQUE INDEX `Manager_userId_key`(`userId`),
     PRIMARY KEY (`id`)
@@ -137,28 +138,41 @@ CREATE TABLE `Societe` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `numTel` INTEGER NOT NULL,
-    `numSiret` INTEGER NULL,
+    `numTel` VARCHAR(191) NULL,
+    `numSiret` VARCHAR(191) NULL,
     `nmbreSites` INTEGER NOT NULL DEFAULT 0,
     `creerPar` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
-    `isActive` BOOLEAN NOT NULL,
-    `regionID` INTEGER NOT NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `regionId` INTEGER NULL,
+    `countryId` INTEGER NULL,
+    `clientId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Societe_regionID_key`(`regionID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocieteManager` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `managerId` INTEGER NOT NULL,
+    `societeId` INTEGER NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Site` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
+    `nom` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `tel` VARCHAR(191) NOT NULL,
     `adresse` VARCHAR(191) NOT NULL,
+    `numSiret` VARCHAR(191) NULL,
     `nbrChauffeur` INTEGER NOT NULL DEFAULT 0,
     `creerPar` ENUM('super_admin', 'client_admin', 'manager', 'chauffeur') NOT NULL,
-    `isActive` BOOLEAN NOT NULL,
-    `companyID` INTEGER NOT NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `clientId` INTEGER NOT NULL,
+    `SocieteID` INTEGER NULL,
 
-    UNIQUE INDEX `Site_companyID_key`(`companyID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -290,15 +304,6 @@ CREATE TABLE `EntretienVehicule` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable
-CREATE TABLE `_ManagerToSociete` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_ManagerToSociete_AB_unique`(`A`, `B`),
-    INDEX `_ManagerToSociete_B_index`(`B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- AddForeignKey
 ALTER TABLE `Profile` ADD CONSTRAINT `Profile_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -312,7 +317,10 @@ ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_userId_fkey` FOREIGN KEY (
 ALTER TABLE `AdminClient` ADD CONSTRAINT `AdminClient_clientID_fkey` FOREIGN KEY (`clientID`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Manager` ADD CONSTRAINT `Manager_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Manager` ADD CONSTRAINT `Manager_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Manager` ADD CONSTRAINT `Manager_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Client`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Chauffeur` ADD CONSTRAINT `Chauffeur_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -327,19 +335,31 @@ ALTER TABLE `Client` ADD CONSTRAINT `Client_superAdminID_fkey` FOREIGN KEY (`sup
 ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_ClientID_fkey` FOREIGN KEY (`ClientID`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_SocieteID_fkey` FOREIGN KEY (`SocieteID`) REFERENCES `Societe`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Contrat` ADD CONSTRAINT `Contrat_SocieteID_fkey` FOREIGN KEY (`SocieteID`) REFERENCES `Societe`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Country` ADD CONSTRAINT `Country_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Client`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Country` ADD CONSTRAINT `Country_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Client`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Region` ADD CONSTRAINT `Region_countryID_fkey` FOREIGN KEY (`countryID`) REFERENCES `Country`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Region` ADD CONSTRAINT `Region_countryID_fkey` FOREIGN KEY (`countryID`) REFERENCES `Country`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Societe` ADD CONSTRAINT `Societe_regionID_fkey` FOREIGN KEY (`regionID`) REFERENCES `Region`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Societe` ADD CONSTRAINT `Societe_regionId_fkey` FOREIGN KEY (`regionId`) REFERENCES `Region`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Site` ADD CONSTRAINT `Site_companyID_fkey` FOREIGN KEY (`companyID`) REFERENCES `Societe`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Societe` ADD CONSTRAINT `Societe_countryId_fkey` FOREIGN KEY (`countryId`) REFERENCES `Country`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Societe` ADD CONSTRAINT `Societe_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Client`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SocieteManager` ADD CONSTRAINT `SocieteManager_managerId_fkey` FOREIGN KEY (`managerId`) REFERENCES `Manager`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SocieteManager` ADD CONSTRAINT `SocieteManager_societeId_fkey` FOREIGN KEY (`societeId`) REFERENCES `Societe`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Site` ADD CONSTRAINT `Site_SocieteID_fkey` FOREIGN KEY (`SocieteID`) REFERENCES `Societe`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Sinistre` ADD CONSTRAINT `Sinistre_chauffeurEmail_fkey` FOREIGN KEY (`chauffeurEmail`) REFERENCES `Chauffeur`(`email`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -352,9 +372,3 @@ ALTER TABLE `EntretienPostAccident` ADD CONSTRAINT `EntretienPostAccident_chauff
 
 -- AddForeignKey
 ALTER TABLE `EntretienVehicule` ADD CONSTRAINT `EntretienVehicule_chauffeurID_fkey` FOREIGN KEY (`chauffeurID`) REFERENCES `Chauffeur`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_ManagerToSociete` ADD CONSTRAINT `_ManagerToSociete_A_fkey` FOREIGN KEY (`A`) REFERENCES `Manager`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_ManagerToSociete` ADD CONSTRAINT `_ManagerToSociete_B_fkey` FOREIGN KEY (`B`) REFERENCES `Societe`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

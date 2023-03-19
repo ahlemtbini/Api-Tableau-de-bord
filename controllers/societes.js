@@ -21,7 +21,26 @@ exports.getSocietes = async (req, res, next) => {
         res.status(404).json({ error: error })
     }
 }
-
+exports.getCountries = async(req, res, next) => {
+    try {        
+        const countries= await prisma.country.findMany({
+            include: {
+                regions: true
+            }
+        })
+        return res.status(200).json(countries)
+    } catch (error) {
+        next(error)
+    }
+}
+exports.getRegions = async(req, res, next) => {
+    try {        
+        const regions= await prisma.region.findMany()
+        return res.status(200).json(regions)
+    } catch (error) {
+        next(error)
+    }
+}
 exports.getSociete = async (req, res, next) => {
     try {
         const societe = await prisma.societe.findUnique({
@@ -91,8 +110,6 @@ exports.deleteSociete = async (req, res, next) => {
         res.status(404).json({ error: error })
     }
 }
-
-
 
 exports.addContrat = async (req, res, next) => {
     try {

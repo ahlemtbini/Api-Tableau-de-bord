@@ -13,6 +13,7 @@ exports.getSites = async(req, res, next) => {
         next(error)
     }
 }
+
 exports.getUserSites = async(req, res, next) => {
     try {        
         const user = await prisma.user.findUnique({

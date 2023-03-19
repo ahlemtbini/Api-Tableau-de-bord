@@ -199,10 +199,10 @@ model Societe {
   nmbreSites Int       @default(0)
   creerPar   Role
   isActive   Boolean @default(true)
-  region   Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
-  regionId Int
-  country   Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  countryId Int  
+  region   Region?   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId Int?
+  country   Country?   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId Int?
   client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId Int   
   managers   SocieteManager[]
