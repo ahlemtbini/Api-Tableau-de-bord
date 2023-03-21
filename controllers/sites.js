@@ -13,6 +13,24 @@ exports.getSites = async(req, res, next) => {
         next(error)
     }
 }
+exports.getSite = async(req, res, next) => {
+    try {        
+        const sites= await prisma.site.findUnique({
+            where: {id : Number(req.params.id)},
+            include: {
+                Societe: {
+                    include: {
+                        region: true,
+                        country: true
+                    }
+                }
+            }
+        })
+        return res.status(200).json(sites)
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.getUserSites = async(req, res, next) => {
     try {        

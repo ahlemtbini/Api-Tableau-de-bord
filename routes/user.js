@@ -101,6 +101,7 @@ router.delete('/managers/:id', managersCtrl.deleteManager);
 
 // sites
 router.get('/sites', sitesCtrl.getSites)
+router.get('/sites/:id', sitesCtrl.getSite)
 router.get('/sites/user/:id', sitesCtrl.getUserSites)
 router.post('/sites/add', sitesCtrl.createSite)
 router.post('/sites/coonetSocietes', sitesCtrl.connectSites)
