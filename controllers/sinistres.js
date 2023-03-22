@@ -310,3 +310,18 @@ exports.importExcel = async (req, res, next) => {
             // next(error)
         }
     }
+exports.saveDocuments =  async (req, res, next) => {
+    try {
+        console.log(req.files,'sdsq')
+        let array = []
+        if (req.files) {
+            for (let i = 0; i < req.files.length; i++) {
+                const fName = req.files[i].filename;
+                array.push(`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
+            }
+        }
+        return res.status(201).json(array)
+    } catch (error) {
+        return res.status(404).json({error})
+    }
+}

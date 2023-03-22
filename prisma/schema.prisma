@@ -278,8 +278,22 @@ model Sinistre {
   creatorId            String?                 @map("id créateur")
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
+  constat                       String?
+  permis_conduire               String?
+  carte_grise                   String?
+  declaration_chauffeur         String?
   declarationSinistre  DeclarationSinistre?
+  // documents            SinistreDocuments?
 }
+
+// model SinistreDocuments {
+//   sinistre                      Sinistre       @relation(fields: [sinistreId], references: [id], onDelete: Cascade)
+//   sinistreId         Int        @unique
+//   constat                       String?
+//   permis_conduire               String?
+//   carte_grise                   String?
+//   declaration_chauffeur         String?
+// }
 
 model DeclarationSinistre {
   sinistre                      Sinistre       @relation(fields: [DOSSIER], references: [id], onDelete: Cascade)
@@ -336,6 +350,7 @@ model DeclarationSinistre {
   CHARGE_AJUSTEE                String?  //@map("Charge ajustée") // n'existe plus
   COMMENTAIRES                  String?         @db.Text
 }
+
 model EntretienPostAccident {
   id                           Int           @id @default(autoincrement())
   // 1 - Identification
