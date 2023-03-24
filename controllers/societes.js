@@ -6,7 +6,7 @@ exports.getSocietes = async (req, res, next) => {
     try {
         const societes = await prisma.societe.findMany({
             include: {
-                contrats: true,
+                contrat: true,
                 country: true,
                 region:true,
                 managers: {
@@ -46,7 +46,7 @@ exports.getSociete = async (req, res, next) => {
         const societe = await prisma.societe.findUnique({
             where: { id: Number(req.params.id) },
             include: {
-                contrats: true,
+                contrat: true,
                 country: true,
                 region: true,
                 client: true
@@ -55,9 +55,9 @@ exports.getSociete = async (req, res, next) => {
         res.status(200).json(societe)
     } catch (error) {
         res.status(404).json({ error: error })
-        // next(error)
     }
 }
+
 exports.getCountry = async (req, res, next) => {
     try {
         const country = await prisma.country.findUnique({
@@ -69,7 +69,6 @@ exports.getCountry = async (req, res, next) => {
         res.status(200).json(country)
     } catch (error) {
         res.status(404).json({ error: error })
-        // next(error)
     }
 }
 
@@ -95,11 +94,10 @@ exports.editSociete = async (req, res, next) => {
         res.status(200).json(societe)
     } catch (error) {
         res.status(404).json({ error: error })
-        next(error)
     }
 }
+
 exports.deleteSociete = async (req, res, next) => {
-    console.log(req.params.id)
     try {
         const { id } = req.params
         const societe = await prisma.societe.delete({

@@ -47,6 +47,7 @@ router.post('/clients/addLogo/:id', upload, clientsCtrl.addLogo);
 router.post('/clients/importAll', clientsCtrl.importAllClients)
 
 router.post('/clients/contrats', clientsCtrl.addContrat)
+router.put('/clients/contrats/:id', clientsCtrl.editContrat)
 router.delete('/clients/contrats/:id', clientsCtrl.deleteContrat)
 router.get('/clients/contrats/:id', clientsCtrl.getContrats)
 router.post('/clients/country', clientsCtrl.addCountry)

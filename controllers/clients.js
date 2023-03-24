@@ -166,6 +166,17 @@ exports.addContrat = async (req, res, next) => {
         next(error)
     }
 }
+exports.editContrat = async (req, res, next) => {
+    try {
+        const contrat = await prisma.contrat.update({
+            where: {id: Number(req.params.id)},
+            data: {...req.body}
+        })
+        res.status(200).json(contrat)
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.getContrats = async (req, res, next) => {
     try {

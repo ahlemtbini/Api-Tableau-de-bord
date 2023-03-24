@@ -172,8 +172,10 @@ model Contrat {
   endDate              String? 
   Client             Client?                    @relation(fields: [ClientID], references: [id])
   ClientID           Int?
-  Societe             Societe?                 @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  // Societe             Societe?                 @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
   SocieteID           Int?
+  societes  Societe[]
+
 }
 model Country {
   id       Int      @id @default(autoincrement())
@@ -207,7 +209,9 @@ model Societe {
   clientId Int   
   managers   SocieteManager[]
   sites      Site[]
-  contrats Contrat[]
+  contrat   Contrat?   @relation(fields: [contratId], references: [id], onDelete: Cascade)
+  contratId Int?   
+  // contrats Contrat[]
 }
 model SocieteManager {
   id           Int         @id @default(autoincrement())
