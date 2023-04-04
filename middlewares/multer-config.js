@@ -6,12 +6,15 @@ const MIME_TYPES = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
     'image/png': 'png',
     'image/jpeg': 'jpeg',
+    'image/webp': 'webp',
 }
+console.log('multer')
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, './documents/')
     },
     filename: (req, file, callback) => {
+        console.log(file,'f')
         let name = file.originalname.split(' ').join('_');
         name = name.split('.pdf')[0]
         const extension = MIME_TYPES[file.mimetype];
@@ -19,4 +22,4 @@ const storage = multer.diskStorage({
     }
 })
 
-module.exports = multer({ storage: storage }).array('file1', 10)
+module.exports = multer({ storage: storage }).array('file1',10)

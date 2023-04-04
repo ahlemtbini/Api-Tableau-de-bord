@@ -58,6 +58,7 @@ router.delete('/clients/regions/:id', clientsCtrl.deleteRegion)
 
 // sinistres
 router.get('/sinistres', sinistresCtrl.getSinistres)
+router.get('/sinis/:id', sinistresCtrl.getSinis)
 router.get('/sinistres/:id', sinistresCtrl.getSinistre)
 router.post('/sinistres/add', sinistresCtrl.addSinistre)
 router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre)
@@ -68,7 +69,8 @@ router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
 router.get('/reparer', sinistresCtrl.reparerDateFormat)
-router.post('/sinistres/etape3', upload, sinistresCtrl.saveDocuments)
+router.post('/sinistres/etape3/:id', upload, sinistresCtrl.saveDocuments)
+// router.put('/sinistres/documents/:id', sinistresCtrl.editDocuments);
 
 // admins
 router.get('/admins', adminsCtrl.getAdmins)

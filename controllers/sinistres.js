@@ -15,7 +15,7 @@ exports.getSinistres = async (req, res, next) => {
         const sinistres = await prisma.sinistre.findMany({
             orderBy: 
                 {
-                    id: 'asc',
+                    DeclarationSinistre: 'asc',
                 },
             include: {
                 declarationSinistre: true
@@ -31,6 +31,17 @@ exports.getSinistre = async (req, res, next) => {
     try {
         const dec = await prisma.declarationSinistre.findUnique({
             where: { id: req.params.id },
+        })
+        res.json(dec)
+    } catch (error) {
+        res.status(404).json({ error: error })
+        // next(error)
+    }
+}
+exports.getSinis = async (req, res, next) => {
+    try {
+        const dec = await prisma.sinistre.findUnique({
+            where: { id: Number(req.params.id )},
         })
         res.json(dec)
     } catch (error) {
@@ -75,17 +86,29 @@ exports.deleteSinistre = async (req, res, next) => {
 exports.editSinistre = async (req, res, next) => {
     try {
         const { id } = req.params
-        console.log(id, req.body)
         const sinis = await prisma.declarationSinistre.update({
             where: { DOSSIER: parseInt(id) },
             data: req.body
         })
         return res.status(200).json(sinis)
     } catch (error) {
-        // next(error)
-        res.status(404).json({ error: error })
+        next(error)
+        // res.status(404).json({ error: error })
     }
 }
+// exports.editDocuments = async (req, res, next) => {
+//     try {
+//         const { id } = req.params
+//         const sinis = await prisma.sinistre.update({
+//             where: { id: parseInt(id) },
+//             data: req.body
+//         })
+//         return res.status(200).json(sinis)
+//     } catch (error) {
+//         // next(error)
+//         res.status(404).json({ error: error })
+//     }
+// }
 
 
 const dateToNumber=(a)=>{
@@ -96,7 +119,7 @@ const compareDatesFr =(a,b)=>{
     const el2 = Number(dateToNumber(b))
     if(el2 > el1){
         return true
-    } 
+    }
     return false
 }
 
@@ -118,7 +141,6 @@ exports.getDecSinistres = async (req, res, next) => {
         res.json(sinistres)
     } catch (error) {
         // res.status(404).json({ error: error })
-        console.log(error)
         next(error)
     }
 }
@@ -159,7 +181,6 @@ exports.deleteAll = async (req, res, next) => {
 const getDate=(date)=>{
     let arr =[]
     arr =date.split(' ')
-    console.log(date)
     const month= new Date(arr).getMonth()
     const month1= new Date(date).getMonth()
     let d=""
@@ -290,20 +311,27 @@ exports.importExcel = async (req, res, next) => {
                     el.value.map((val)=>{
                         arr.push({[el.name]: {contains: `-${val}-`}})
                     })
-                    console.log(arr)
                     obj ={...obj, OR: arr}
                 } else {
                     obj ={...obj, [el.name]: {in: el.value}}
                 }
             }
         })
-         console.log(obj)
         try {
-            const sinistres = await prisma.declarationSinistre.findMany({
+            const sin = await prisma.declarationSinistre.findMany({
                 where: obj
-            })
-        // console.log(sinistres)
-            
+            })            
+            let sinistres = [...sin]
+            let n=sinistres.length
+             for (let i = 0; i < n-1; i++){
+                 for (let j = 0; j< n-i-1; j++) {
+                    if (sinistres[j+1].DATE_SURVENANCE && sinistres[j].DATE_SURVENANCE && compareDatesFr(sinistres[j].DATE_SURVENANCE,sinistres[j+1].DATE_SURVENANCE )){
+                        const t=sinistres[j+1]
+                        sinistres[j+1]=sinistres[j]
+                        sinistres[j]=t
+                    }
+                }
+            }
             res.json(sinistres)
         } catch (error) {
             res.status(404).json({ error: "requete non valide" })
@@ -311,17 +339,37 @@ exports.importExcel = async (req, res, next) => {
         }
     }
 exports.saveDocuments =  async (req, res, next) => {
+    console.log('docs',req.body.form)
     try {
         console.log(req.files,'sdsq')
+        const { id } = req.params
         let array = []
+        let obj={}
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const fName = req.files[i].filename;
-                array.push(`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
+                const fileKey = req.files[i].originalname
+                console.log(fName,fileKey)
+                if(fName){
+                    obj = {...obj,[fileKey]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`}
+                    // array.push({ [i]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`})
+                }
             }
         }
-        return res.status(201).json(array)
+        console.log(obj, 'arr')
+
+        const sinis = await prisma.sinistre.update({
+            where: { id: parseInt(id) },
+            data: {
+                constat: obj?.constat,
+                permis_conduire: obj?.permis_conduire ,
+                carte_grise: obj?.carte_grise,
+                declaration_chauffeur: obj?.declaration_chauffeur
+            }
+        })
+        return res.status(201).json(sinis)
     } catch (error) {
-        return res.status(404).json({error})
+        next(error)
+        // return res.status(404).json({error})
     }
 }
