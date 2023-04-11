@@ -179,17 +179,26 @@ exports.deleteAll = async (req, res, next) => {
 }
 
 const getDate=(date)=>{
-    let arr =[]
-    arr =date.split(' ')
-    const month= new Date(arr).getMonth()
-    const month1= new Date(date).getMonth()
+    const newDate = new Date(date)
     let d=""
-    if(String(month1+1) <10 ){
-         d=arr[2] + "-0" + String(month1+1)  + "-" + arr[3]
-    }else{
-        d=arr[2] + "-" + String(month1+1)  + "-" + arr[3]
+    let arr =date.split(' ')
+    let arr2 =date.split('-')
+    if(newDate == "Invalid Date" ){
+        console.log('invalid')
+        let arr2=date.toString()
+        arr2=arr2.split('-')
+        d=arr2[0] + "-" + arr2[1]?.slice(1)+ "-" + arr2[2]  
+    } else{
+        const month1= newDate.getMonth()
+        const day =arr[2].toString()
+        const year =arr[3].toString()
+        if(String(month1+1) <10 ){
+             d=(day + "-0" + String(month1+1)  + "-" + year)
+        }else{
+            d=day + "-" + String(month1+1)  + "-" + year
+        }
     }
-    // console.log('arr',month,'date',month1)
+    console.log(newDate,'arr1',arr,'arr2',arr2,'res',d)
     return d
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
@@ -339,35 +348,41 @@ exports.importExcel = async (req, res, next) => {
         }
     }
 exports.saveDocuments =  async (req, res, next) => {
-    console.log('docs',req.body.form)
     try {
-        console.log(req.files,'sdsq')
+        console.log('docs',req.body)
         const { id } = req.params
-        let array = []
-        let obj={}
+        const sinis = await prisma.sinistre.update({
+            where: { id: parseInt(id) },
+            data: {
+                constat: JSON.stringify(req.body?.constat),
+                permis_conduire: JSON.stringify(req.body?.permis_conduire),
+                carte_grise: JSON.stringify(req.body?.carte_grise),
+                declaration_chauffeur: JSON.stringify(req.body?.declaration_chauffeur)
+            }
+        })
+        return res.status(201).json(sinis)
+    } catch (error) {
+        next(error)
+        // return res.status(404).json({error})
+    }
+}
+exports.saveDocs =  async (req, res, next) => {
+    try {
+        console.log(req.files,'files')
+        let arr = []
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const fName = req.files[i].filename;
                 const fileKey = req.files[i].originalname
                 console.log(fName,fileKey)
                 if(fName){
-                    obj = {...obj,[fileKey]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`}
+                    arr = [...arr,{[fileKey]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`}]
                     // array.push({ [i]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`})
                 }
             }
         }
-        console.log(obj, 'arr')
-
-        const sinis = await prisma.sinistre.update({
-            where: { id: parseInt(id) },
-            data: {
-                constat: obj?.constat,
-                permis_conduire: obj?.permis_conduire ,
-                carte_grise: obj?.carte_grise,
-                declaration_chauffeur: obj?.declaration_chauffeur
-            }
-        })
-        return res.status(201).json(sinis)
+        console.log(arr, 'arr')
+        return res.status(201).json(arr)
     } catch (error) {
         next(error)
         // return res.status(404).json({error})

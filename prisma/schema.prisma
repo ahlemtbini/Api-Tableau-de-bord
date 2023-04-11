@@ -282,10 +282,11 @@ model Sinistre {
   creatorId            String?                 @map("id créateur")
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
-  constat                       String?
-  permis_conduire               String?
-  carte_grise                   String?
-  declaration_chauffeur         String?
+  constat                       Json?
+  permis_conduire               Json?
+  carte_grise                   Json?
+  declaration_chauffeur         Json?
+  autres_pieces         Json?
   declarationSinistre  DeclarationSinistre?
   // documents            SinistreDocuments?
 }

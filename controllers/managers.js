@@ -60,7 +60,6 @@ exports.createManager = (req, res, next) => {
               mdp: hash,
             }
         })
-        console.log( req.body,user.id)
         const manager = await prisma.manager.create({
             data: {
                 // clientId: Number(req.body.clientId),

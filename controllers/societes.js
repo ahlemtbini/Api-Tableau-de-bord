@@ -35,7 +35,11 @@ exports.getCountries = async(req, res, next) => {
 }
 exports.getRegions = async(req, res, next) => {
     try {        
-        const regions= await prisma.region.findMany()
+        const regions= await prisma.region.findMany({
+            include: {
+                societes: true
+            }
+        })
         return res.status(200).json(regions)
     } catch (error) {
         next(error)
@@ -49,7 +53,11 @@ exports.getSociete = async (req, res, next) => {
                 contrat: true,
                 country: true,
                 region: true,
-                client: true
+                client: {
+                    include: {
+                        contrats: true
+                    }
+                }
             }
         })
         res.status(200).json(societe)

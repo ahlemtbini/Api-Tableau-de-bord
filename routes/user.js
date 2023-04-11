@@ -18,6 +18,10 @@ const societesCtrl = require("../controllers/societes");
 const sitesCtrl = require("../controllers/sites");
 const managersCtrl = require("../controllers/managers");
 
+//documents
+router.post('/documents/save', upload, sinistresCtrl.saveDocs)
+
+
 // user controller
 router.get('/profile', userCtrl.getProfile);
 router.get('/users', userCtrl.getUsers);
@@ -69,7 +73,7 @@ router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
 router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
 router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
 router.get('/reparer', sinistresCtrl.reparerDateFormat)
-router.post('/sinistres/etape3/:id', upload, sinistresCtrl.saveDocuments)
+router.post('/sinistres/etape3/:id', sinistresCtrl.saveDocuments)
 // router.put('/sinistres/documents/:id', sinistresCtrl.editDocuments);
 
 // admins
