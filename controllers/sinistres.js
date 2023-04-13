@@ -178,27 +178,42 @@ exports.deleteAll = async (req, res, next) => {
     }
 }
 
+// const getDate=(date)=>{
+//     const newDate = new Date(date)
+//     let d=""
+//     let arr =date.split(' ')
+//     let arr2 =date.split('-')
+//     if(newDate == "Invalid Date" ){
+//         console.log('invalid')
+//         let arr2=date.toString()
+//         arr2=arr2.split('-')
+//         d=arr2[0] + "-" + arr2[1]?.slice(1)+ "-" + arr2[2]  
+//     } else{
+//         const month1= newDate.getMonth()
+//         const day =arr[2].toString()
+//         const year =arr[3].toString()
+//         if(String(month1+1) <10 ){
+//              d=(day + "-0" + String(month1+1)  + "-" + year)
+//         }else{
+//             d=day + "-" + String(month1+1)  + "-" + year
+//         }
+//     }
+//     console.log(newDate,'arr1',arr,'arr2',arr2,'res',d)
+//     return d
+// }
 const getDate=(date)=>{
-    const newDate = new Date(date)
+    let arr =[]
+    arr =date.split(' ')
+    console.log(date)
+    const month= new Date(arr).getMonth()
+    const month1= new Date(date).getMonth()
     let d=""
-    let arr =date.split(' ')
-    let arr2 =date.split('-')
-    if(newDate == "Invalid Date" ){
-        console.log('invalid')
-        let arr2=date.toString()
-        arr2=arr2.split('-')
-        d=arr2[0] + "-" + arr2[1]?.slice(1)+ "-" + arr2[2]  
-    } else{
-        const month1= newDate.getMonth()
-        const day =arr[2].toString()
-        const year =arr[3].toString()
-        if(String(month1+1) <10 ){
-             d=(day + "-0" + String(month1+1)  + "-" + year)
-        }else{
-            d=day + "-" + String(month1+1)  + "-" + year
-        }
+    if(String(month1+1) <10 ){
+         d=arr[2] + "-0" + String(month1+1)  + "-" + arr[3]
+    }else{
+        d=arr[2] + "-" + String(month1+1)  + "-" + arr[3]
     }
-    console.log(newDate,'arr1',arr,'arr2',arr2,'res',d)
+    // console.log('arr',month,'date',month1)
     return d
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",

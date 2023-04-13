@@ -267,7 +267,7 @@ exports.login = async (req, res, next) => {
         resetLink: token,
       }
     })
-    console.log(true)
+    console.log(user)
     // return true
   } catch (error) {
     console.log(error)
@@ -275,7 +275,8 @@ exports.login = async (req, res, next) => {
  }
 
 exports.forgotPassword = async(req, res, next) => {
-  const { email } = req.body;
+  const  email= req.body.email;
+  console.log('test mail',email)
   try {
       const user = await prisma.user.findUnique({
         where:{
@@ -291,7 +292,7 @@ exports.forgotPassword = async(req, res, next) => {
         process.env.ENCRYPT_KEY,
         { algorithm: "HS256" }
         )
-        console.log(token)
+        console.log('test t',token)
       const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
   
       updateUser(user.id,token)
@@ -299,13 +300,13 @@ exports.forgotPassword = async(req, res, next) => {
       const options = {
         to: email,
         from: '<contact@fleetrisk.fr>',
-        subject: "Mot de passe",
+        subject: "Réinitialisationde mot de passe",
         html: `<div>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
             <img src="http://localhost:3000/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" />
         </b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour</b>${user.prenom}</p>
+        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Nous vous remercions
         de votre inscription à votre espace FLEETRISK et vous confirmons que votre
@@ -325,6 +326,8 @@ exports.forgotPassword = async(req, res, next) => {
         </div> `,
       };
 
+
+      console.log(options)
       const resEmail = await send_mail(options, email)
       console.log(resEmail)
       if(resEmail.rejected.length > 0){
