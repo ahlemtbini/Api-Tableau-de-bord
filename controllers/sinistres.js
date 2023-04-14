@@ -341,6 +341,7 @@ exports.importExcel = async (req, res, next) => {
                 }
             }
         })
+        
         try {
             const sin = await prisma.declarationSinistre.findMany({
                 where: obj
