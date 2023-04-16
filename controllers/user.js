@@ -300,10 +300,10 @@ exports.forgotPassword = async(req, res, next) => {
       const options = {
         to: email,
         from: '<contact@fleetrisk.fr>',
-        subject: "Réinitialisationde mot de passe",
+        subject: "Réinitialisation de mot de passe",
         html: `<div>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
-            <img src="http://localhost:3000/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" />
+            <img src="http://localhost:5000/api/documents/logo_white.png" width="200px" />
         </b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
