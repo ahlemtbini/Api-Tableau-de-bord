@@ -303,7 +303,7 @@ exports.forgotPassword = async(req, res, next) => {
         subject: "Réinitialisation de mot de passe",
         html: `<div>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
-            <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" />
+            <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" max-width="200px" />
         </b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
@@ -375,19 +375,80 @@ exports.resetPassword = (req, res, next) => {
   }
 }
 
-const templateEmail =""
+exports.confirmationMail = async(req, res, next) => {
+  const  email= req.body.email;
+  console.log('test mail',email)
+  try {
+      const user = await prisma.user.findUnique({
+        where:{
+          email: email
+        }
+      })
+      const token =  jwt.sign({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          expiresIn: 36000
+        },
+        process.env.ENCRYPT_KEY,
+        { algorithm: "HS256" }
+        )
+        console.log('test t',token)
+      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+  
+      updateUser(user.id,token)
 
-const forgotTemplate= `<div style="background:#fff;
-height:300px; display:flex;justify-content:center;align-items: center;">
-  <div style="background:#33373A;padding:30px;height:fit-content">
-    <h2 style="background:#33373A;color:#61892F;margin:0;margin-bottom:30px;" >Réinitialisation de mot de passe :<br/></h2>
-    <a style="background: #61892F;
-    padding: 10px 20px;
-    color: #000;
-    text-decoration: none;
-    border-radius: 25px;    width: 40%;
-    margin: auto;
-    display: block;text-align:center"
-       href=>cliquer ici</a>
-  </div>
-`
+      const options = {
+        to: email,
+        from: '<contact@fleetrisk.fr>',
+        subject: "Votre compte FLEETRISK est actif !",
+        html: `<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8" />
+                <title>Titre</title>
+            </head>
+        
+            <body>
+                <div>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
+                        <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" max-width="200px"/>
+                    </b></p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour</b>${user.prenom}</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Nous vous remercions
+                    de votre inscription à votre espace FLEETRISK et vous confirmons que votre
+                    compte est désormais actif.</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Pour commencer à
+                    utiliser FLEETRISK, veuillez noter votre Identifiant suivant&nbsp;: ${user.email}
+                    puis cliquer sur le lien ci-dessous.</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+                    <div align="center">
+                        
+                        <button style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;color:white;background:#0b1e3e;padding:12px">
+                            <a href="${link}"><span style="color:white">Je me connecte</span></a>
+                        </button>
+                    </div>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
+                        <a href="mailto:contact@fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank">contact@fleetrisk.fr</a> .</b> <b>
+                        <a href="https://fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://fleetrisk.fr&amp;source=gmail&amp;ust=1680863108559000&amp;usg=AOvVaw0ZYineXysI0H-2PyZQjk4X">https://fleetrisk.fr</a> . Politique de
+                    confidentialité</b></p>
+                </div>  
+            </body>
+        </html>`,
+      };
+
+
+      console.log(options)
+      const resEmail = await send_mail(options, email)
+      console.log(resEmail)
+      if(resEmail.rejected.length > 0){
+        return res.error({error: "mail de restauration n'a pas pu être envoyé"} )
+      }
+      return res.status(200).json({ message: "mail de restauration a été envoyé" })
+  } catch (error) {
+      res.status(404).json({ error: "adresse mail n'est pas trouvé" })
+  }
+};

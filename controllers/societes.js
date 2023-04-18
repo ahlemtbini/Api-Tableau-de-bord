@@ -9,6 +9,7 @@ exports.getSocietes = async (req, res, next) => {
                 contrat: true,
                 country: true,
                 region:true,
+                client: true,
                 managers: {
                     select:{
                         manager:true

@@ -373,7 +373,8 @@ exports.saveDocuments =  async (req, res, next) => {
                 constat: JSON.stringify(req.body?.constat),
                 permis_conduire: JSON.stringify(req.body?.permis_conduire),
                 carte_grise: JSON.stringify(req.body?.carte_grise),
-                declaration_chauffeur: JSON.stringify(req.body?.declaration_chauffeur)
+                declaration_chauffeur: JSON.stringify(req.body?.declaration_chauffeur),
+                autres_pieces: JSON.stringify(req.body?.autres_pieces)
             }
         })
         return res.status(201).json(sinis)

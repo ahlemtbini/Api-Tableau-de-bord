@@ -38,6 +38,8 @@ router.post('/users/forgotPass', userCtrl.forgotPassword)
 router.post('/users/resetPass', userCtrl.resetPassword)
 router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
 router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
+router.post('/users/confirmationMail', userCtrl.confirmationMail)
+
 
 // clients controller
 router.get('/clients', clientsCtrl.getClients)

@@ -5,7 +5,11 @@ exports.getSites = async(req, res, next) => {
     try {        
         const sites= await prisma.site.findMany({
             include: {
-                Societe: true
+                Societe: {
+                    include: {
+                        client:true
+                    }
+                },
             }
         })
         return res.status(200).json(sites)
