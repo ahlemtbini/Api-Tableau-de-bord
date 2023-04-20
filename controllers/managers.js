@@ -11,7 +11,7 @@ exports.getManagers = async (req, res, next) => {
               user: true,
               societes: {
                 select: {
-                    societe:true
+                    societe:true,
                 }
               }
           }
@@ -105,7 +105,10 @@ exports.deleteManager = async (req, res, next) => {
         const manager = await prisma.manager.delete({
             where: { id: parseInt(id) },
         })
-        res.status(200).json(manager)
+        const user = await prisma.user.delete({
+            where: { id: manager.userId },
+        })
+        res.status(200).json(user)
     } catch (error) {
         next(error)
         // res.status(404).json({ error: error })

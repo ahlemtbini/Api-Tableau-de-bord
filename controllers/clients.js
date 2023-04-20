@@ -7,8 +7,16 @@ exports.getClients = async (req, res, next) => {
         const clients = await prisma.client.findMany({
             include: {
                 contrats: true,
-                countrys: true,
-                societes: true
+                countrys: {
+                    include: {
+                        regions: true
+                    }
+                },
+                societes: {
+                    include: {
+                        sites: true
+                    }
+                }
             }
         })
         res.status(200).json(clients)

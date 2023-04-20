@@ -415,7 +415,7 @@ exports.confirmationMail = async(req, res, next) => {
                         <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" max-width="200px"/>
                     </b></p>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
-                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour</b>${user.prenom}</p>
+                    <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Nous vous remercions
                     de votre inscription à votre espace FLEETRISK et vous confirmons que votre
