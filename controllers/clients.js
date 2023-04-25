@@ -211,7 +211,10 @@ exports.deleteContrat = async (req, res, next) => {
 exports.addCountry = async (req, res, next) => {
     try {
         const country = await prisma.country.create({
-            data: req.body
+            data: req.body,
+            include: {
+                regions: true
+            }
         })
         res.status(200).json(country)
     } catch (error) {
@@ -264,5 +267,29 @@ exports.deleteRegion = async (req, res, next) => {
         res.status(200).json(region)
     } catch (error) {
         res.status(404).json({ error: error })
+    }
+}
+
+exports.initRegions = async (req, res, next) => {
+    try {
+        console.dir("init",req.params.id)
+        const cid = Number(req.params.id)
+        const regData =[
+            {name:"SUD-OUEST",countryID: cid},
+            {name: "ATLANTIQUE",countryID: cid},
+            {name:"ILE DE FRANCE",countryID: cid},
+            {name:"PROVENCE",countryID: cid},
+            {name:"RHONE-ALPES",countryID: cid},
+            {name:"ROUSSILLON",countryID: cid},
+            {name:"SIEGE",countryID: cid}
+       ]
+        const regions = await prisma.region.createMany({
+            data : [...regData]
+        })
+        const reg= await prisma.region.findMany({})
+        res.status(200).json(reg)
+    } catch (error) {
+        next(error)
+        res.status(404).json({ error: "Les n'ont pas pu etre initialiser" })
     }
 }
