@@ -95,22 +95,22 @@ exports.createManager = (req, res, next) => {
             where: { id: Number(id) },
             data: req.body.user,
         })
-        // const manager = await prisma.manager.update({
-        //     where: {id: Number(req.params.id)},
-        //     data: {
-        //                         user: {
-        //             connect:{
-        //             id:user.id,
-        //             }
-        //         },
-        //         client: {
-        //             connect: {
-        //                 id:Number(req.body.clientId)
-        //             }
-        //         }
-        //     }
-        // })
-        console.dir(user)
+        const manager = await prisma.manager.update({
+            where: {id: Number(req.params.id)},
+            data: {
+                // user: {
+                //     connect:{
+                //     id:user.id,
+                //     }
+                // },
+                client: {
+                    connect: {
+                        id:Number(req.body.clientId)
+                    }
+                }
+            }
+        })
+        console.dir(manager)
         res.status(200).json(user)
     } catch (error) {
         // res.status(404).json({ error: error })

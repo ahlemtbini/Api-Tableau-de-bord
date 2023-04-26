@@ -46,23 +46,37 @@ exports.getAdminClients = async (req, res, next) => {
 exports.getAdminSinistres = async (req, res, next) => {
     try {
       const { id } = req.params
-      const sinis = await prisma.sinistre.findMany({
+      const admin = await prisma.adminClient.findUnique({
+        where: {userId: Number(id)}
+      })
+      console.log(admin)
+      const sinis = await prisma.declarationSinistre.findMany({
         where:{
-            creatorId : id
+          NUMERO_CLIENT : admin.clientID.toString()
           },
-          select : {
-            declarationSinistre: true
-          }
+          // include : {
+          //   sinistre: true
+          // }
         })
-        const arr=[]
-        sinis.map(el=>{
-          arr.push(el.declarationSinistre)
-        })
-        console.dir(arr)
-        res.status(200).json(arr)
+      console.log(sinis)
+
+      // const sinis = await prisma.sinistre.findMany({
+      //   where:{
+      //       creatorId : id
+      //     },
+      //     select : {
+      //       declarationSinistre: true
+      //     }
+      //   })
+      //   const arr=[]
+      //   sinis.map(el=>{
+      //     arr.push(el.declarationSinistre)
+      //   })
+      // console.dir(arr)
+        res.status(200).json(sinis)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 exports.getSaClients = async (req, res, next) => {
