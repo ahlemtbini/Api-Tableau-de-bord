@@ -15,7 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
-
 app.use(
   cors({
     origin: "*",
@@ -23,17 +22,13 @@ app.use(
   })
 );
 
-
 app.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
 
 app.use('/api/documents', express.static(path.join(__dirname, '/documents')));
 app.use("/api", userRoutes);
-// app.use('/api', require('./routes/api.route'));
-// app.post('/api/clients/addLogo', upload, (req, res, next) => {
-//   console.log(file)
-// });
+
 
 app.use((req, res, next) => {
   createError.NotFound()
@@ -41,11 +36,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({error: err.message || 'server error' })
-  // res.status(err.status || 500);
-  // res.send({
-  //   status: err.status || 500,
-  //   message: err.message,
-  // });
+
 });
 
 

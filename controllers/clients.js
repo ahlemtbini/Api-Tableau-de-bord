@@ -47,14 +47,30 @@ exports.getUserClient = async (req, res, next) => {
             include:{
                 admin_client: {
                     include: {
-                        client: true
+                        client: {
+                            include: {
+                                contrats: true,
+                                countrys: {
+                                    include: {
+                                        regions: true
+                                    }
+                                },
+                                societes: {
+                                    include: {
+                                        sites: true
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 },
                 manager: {
                     include: {
                         client: true
                     }
-                }
+                },
+                
             }
         })
         let client = {}
@@ -64,7 +80,6 @@ exports.getUserClient = async (req, res, next) => {
         if(user.role === "manager"){
             client= user.manager.client
         }
-        console.log(client)
         res.status(200).json(client)
     } catch (error) {
         next(error)
@@ -144,15 +159,9 @@ exports.deleteClient = async (req, res, next) => {
     }
 }
 exports.importAllClients = async (req, res, next) => {
-    if (req.files[0]) {
 
-        console.log(req.files)
-        console.log(req.file)
-        console.log(req.files[0].filename)
-    }
     try {
         const data = XLSX.utils.sheet_to_json(req.files[0])
-        console.log(data)
         // const clients = await prisma.client.createMany({
         //     data: data,
         //     skipDuplicates: true
@@ -272,7 +281,6 @@ exports.deleteRegion = async (req, res, next) => {
 
 exports.initRegions = async (req, res, next) => {
     try {
-        console.dir("init",req.params.id)
         const cid = Number(req.params.id)
         const regData =[
             {name:"SUD-OUEST",countryID: cid},

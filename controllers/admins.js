@@ -27,7 +27,6 @@ exports.getAdmins = async (req, res, next) => {
 exports.getAdminClients = async (req, res, next) => {
     try {
       const { id } = req.params
-      console.dir(id)
         const admin = await prisma.adminClient.findUnique({
           where:{
             userId: parseInt(id)
@@ -49,16 +48,11 @@ exports.getAdminSinistres = async (req, res, next) => {
       const admin = await prisma.adminClient.findUnique({
         where: {userId: Number(id)}
       })
-      console.log(admin)
       const sinis = await prisma.declarationSinistre.findMany({
         where:{
           NUMERO_CLIENT : admin.clientID.toString()
-          },
-          // include : {
-          //   sinistre: true
-          // }
+          }
         })
-      console.log(sinis)
 
       // const sinis = await prisma.sinistre.findMany({
       //   where:{
@@ -72,7 +66,6 @@ exports.getAdminSinistres = async (req, res, next) => {
       //   sinis.map(el=>{
       //     arr.push(el.declarationSinistre)
       //   })
-      // console.dir(arr)
         res.status(200).json(sinis)
     } catch (error) {
         // res.status(404).json({ error: error })
@@ -121,7 +114,6 @@ exports.createAdmin = (req, res, next) => {
   }
 
   exports.editAdmin = async (req, res, next) => {
-    // console.dir(req.body)
     try {
         const { id } = req.params
         const admin = await prisma.adminClient.update({
@@ -177,19 +169,4 @@ exports.addClient = async (req, res, next) => {
         // next(error)
     }
 }
-
-// const updateUser = async(id,token)=>{
-//   try {
-//     const user = await prisma.user.update({
-//       where: { id: id },
-//       data:{
-//         resetLink: token,
-//       }
-//     })
-//     console.log(user.resetLink)
-//     return true
-//   } catch (error) {
-//     console.log(error)
-//   }
-//  }
 

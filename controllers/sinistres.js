@@ -184,7 +184,6 @@ exports.deleteAll = async (req, res, next) => {
 //     let arr =date.split(' ')
 //     let arr2 =date.split('-')
 //     if(newDate == "Invalid Date" ){
-//         console.log('invalid')
 //         let arr2=date.toString()
 //         arr2=arr2.split('-')
 //         d=arr2[0] + "-" + arr2[1]?.slice(1)+ "-" + arr2[2]  
@@ -198,13 +197,11 @@ exports.deleteAll = async (req, res, next) => {
 //             d=day + "-" + String(month1+1)  + "-" + year
 //         }
 //     }
-//     console.log(newDate,'arr1',arr,'arr2',arr2,'res',d)
 //     return d
 // }
 const getDate=(date)=>{
     let arr =[]
     arr =date.split(' ')
-    console.log(date)
     const month= new Date(arr).getMonth()
     const month1= new Date(date).getMonth()
     let d=""
@@ -213,7 +210,6 @@ const getDate=(date)=>{
     }else{
         d=arr[2] + "-" + String(month1+1)  + "-" + arr[3]
     }
-    // console.log('arr',month,'date',month1)
     return d
 }
 const datesArr= ["DATE_RECEPTION","DATE_SURVENANCE","PREMIERE_MEC","DATE_MISSIONNEMENT",
@@ -226,7 +222,6 @@ exports.reparerDateFormat = async (req, res, next) => {
             for(let key in el){
                 if( datesArr.includes(key)){
                     if(el[key] && el[key]?.split('-')[0].length== 4 ){
-                        console.log(el[key])
                         el[key]= el[key]?.split('-')[2]+'-'+el[key]?.split('-')[1]+'-'+ el[key].split('-')[0]
                         try {
                             const sinis = await prisma.declarationSinistre.update({
@@ -235,7 +230,6 @@ exports.reparerDateFormat = async (req, res, next) => {
                             })
                             
                         } catch (error) {
-                            console.log(error)
                             next(error)
                         }
                     }
@@ -245,7 +239,6 @@ exports.reparerDateFormat = async (req, res, next) => {
         res.json('format date modifié')
     } catch (error) {
         // res.status(404).json({ error: error })
-        console.log(error)
         next(error)
     }
 }
@@ -255,7 +248,6 @@ exports.importExcel = async (req, res, next) => {
         const fName = req.files[0].filename;
         excel = (`${req.protocol}://${req.get('host')}/api/documents/${fName}`)
           var filePath = './documents/' + fName
-            console.log(filePath)
           const excelData = excelToJson({
             sourceFile: filePath,
             header: {rows:1,},
@@ -291,7 +283,6 @@ exports.importExcel = async (req, res, next) => {
                 })
       
             })
-            // console.log("arr",arr.length)
             // res.status(200).json({arr})
             const sinistre = await prisma.sinistre.deleteMany({})
 
@@ -365,7 +356,6 @@ exports.importExcel = async (req, res, next) => {
     }
 exports.saveDocuments =  async (req, res, next) => {
     try {
-        console.log('docs',req.body)
         const { id } = req.params
         const sinis = await prisma.sinistre.update({
             where: { id: parseInt(id) },
@@ -385,20 +375,17 @@ exports.saveDocuments =  async (req, res, next) => {
 }
 exports.saveDocs =  async (req, res, next) => {
     try {
-        console.log(req.files,'files')
         let arr = []
         if (req.files) {
             for (let i = 0; i < req.files.length; i++) {
                 const fName = req.files[i].filename;
                 const fileKey = req.files[i].originalname
-                console.log(fName,fileKey)
                 if(fName){
                     arr = [...arr,{[fileKey]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`}]
                     // array.push({ [i]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`})
                 }
             }
         }
-        console.log(arr, 'arr')
         return res.status(201).json(arr)
     } catch (error) {
         next(error)
