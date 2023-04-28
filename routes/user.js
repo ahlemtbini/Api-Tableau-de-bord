@@ -20,6 +20,7 @@ const managersCtrl = require("../controllers/managers");
 
 //documents
 router.post('/documents/save', upload, sinistresCtrl.saveDocs)
+router.put('/documents/update', upload, sinistresCtrl.upDocs)
 
 
 // user controller

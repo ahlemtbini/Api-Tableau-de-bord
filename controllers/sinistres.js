@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 const excelToJson = require('convert-excel-to-json');
 var XLSX = require("xlsx");
 const fse =require("fs-extra")
-
+const fs = require('fs')
 exports.getSinistres = async (req, res, next) => {
     try {
         // const sinistres = await prisma.$queryRaw`
@@ -385,6 +385,48 @@ exports.saveDocs =  async (req, res, next) => {
                     // array.push({ [i]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`})
                 }
             }
+        }
+        return res.status(201).json(arr)
+    } catch (error) {
+        next(error)
+        // return res.status(404).json({error})
+    }
+}
+exports.upDocs =  async (req, res, next) => {
+    console.log('links',typeof req.body,req.body)
+    const links = Object.values(req.body)
+    const paths = []
+    links.map((doc,id)=>{
+        const path= doc
+        console.log('doc',doc)
+        paths.push('./documents/'+path.split('/')[5])
+    })
+ 
+    console.log(paths)
+
+    try {
+        let arr = []
+        if (req.files) {
+            for (let i = 0; i < req.files.length; i++) {
+                const fName = req.files[i].filename;
+                const fileKey = req.files[i].originalname
+                if(fName){
+                    arr = [...arr,{[fileKey]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`}]
+                    // array.push({ [i]:`${req.protocol}://${req.get('host')}/api/documents/${fName}`})
+                }
+            }
+        }
+        if(arr.length > 0){
+            try {
+                paths.map(async(path)=>{
+                    fse.remove(path)
+                    .then(()=>console.log('deleted'))
+                    .catch((err)=>console.log(err))
+                })
+                //file removed
+              } catch(err) {
+                console.error(err)
+              }
         }
         return res.status(201).json(arr)
     } catch (error) {
