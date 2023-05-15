@@ -104,6 +104,7 @@ router.get('/regions', societesCtrl.getRegions)
 
 // managers
 router.get('/managers', managersCtrl.getManagers)
+router.get('/managers/userManagers/:id', managersCtrl.getUserManagers)
 router.post('/managers/add', managersCtrl.createManager)
 router.post('/managers/connetSocietes', managersCtrl.connectSocietes)
 router.put('/managers/edit/:id', managersCtrl.editManager);

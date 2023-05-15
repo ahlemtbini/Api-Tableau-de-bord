@@ -31,9 +31,12 @@ exports.getAdminClients = async (req, res, next) => {
           where:{
             userId: parseInt(id)
           },include: {
-            user:true
-          }, include:{
-            client:true
+            user:true,
+            client:{
+              include: {
+                societes: true
+              }
+            }
           }
         })
         res.status(200).json(admin)

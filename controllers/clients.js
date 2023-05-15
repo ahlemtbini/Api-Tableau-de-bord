@@ -29,7 +29,8 @@ exports.getClient = async (req, res, next) => {
         const client = await prisma.client.findUnique({
             where: { id: Number(req.params.id) },
             include: {
-                contrats: true
+                contrats: true,
+                societes: true
             }
         })
         res.status(200).json(client)

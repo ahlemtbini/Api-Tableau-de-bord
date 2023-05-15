@@ -22,6 +22,58 @@ exports.getManagers = async (req, res, next) => {
         next(error)
     }
 }
+exports.getUserManagers = async (req, res, next) => {
+    try {
+        const user= await prisma.user.findUnique({
+            where: {id: Number(req.params.id)},
+            include: {
+                manager: true,
+                admin_client: true
+            }
+        })
+        let idClient = null
+        if(user.admin_client){
+            idClient= user.admin_client.clientID
+        } else if(user.manager){
+            idClient= user.manager.clientId
+        }
+        // console.log('user',user)
+        let managers = []
+        if(idClient !== null){
+            managers = await prisma.manager.findMany({
+                where: {
+                    clientId: idClient
+                },
+                include: {
+                    user: true,
+                    societes: {
+                      select: {
+                          societe:true,
+                      }
+                    }
+                }
+              }) 
+        } else {
+            managers = await prisma.manager.findMany({
+                include: {
+                    user: true,
+                    societes: {
+                      select: {
+                          societe:true,
+                      }
+                    }
+                }
+             })
+        }
+        console.log('mang',managers)
+
+        res.status(200).json(managers)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+
 exports.connectSocietes = async (req, res, next) => {
     console.dir(req.body,'req')
     try {

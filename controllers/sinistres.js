@@ -6,36 +6,35 @@ const fse =require("fs-extra")
 const fs = require('fs')
 exports.getSinistres = async (req, res, next) => {
     try {
-        // const sinistres = await prisma.$queryRaw`
-        // select sins.*
-        // from "Sinistre" sins
-        // join "DeclarationSinistre" dec on dec.DOSSIER = sinis."id"
-        // order by dec.DATE_SURVENANCE desc
-        // `
-        const sinistres = await prisma.sinistre.findMany({
-            orderBy: 
-                {
-                    DeclarationSinistre: 'asc',
-                },
-            include: {
-                declarationSinistre: true
-            }
+    
+        const sinistres = await prisma.declarationSinistre.findMany({
+            // orderBy: 
+            //     {
+            //         DeclarationSinistre: {
+            //             DATE_RECEPTION : 'desc'
+            //         },
+            //     },
+         
+                    orderBy:{
+                        DATE_RECEPTION : 'asc'
+                    }
         })
         res.json(sinistres)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 exports.getSinistre = async (req, res, next) => {
+    console.log( Number(req.params.id) )
     try {
         const dec = await prisma.declarationSinistre.findUnique({
-            where: { id: req.params.id },
+            where: { DOSSIER: Number(req.params.id) },
         })
         res.json(dec)
     } catch (error) {
-        res.status(404).json({ error: error })
-        // next(error)
+        // res.status(404).json({ error: error })
+        next(error)
     }
 }
 exports.getSinis = async (req, res, next) => {
