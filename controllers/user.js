@@ -109,13 +109,24 @@ exports.getUser = async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: { id: Number(req.params.id) },
       include: {
-        profile: true
+        profile: true,
+        manager: {
+          include: {
+            societes: {
+              include: {
+                societe:true
+              }
+            }
+          }
+        },
+        admin_client: true,
+        super_admin: true
       }
     })
     res.json(user)
   } catch (error) {
-    return res.status(400).json({error})
-    // next(error)
+    // return res.status(400).json({error})
+    next(error)
   }
 }
 exports.editUser = async (req, res, next) => {

@@ -63,6 +63,7 @@ router.get('/clients/countries/:id', clientsCtrl.getCountries)
 router.post('/clients/region', clientsCtrl.addRegion)
 router.delete('/clients/regions/:id', clientsCtrl.deleteRegion)
 router.get('/initRegions/:id', clientsCtrl.initRegions)
+router.get('/getClientByName/:name', clientsCtrl.getClientByName)
 
 // sinistres
 router.get('/sinistres', sinistresCtrl.getSinistres)

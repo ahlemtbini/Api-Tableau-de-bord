@@ -39,6 +39,24 @@ exports.getClient = async (req, res, next) => {
         // next(error)
     }
 }
+exports.getClientByName = async (req, res, next) => {
+    try {
+        const client = await prisma.client.findFirst({
+            where: { nomClient: (req.params.name) }
+            // include: {
+            //     contrats: true,
+            //     societes: true
+            // }
+        })
+        if (client == null){
+            return  res.status(404).json({ error: error })
+        }
+        return res.status(200).json(client)
+    } catch (error) {
+        res.status(404).json({ error: error })
+        // next(error)
+    }
+}
 exports.getUserClient = async (req, res, next) => {
     try {
         const user= await prisma.user.findUnique({
