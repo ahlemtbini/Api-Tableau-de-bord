@@ -116,10 +116,19 @@ exports.getUser = async (req, res, next) => {
               include: {
                 societe:true
               }
-            }
+            },
+            client: true
           }
         },
-        admin_client: true,
+        admin_client: {
+          include: {
+            client: {
+              include: {
+                societes:true
+              }
+            },
+          }
+        },
         super_admin: true
       }
     })
