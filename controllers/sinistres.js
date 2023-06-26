@@ -6,15 +6,7 @@ const fse =require("fs-extra")
 const fs = require('fs')
 exports.getSinistres = async (req, res, next) => {
     try {
-    
         const sinistres = await prisma.declarationSinistre.findMany({
-            // orderBy: 
-            //     {
-            //         DeclarationSinistre: {
-            //             DATE_RECEPTION : 'desc'
-            //         },
-            //     },
-         
                     orderBy:{
                         DATE_RECEPTION : 'asc'
                     }
@@ -138,6 +130,30 @@ exports.getDecSinistres = async (req, res, next) => {
                 }
             }
         res.json(sinistres)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.getSinisAdminManger = async (req, res, next) => {
+    try {
+        const sin = await prisma.sinistre.findMany({
+            where: {
+                NOT:{
+                    creatorRole: "super_admin"
+                }
+            },
+            include:{
+                declarationSinistre: true
+            },
+            orderBy: {
+                declarationSinistre: {
+                    DATE_SURVENANCE: 'asc' // 'asc' for ascending order or 'desc' for descending order
+                }
+              },
+        })
+     
+        res.json(sin)
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
@@ -318,6 +334,7 @@ exports.importExcel = async (req, res, next) => {
     
     exports.getFiltredData =  async(req, res, next) => {
         let obj={}
+        console.log('obj',req.body[0])
         req.body.map((el,id)=>{
             if(el.value.length > 0){
                 if(el.name=== "DATE_SURVENANCE"){
@@ -331,7 +348,6 @@ exports.importExcel = async (req, res, next) => {
                 }
             }
         })
-        
         try {
             const sin = await prisma.declarationSinistre.findMany({
                 where: obj

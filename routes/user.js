@@ -66,6 +66,7 @@ router.get('/initRegions/:id', clientsCtrl.initRegions)
 router.get('/getClientByName/:name', clientsCtrl.getClientByName)
 
 // sinistres
+router.get('/sinistresAdminManager', sinistresCtrl.getSinisAdminManger)
 router.get('/sinistres', sinistresCtrl.getSinistres)
 router.get('/sinis/:id', sinistresCtrl.getSinis)
 router.get('/sinistres/:id', sinistresCtrl.getSinistre)
@@ -102,6 +103,7 @@ router.delete('/societes/:id', societesCtrl.deleteSociete);
 // router.get('/societes/contrats/:id', societesCtrl.getContrats)
 router.get('/countries', societesCtrl.getCountries)
 router.get('/regions', societesCtrl.getRegions)
+router.post('/societes/filtre', societesCtrl.getFiltredData)
 
 // managers
 router.get('/managers', managersCtrl.getManagers)

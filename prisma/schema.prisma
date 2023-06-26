@@ -82,7 +82,7 @@ model User {
   role          Role
   numTel        String?
   resetLink     String?       @db.Text
-  aciveInactive Boolean      @default(true)
+  aciveInactive Boolean      @default(false)
   profile       Profile?
   super_admin   SuperAdmin?
   admin_client  AdminClient?

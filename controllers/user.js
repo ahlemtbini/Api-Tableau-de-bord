@@ -224,7 +224,6 @@ exports.login = async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: { email: req.body.email },
     })
-    console.dir(req.body)
     if (!user) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
     }
@@ -287,7 +286,6 @@ exports.login = async (req, res, next) => {
         resetLink: token,
       }
     })
-    console.log(user)
     // return true
   } catch (error) {
     console.log(error)
@@ -296,7 +294,6 @@ exports.login = async (req, res, next) => {
 
 exports.forgotPassword = async(req, res, next) => {
   const  email= req.body.email;
-  console.log('test mail',email)
   try {
       const user = await prisma.user.findUnique({
         where:{
@@ -312,8 +309,8 @@ exports.forgotPassword = async(req, res, next) => {
         process.env.ENCRYPT_KEY,
         { algorithm: "HS256" }
         )
-        console.log('test t',token)
-      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+        const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+        console.log('test t',link)
   
       updateUser(user.id,token)
 
@@ -323,7 +320,7 @@ exports.forgotPassword = async(req, res, next) => {
         subject: "Réinitialisation de mot de passe",
         html: `<div>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
-            <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" max-width="200px" />
+            <img src="http://fleetrisk.fr/api/documents/logo_white.png.1687695777661.png" width="200px" max-width="200px" />
         </b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
@@ -347,9 +344,9 @@ exports.forgotPassword = async(req, res, next) => {
       };
 
 
-      console.log(options)
+      // console.log(options)
       const resEmail = await send_mail(options, email)
-      console.log(resEmail)
+      console.log('res',resEmail)
       if(resEmail.rejected.length > 0){
         return res.error("mail de restauration n'a pas pu être envoyé" )
       }
@@ -379,6 +376,7 @@ exports.resetPassword = (req, res, next) => {
             where: { id: decoded.id },
             data:{
               mdp: hash,
+              activeInactive: true
             }
           })
           console.log(true)
@@ -413,26 +411,19 @@ exports.confirmationMail = async(req, res, next) => {
         process.env.ENCRYPT_KEY,
         { algorithm: "HS256" }
         )
-        console.log('test t',token)
-      const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
+        const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
   
+        console.log('test t',user,link)
       updateUser(user.id,token)
 
       const options = {
         to: email,
         from: '<contact@fleetrisk.fr>',
         subject: "Votre compte FLEETRISK est actif !",
-        html: `<!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="utf-8" />
-                <title>Titre</title>
-            </head>
-        
-            <body>
+        html: `<body>
                 <div>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
-                        <img src="https://fleetrisk.fr/_next/image?url=%2Flogo_white.png&w=1920&q=75" width="200px" max-width="200px"/>
+                        <img src="http://fleetrisk.fr/api/documents/logo_white.png.1687695777661.png" width="200px" max-width="200px"/>
                     </b></p>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
@@ -448,7 +439,7 @@ exports.confirmationMail = async(req, res, next) => {
                     <div align="center">
                         
                         <button style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;color:white;background:#0b1e3e;padding:12px">
-                            <a href="${link}"><span style="color:white">Je me connecte</span></a>
+                            <a href="#"><span style="color:white">Je me connecte</span></a>
                         </button>
                     </div>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
@@ -456,12 +447,9 @@ exports.confirmationMail = async(req, res, next) => {
                         <a href="https://fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://fleetrisk.fr&amp;source=gmail&amp;ust=1680863108559000&amp;usg=AOvVaw0ZYineXysI0H-2PyZQjk4X">https://fleetrisk.fr</a> . Politique de
                     confidentialité</b></p>
                 </div>  
-            </body>
-        </html>`,
+            </body>`,
       };
 
-
-      console.log(options)
       const resEmail = await send_mail(options, email)
       console.log(resEmail)
       if(resEmail.rejected.length > 0){
@@ -472,3 +460,4 @@ exports.confirmationMail = async(req, res, next) => {
       res.status(404).json({ error: "adresse mail n'est pas trouvé" })
   }
 };
+        
