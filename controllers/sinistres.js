@@ -336,7 +336,7 @@ exports.importExcel = async (req, res, next) => {
         let obj={}
         console.log('obj',req.body[0])
         req.body.map((el,id)=>{
-            if(el.value.length > 0){
+            if(el.value?.length > 0){
                 if(el.name=== "DATE_SURVENANCE"){
                     const arr = []
                     el.value.map((val)=>{

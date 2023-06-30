@@ -113,7 +113,8 @@ exports.getAdminClient = async (req, res, next) => {
                 client : {
                     include: {
                         contrats:true,
-                        countrys: true
+                        countrys: true,
+                        societes: true
                     }
                 },
             },

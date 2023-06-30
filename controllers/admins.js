@@ -30,7 +30,8 @@ exports.getAdminClients = async (req, res, next) => {
         const admin = await prisma.adminClient.findUnique({
           where:{
             userId: parseInt(id)
-          },include: {
+          },
+          include: {
             user:true,
             client:{
               include: {

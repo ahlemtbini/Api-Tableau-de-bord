@@ -376,7 +376,7 @@ exports.resetPassword = (req, res, next) => {
             where: { id: decoded.id },
             data:{
               mdp: hash,
-              activeInactive: true
+              aciveInactive: true
             }
           })
           console.log(true)
@@ -439,7 +439,7 @@ exports.confirmationMail = async(req, res, next) => {
                     <div align="center">
                         
                         <button style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;color:white;background:#0b1e3e;padding:12px">
-                            <a href="#"><span style="color:white">Je me connecte</span></a>
+                            <a href="${link}"><span style="color:white">Je me connecte</span></a>
                         </button>
                     </div>
                     <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
