@@ -151,15 +151,14 @@ exports.editUser = async (req, res, next) => {
     next(error)
   }
 }
-exports.deleteAll = async (req, res, next) => {
-  try {
-      const users = await prisma.user.deleteMany()
-      return res.status(200).json({ users })
-  } catch (error) {
-      res.status(404).json({ error: error })
-      next(error)
-  }
-}
+// exports.deleteAll = async (req, res, next) => {
+//   try {
+//       const users = await prisma.user.deleteMany({})
+//       return res.status(200).json({ message: "tous les users ont été supprimés" })
+//   } catch (error) {
+//       next(error)
+//   }
+// }
 
 exports.deleteUser = async (req, res, next) => {
   // console.log(req.params)

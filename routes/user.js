@@ -17,6 +17,7 @@ const adminsCtrl = require("../controllers/admins");
 const societesCtrl = require("../controllers/societes");
 const sitesCtrl = require("../controllers/sites");
 const managersCtrl = require("../controllers/managers");
+const migrateCtrl = require("../controllers/migrateDB");
 
 //documents
 router.post('/documents/save', upload, sinistresCtrl.saveDocs)
@@ -122,6 +123,16 @@ router.post('/sites/coonetSocietes', sitesCtrl.connectSites)
 router.put('/sites/edit/:id', sitesCtrl.editSite);
 router.delete('/sites/:id', sitesCtrl.deleteSite);
 //regions
+
+
+
+// migrate
+
+router.get('/sinis', migrateCtrl.getSinistres)
+router.get('/migrateSinis', migrateCtrl.addSinistres)
+router.get('/migrateUsers', migrateCtrl.createUsers)
+router.get('/admins', migrateCtrl.getAdmins)
+router.get('/migrateAdmins', migrateCtrl.createAdmins)
 
 /*
 async function main() {

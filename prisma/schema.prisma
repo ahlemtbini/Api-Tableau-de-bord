@@ -97,7 +97,7 @@ model Profile {
   creerPar          Role          @default(manager)
   permisConduire    Bytes?
   photo           String?
-  user              User          @relation(fields: [userId], references: [id])
+  user              User          @relation(fields: [userId], references: [id],onDelete: Cascade)
   userId            Int           @unique
 }
 model SuperAdmin {
@@ -127,7 +127,7 @@ model Chauffeur {
   email                  String                  @unique
   siteName               String
   region                 String
-  user                   User                    @relation(fields: [userId], references: [id])
+  user                   User                    @relation(fields: [userId], references: [id],onDelete: Cascade)
   userId                 Int                     @unique
   site                   Site                    @relation(fields: [siteId], references: [id])
   siteId                 Int                    
