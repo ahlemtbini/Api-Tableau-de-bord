@@ -84,10 +84,18 @@ model User {
   resetLink     String?       @db.Text
   aciveInactive Boolean      @default(false)
   profile       Profile?
+  dashbordPrefrences DashbordPrefrences?
   super_admin   SuperAdmin?
   admin_client  AdminClient?
   manager       Manager?
   chauffeur     Chauffeur?
+}
+model DashbordPrefrences{
+  id            Int          @id @default(autoincrement())
+  page1         Json?
+  page2         Json?
+  user              User          @relation(fields: [userId], references: [id],onDelete: Cascade)
+  userId            Int           @unique
 }
 model Profile {
   numTel            String?
@@ -135,6 +143,19 @@ model Chauffeur {
   entretienPostAciidents EntretienPostAccident[]
   entretienVehicules     EntretienVehicule[]
 }
+model Objectif {
+  id                   Int           @id @default(autoincrement())
+  value                String
+  year                 String
+  current              Boolean     @default(false)
+  contratId            Int?
+  Client               Client?       @relation(fields: [ClientID], references: [id],onDelete: Cascade)
+  ClientID             Int?
+  Societe              Societe?      @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  SocieteID            Int?
+  region               Region?       @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId             Int?
+}
 model Client {
   id                   Int           @id @default(autoincrement())
   nomClient            String
@@ -164,6 +185,7 @@ model Client {
   contrats Contrat[]
   societes  Societe[]
   managers Manager[]
+  objectifs Objectif[]
 }
 model Contrat {
   id                   Int                   @id @default(autoincrement())
@@ -193,6 +215,7 @@ model Region {
   country   Country   @relation(fields: [countryID], references: [id], onDelete: Cascade)
   countryID Int
   societes  Societe[]
+  objectifs Objectif[]
 }
 model Societe {
   id         Int       @id @default(autoincrement())
@@ -213,6 +236,7 @@ model Societe {
   sites      Site[]
   contrat   Contrat?   @relation(fields: [contratId], references: [id], onDelete: Cascade)
   contratId Int?   
+  objectifs Objectif[]
   // contrats Contrat[]
 }
 model SocieteManager {

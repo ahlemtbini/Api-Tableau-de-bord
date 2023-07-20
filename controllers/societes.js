@@ -10,6 +10,7 @@ exports.getSocietes = async (req, res, next) => {
                 country: true,
                 region:true,
                 client: true,
+                objectifs: true,
                 managers: {
                     select:{
                         manager:true
@@ -152,12 +153,10 @@ exports.getFiltredData =  async(req, res, next) => {
             obj ={...obj, [el.name]: parseInt(el.value)}
         }
     })
-    console.log('obj',obj)
     try {
         const socs = await prisma.societe.findMany({
             where: obj
         })            
-     console.log('socs',socs)
         res.json(socs)
     } catch (error) {
         res.status(404).json({ error: "requete non valide" })

@@ -92,8 +92,6 @@ exports.getUsers = async (req, res, next) => {
     const users = await prisma.user.findMany({
       include: {
         super_admin: true,
-      },
-      include: {
         profile: true,
       }
     })
@@ -110,6 +108,7 @@ exports.getUser = async (req, res, next) => {
       where: { id: Number(req.params.id) },
       include: {
         profile: true,
+        dashbordPrefrences: true,
         manager: {
           include: {
             societes: {
@@ -117,7 +116,7 @@ exports.getUser = async (req, res, next) => {
                 societe:true
               }
             },
-            client: true
+            client: true,
           }
         },
         admin_client: {
@@ -161,7 +160,7 @@ exports.editUser = async (req, res, next) => {
 // }
 
 exports.deleteUser = async (req, res, next) => {
-  // console.log(req.params)
+  console.log(req.params)
   try {
     const { id } = req.params
     const user = await prisma.user.delete({
@@ -357,8 +356,6 @@ exports.forgotPassword = async(req, res, next) => {
   }
 };
 
-
-
 exports.resetPassword = (req, res, next) => {
   console.log(req.body)
   const { resetLink, newPass } = req.body;
@@ -459,4 +456,41 @@ exports.confirmationMail = async(req, res, next) => {
       res.status(404).json({ error: "adresse mail n'est pas trouvé" })
   }
 };
-        
+
+exports.getDashbordPrefrences = async(req, res, next) => {
+  try {
+    const {id} = req.params
+      const dashbord = await prisma.dashbordPrefrences.findOne({
+          where:{userId:Number(id)}
+      })
+      return res.status(200).json(dashbord)
+  } catch (error) {
+    next(error)
+  }
+}
+exports.saveDashbordPrefrences = async(req, res, next) => {
+  try {
+      const dashbord = await prisma.dashbordPrefrences.create({
+          data: {...req.body}
+      })
+      return res.status(200).json(dashbord)
+  } catch (error) {
+    next(error)
+  }
+}
+exports.upDashbordPrefrences = async(req, res, next) => {
+  try {
+    console.log(req.body)
+      const dashbord = await prisma.dashbordPrefrences.update({
+        where:{id: req.body.id},
+        data: {
+          page1:{...req.body.page1},
+          page2:{...req.body.page2},
+        }
+      })
+      return res.status(200).json(dashbord)
+  } catch (error) {
+    next(error)
+    // res.status(404).json({error})
+  }
+}

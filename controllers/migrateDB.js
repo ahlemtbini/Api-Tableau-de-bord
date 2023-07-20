@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const {sinistresData,usersData,adminsData} = require('../backup')
+const {sinistresData,usersData,adminsData,managersData} = require('../backup')
 
 // sinistres
   exports.getSinistres = async (req, res, next) => {
@@ -54,6 +54,7 @@ exports.createUsers = async (req, res, next) => {
     try {
         usersData.map(async(el)=>{
           const userData=removeNullValues(el)
+          delete userData.id
           const user = await prisma.user.create({
               data: {
                 ...userData,
@@ -83,29 +84,42 @@ exports.createAdmins = async (req, res, next) => {
             const data={id:el.id, userId:el.userId,clientID:el.clientID}
             formattedAdmins.push(data)
         })
-        console.log(formattedAdmins)
-        // formattedAdmins.map(async(adminData)=>{
-        //     const admin =await prisma.adminClient.create({
-        //       data: {
-        //         // id: adminData.id,
-        //         user: {
-        //             connect:{
-        //                 id: adminData.userId
-        //             }
-        //         },
-        //         adminClient: {
-        //             connect:{
-        //                 id: adminData.clientID
-        //             }
-        //         }
-        //       }
-        //     })
-        // })
+        // console.log(formattedAdmins)
+        formattedAdmins.map(async(adminData)=>{
+            const admin =await prisma.adminClient.create({
+              data: {
+                // id: adminData.id,
+                user: {
+                    connect:{
+                        id: adminData.userId
+                    }
+                },
+                client: {
+                    connect:{
+                        id: adminData.clientID
+                    }
+                }
+              }
+            })
+        })
+        return res.status(200).json("admins added")
     } catch (error) {
       return res.status(400).json("ce email existe déja!")
       // next(error)
     }
   }
+
+  //MAnagers
+  exports.getManagers = async (req, res, next) => {
+    try {
+        const managers = await prisma.manager.findMany({
+        })
+        res.status(200).json(managers)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
 exports.createMannagers = async (req, res, next) => {
     try {
         const manager = await prisma.manager.create({
@@ -126,4 +140,4 @@ exports.createMannagers = async (req, res, next) => {
     } catch (error) {
       next(error)
     }
-  }
+}

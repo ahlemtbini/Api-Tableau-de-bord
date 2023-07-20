@@ -256,7 +256,11 @@ exports.getCountries = async (req, res, next) => {
         const countries = await prisma.country.findMany({
             where: { clientId: Number(req.params.id) },
             include: {
-                regions: true
+                regions: {
+                    include: {
+                        objectifs: true
+                    }
+                }
             }
         })
         res.status(200).json(countries)

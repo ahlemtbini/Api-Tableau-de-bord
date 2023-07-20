@@ -9,7 +9,6 @@ const { findSync } = require("@prisma/client/runtime");
 const multer = require("multer")
 const upload = require("../middlewares/multer-config")
 
-
 const userCtrl = require("../controllers/user");
 const clientsCtrl = require("../controllers/clients");
 const sinistresCtrl = require("../controllers/sinistres");
@@ -18,11 +17,16 @@ const societesCtrl = require("../controllers/societes");
 const sitesCtrl = require("../controllers/sites");
 const managersCtrl = require("../controllers/managers");
 const migrateCtrl = require("../controllers/migrateDB");
+const objectiveCtrl = require("../controllers/objectives");
+
+//Dashbord
+router.get(`/dashbord/userPrefrnces/:id`, userCtrl.getDashbordPrefrences)
+router.post('/dashbord/addUserPrefrnces', userCtrl.saveDashbordPrefrences)
+router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
 
 //documents
 router.post('/documents/save', upload, sinistresCtrl.saveDocs)
 router.put('/documents/update', upload, sinistresCtrl.upDocs)
-
 
 // user controller
 router.get('/profile', userCtrl.getProfile);
@@ -124,15 +128,20 @@ router.put('/sites/edit/:id', sitesCtrl.editSite);
 router.delete('/sites/:id', sitesCtrl.deleteSite);
 //regions
 
-
+// Objectives
+router.post('/objectifs/getAll', objectiveCtrl.getAll)
+router.post('/objectifs/getByName', objectiveCtrl.getByName)
+router.post('/objectifs/add', objectiveCtrl.addObjective)
+// router.put('/objectives/up', objectiveCtrl.upObjective);
+// router.delete('/objectives/:id', sitesCtrl.deleteSite);
 
 // migrate
-
 router.get('/sinis', migrateCtrl.getSinistres)
 router.get('/migrateSinis', migrateCtrl.addSinistres)
 router.get('/migrateUsers', migrateCtrl.createUsers)
 router.get('/admins', migrateCtrl.getAdmins)
 router.get('/migrateAdmins', migrateCtrl.createAdmins)
+router.get('/manags', migrateCtrl.getManagers)
 
 /*
 async function main() {
