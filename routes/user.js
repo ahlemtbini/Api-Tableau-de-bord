@@ -132,6 +132,7 @@ router.delete('/sites/:id', sitesCtrl.deleteSite);
 router.post('/objectifs/getAll', objectiveCtrl.getAll)
 router.post('/objectifs/getByName', objectiveCtrl.getByName)
 router.post('/objectifs/add', objectiveCtrl.addObjective)
+router.delete('/objectifs/:id', objectiveCtrl.deleteObjective)
 // router.put('/objectives/up', objectiveCtrl.upObjective);
 // router.delete('/objectives/:id', sitesCtrl.deleteSite);
 

@@ -94,7 +94,7 @@ model DashbordPrefrences{
   id            Int          @id @default(autoincrement())
   page1         Json?
   page2         Json?
-  user              User          @relation(fields: [userId], references: [id],onDelete: Cascade)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            Int           @unique
 }
 model Profile {
@@ -146,7 +146,7 @@ model Chauffeur {
 model Objectif {
   id                   Int           @id @default(autoincrement())
   value                String
-  year                 String
+  year                 String      
   current              Boolean     @default(false)
   contratId            Int?
   Client               Client?       @relation(fields: [ClientID], references: [id],onDelete: Cascade)
@@ -155,6 +155,8 @@ model Objectif {
   SocieteID            Int?
   region               Region?       @relation(fields: [regionId], references: [id], onDelete: Cascade)
   regionId             Int?
+  Site                 Site?      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  siteId               Int?
 }
 model Client {
   id                   Int           @id @default(autoincrement())
@@ -260,6 +262,8 @@ model Site {
   Societe      Societe?    @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
   SocieteID    Int?
   chuaffeurs   Chauffeur[]
+  objectifs Objectif[]
+
 }
 
 enum VehiculeTypeEnum {

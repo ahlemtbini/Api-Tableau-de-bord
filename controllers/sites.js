@@ -7,7 +7,8 @@ exports.getSites = async(req, res, next) => {
             include: {
                 Societe: {
                     include: {
-                        client:true
+                        client:true,
+                        objectifs:true
                     }
                 },
             }
@@ -50,7 +51,7 @@ exports.getUserSites = async(req, res, next) => {
                                 societe:{
                                     select: {
                                         sites: {
-                                            include: {Societe:true}
+                                            include: {Societe:true,objectifs:true}
                                         }
                                     }
                                 }
@@ -65,7 +66,7 @@ exports.getUserSites = async(req, res, next) => {
                                 societes: {
                                     select: {
                                         sites: {
-                                            include: {Societe:true}
+                                            include: {Societe:true,objectifs:true}
                                         }
                                     }
                                 }

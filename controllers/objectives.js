@@ -2,10 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 
-const getCurrentYear = ()=>{
-    const currentDate = new Date();
-   return currentDate.getFullYear();
-  }
+
 const getClientId = async (name)=>{
     try {
         const client = await prisma.client.findFirst({
@@ -49,10 +46,13 @@ exports.getByName = async (req, res, next) => {
             obj= { SocieteID: id}
         } 
         else if(req.body.type == 'région'){
-            console.log(id,req.body.type )
             obj= { regionId: id }
         } 
-        console.log(obj,req.body.type)
+        else if(req.body.type == 'site'){
+            // console.log(id,req.body.type )
+            obj= { siteId: id }
+        } 
+        // console.log(obj,req.body.type)
         const objectifs = await prisma.objectif.findMany({
             where: obj
         })
@@ -78,6 +78,9 @@ exports.getAll = async (req, res, next) => {
         else if(req.body.type == 'region'){
             obj= {...obj, regionId: Number(req.body.id) }
         } 
+        else if(req.body.type == 'site'){
+            obj= {...obj, siteId: Number(req.body.id) }
+        } 
         const objectifs = await prisma.objectif.findMany({
           where:obj
         })
@@ -99,8 +102,10 @@ exports.addObjective = async (req, res, next) => {
         else if(req.body.type == 'region'){
             obj= {...req.body.data, regionId: Number(req.body.id) }
         }
+        else if(req.body.type == 'site'){
+            obj= {...req.body.data, siteId: Number(req.body.id) }
+        }
         const currentYear = new Date().getFullYear();
-        console.log(obj.year,currentYear)
         if(parseInt(obj.year) == currentYear){
             obj={...obj, current: true}
         }
@@ -110,6 +115,18 @@ exports.addObjective = async (req, res, next) => {
         res.status(200).json(objective)
     } catch (error) {
         // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.deleteObjective = async (req, res, next) => {
+    try {
+        const id = parseInt(req.params.id)
+        console.log(id,req.params,'test')
+        const objective = await prisma.objectif.delete({
+            where: {id: id}
+        })
+        res.status(200).json(objective)
+    } catch (error) {
         next(error)
     }
 }
