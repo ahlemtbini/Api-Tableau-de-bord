@@ -30,7 +30,12 @@ exports.getClient = async (req, res, next) => {
             where: { id: Number(req.params.id) },
             include: {
                 contrats: true,
-                societes: true
+                societes: true,
+                countrys: {
+                    include:{
+                        regions: true
+                    }
+                }
             }
         })
         res.status(200).json(client)

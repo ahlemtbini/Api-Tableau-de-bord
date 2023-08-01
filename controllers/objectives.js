@@ -1,10 +1,9 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-
-
 const getClientId = async (name)=>{
-    try {
+    try {  
+        console.log(name)
         const client = await prisma.client.findFirst({
             where:{nomClient:name}
         }) 
@@ -18,7 +17,7 @@ const getSocieteId = async (name)=>{
         const societe = await prisma.societe.findFirst({
             where:{name:name}
         }) 
-        return societe.id
+        return parseInt(societe.id)
     } catch (error) {
         next(error)
     }
@@ -28,42 +27,56 @@ const getRegionId = async (name)=>{
         const region = await prisma.region.findFirst({
             where:{name:name}
         }) 
-        return region.id
+        return parseInt(region.id)
+    } catch (error) {
+        next(error)   
+    }
+}
+const getSiteId = async (name)=>{
+    try {
+        const region = await prisma.site.findFirst({
+            where:{nom:name}
+        }) 
+        return parseInt(region.id)
     } catch (error) {
         next(error)   
     }
 }
 exports.getByName = async (req, res, next) => {
     try {
-        let obj ={}
+        console.log(req.body)
+        let obj 
         let resFound =false
-        if(req.body.type == 'client'){
-            const id= await getClientId(req.body.id)
+        if(req.body.type == 'Client'){
+            const id=parseInt(req.body.id)
             obj= { ClientID: id}
         }
-        else if(req.body.type == 'société'){
+        else if(req.body.type == 'Société'){
             const id= await  getSocieteId(req.body.id )
             obj= { SocieteID: id}
         } 
-        else if(req.body.type == 'région'){
+        else if(req.body.type == 'Région'){
+            const id= await  getRegionId(req.body.id )
             obj= { regionId: id }
         } 
-        else if(req.body.type == 'site'){
-            // console.log(id,req.body.type )
+        else if(req.body.type == 'Site'){
+            const id= await  getSiteId(req.body.id )
             obj= { siteId: id }
         } 
-        // console.log(obj,req.body.type)
+        console.log(obj,req.body.type)
         const objectifs = await prisma.objectif.findMany({
             where: obj
         })
-        if(obj!== {}){
+        if(obj){
             res.status(200).json(objectifs)
         } else {
-            // next(error)
+        //   return  next(error)
+       return res.status(404).json({ error: 'not find' })
+
         }
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        // return next(error)
+        res.status(404).json({ error: 'not find' })
     }
 }
 exports.getAll = async (req, res, next) => {
@@ -92,30 +105,44 @@ exports.getAll = async (req, res, next) => {
 }
 exports.addObjective = async (req, res, next) => {
     try {
-        let obj ={}
-        if(req.body.type == 'client'){
-            obj= {...req.body.data, ClientID: Number(req.body.id) }
-        }
-        else if(req.body.type == 'societe'){
-            obj= {...req.body.data, SocieteID: Number(req.body.id) }
-        } 
-        else if(req.body.type == 'region'){
-            obj= {...req.body.data, regionId: Number(req.body.id) }
-        }
-        else if(req.body.type == 'site'){
-            obj= {...req.body.data, siteId: Number(req.body.id) }
-        }
-        const currentYear = new Date().getFullYear();
-        if(parseInt(obj.year) == currentYear){
-            obj={...obj, current: true}
-        }
-        const objective = await prisma.objectif.create({
-            data: obj
-        })
-        res.status(200).json(objective)
+       
+
+            let obj ={}
+            if(req.body.type == 'client'){
+                obj= {...req.body.data, ClientID: Number(req.body.id) }
+            }
+            else if(req.body.type == 'societe'){
+                obj= {...req.body.data, SocieteID: Number(req.body.id) }
+            } 
+            else if(req.body.type == 'region'){
+                obj= {...req.body.data, regionId: Number(req.body.id) }
+            }
+            else if(req.body.type == 'site'){
+                obj= {...req.body.data, siteId: Number(req.body.id) }
+            }
+            const filtre = {...obj}
+            delete filtre.value
+            console.log('filtre', filtre)
+
+            const yearExist = await prisma.objectif.findFirst({
+                where: filtre
+            })
+            console.log('year', yearExist)
+            if (yearExist){
+            return res.status(404).json({ error: `Un objective avec l'année ${req.body.data.year} déja existe !` })
+            } 
+            const currentYear = new Date().getFullYear();
+            if(parseInt(obj.year) == currentYear){
+                obj={...obj, current: true}
+            }
+
+            const objective = await prisma.objectif.create({
+                data: obj
+            })
+            res.status(200).json(objective)
+        
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        return res.status(404).json({ error: `Un objective avec l'année ${req.body.data.year} déja existe` })
     }
 }
 exports.deleteObjective = async (req, res, next) => {
