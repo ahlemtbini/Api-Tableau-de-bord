@@ -486,6 +486,23 @@ exports.upDashbordPrefrences = async(req, res, next) => {
         data: {
           page1:{...req.body.page1},
           page2:{...req.body.page2},
+          rangeDate:{...req.body.rangeDate}
+        }
+      })
+      return res.status(200).json(dashbord)
+  } catch (error) {
+    next(error)
+    // res.status(404).json({error})
+  }
+}
+exports.uprangeDate = async(req, res, next) => {
+  try {
+    console.log(req.body)
+      const dashbord = await prisma.dashbordPrefrences.update({
+        where:{id: req.body.id},
+        data: {
+          page1:{...req.body.page1},
+          page2:{...req.body.page2},
         }
       })
       return res.status(200).json(dashbord)
