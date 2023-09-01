@@ -111,7 +111,9 @@ router.get('/regions', societesCtrl.getRegions)
 router.post('/societes/filtre', societesCtrl.getFiltredData)
 
 // managers
+router.get('/manager/sinistres/:id', managersCtrl.getManagerSinistres)
 router.get('/managers', managersCtrl.getManagers)
+router.get('/managers/:id', managersCtrl.getManager)
 router.get('/managers/userManagers/:id', managersCtrl.getUserManagers)
 router.post('/managers/add', managersCtrl.createManager)
 router.post('/managers/connetSocietes', managersCtrl.connectSocietes)

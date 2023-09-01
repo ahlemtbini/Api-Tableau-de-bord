@@ -4,10 +4,61 @@ const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const send_mail = require("../utility/sendEmail");
 
+exports.getManagerSinistres = async (req, res, next) => {
+    try {
+      const { id } = req.params
+      const manager = await prisma.manager.findUnique({
+        where: {userId: Number(id)},
+        include: { 
+            societes: { 
+                select: { societe: true}
+             },
+        }
+      })
+      const socNames = []
+      manager.societes.map(soc=>{
+        socNames.push(soc.societe.name)
+      })
+      const sinis = await prisma.declarationSinistre.findMany({
+        where: {
+            SOCIETE: {
+            in: socNames,
+          },
+        },
+      });
+
+        res.status(200).json(sinis)
+    } catch (error) {
+        next(error)
+    }
+}
+
 exports.getManagers = async (req, res, next) => {
     try {
         const managers = await prisma.manager.findMany({
           include: {
+              user: true,
+              societes: {
+                select: {
+                    societe:true,
+                }
+              }
+          }
+        })
+        res.status(200).json(managers)
+    } catch (error) {
+        // res.status(404).json({ error: error })
+        next(error)
+    }
+}
+exports.getManager = async (req, res, next) => {
+    try {
+        const managers = await prisma.manager.findMany({
+            where: {
+                userId: parseInt(req.params.id)
+            },
+          include: {
+            client:true,
               user: true,
               societes: {
                 select: {
@@ -27,7 +78,11 @@ exports.getUserManagers = async (req, res, next) => {
         const user= await prisma.user.findUnique({
             where: {id: Number(req.params.id)},
             include: {
-                manager: true,
+                manager: {
+                    include: {
+                        client: true,
+                    }
+                },
                 admin_client: true
             }
         })

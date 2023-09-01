@@ -129,7 +129,7 @@ exports.addObjective = async (req, res, next) => {
             })
             console.log('year', yearExist)
             if (yearExist){
-            return res.status(404).json({ error: `Un objective avec l'année ${req.body.data.year} déja existe !` })
+            return res.status(404).json({ error: `Il existe déjà un objectif pour l'année ${req.body.data.year} !` })
             } 
             const currentYear = new Date().getFullYear();
             if(parseInt(obj.year) == currentYear){
@@ -142,7 +142,7 @@ exports.addObjective = async (req, res, next) => {
             res.status(200).json(objective)
         
     } catch (error) {
-        return res.status(404).json({ error: `Un objective avec l'année ${req.body.data.year} déja existe` })
+        return res.status(404).json({ error: `Il existe déjà un objectif pour l'année ${req.body.data.year} !` })
     }
 }
 exports.deleteObjective = async (req, res, next) => {

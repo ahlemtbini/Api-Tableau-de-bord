@@ -58,18 +58,6 @@ exports.getAdminSinistres = async (req, res, next) => {
           }
         })
 
-      // const sinis = await prisma.sinistre.findMany({
-      //   where:{
-      //       creatorId : id
-      //     },
-      //     select : {
-      //       declarationSinistre: true
-      //     }
-      //   })
-      //   const arr=[]
-      //   sinis.map(el=>{
-      //     arr.push(el.declarationSinistre)
-      //   })
         res.status(200).json(sinis)
     } catch (error) {
         // res.status(404).json({ error: error })

@@ -83,8 +83,7 @@ exports.getUserSites = async(req, res, next) => {
             console.log(soc)
             soc.societe.sites.map(site=>  filteredSites.push(site))
         })
-    }
-    if(user.role === "client_admin"){
+    }else if(user.role === "client_admin"){
         console.log(user.admin_client)
         user.admin_client?.client?.societes?.map(soc=>{
             console.log(soc)
