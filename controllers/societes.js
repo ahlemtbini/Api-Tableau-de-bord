@@ -149,13 +149,25 @@ exports.getContrats = async (req, res, next) => {
 exports.getFiltredData =  async(req, res, next) => {
     let obj={}
     req.body.map((el,id)=>{
-        if(el.value.length > 0){
+        if(el.value.length > 1){
+            const arr = []
+            el.value.map((val)=>{
+                console.log(val)
+                arr.push(parseInt(val))
+            })
+            obj ={...obj, [el.name]: {in: arr }}
+        } else if(el.value.length == 1) {
             obj ={...obj, [el.name]: parseInt(el.value)}
         }
     })
+
     try {
         const socs = await prisma.societe.findMany({
-            where: obj
+            where: obj,
+            include: {
+                region:true,
+                client:true
+            }
         })            
         res.json(socs)
     } catch (error) {
