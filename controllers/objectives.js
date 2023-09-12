@@ -27,6 +27,7 @@ const getRegionId = async (name)=>{
         const region = await prisma.region.findFirst({
             where:{name:name}
         }) 
+        console.log('name',name,region)
         return parseInt(region.id)
     } catch (error) {
         next(error)   
@@ -105,8 +106,6 @@ exports.getAll = async (req, res, next) => {
 }
 exports.addObjective = async (req, res, next) => {
     try {
-       
-
             let obj ={}
             if(req.body.type == 'client'){
                 obj= {...req.body.data, ClientID: Number(req.body.id) }
@@ -154,6 +153,55 @@ exports.deleteObjective = async (req, res, next) => {
         })
         res.status(200).json(objective)
     } catch (error) {
+        next(error)
+    }
+}
+
+exports.getFiltred = async (req, res, next) => {
+    try {
+        let obj ={}
+        if(req.body.year){
+            obj= {...obj, year: (req.body.year).toString() }
+        }
+        if(req.body?.filter && req.body?.id){
+            let elid
+            switch (req.body.filter) {
+                case "ClientID": elid = parseInt(req.body.id);
+                    break;
+                case "regionId": elid = await getRegionId(req.body.id);
+                    break;
+                case "SocieteID": elid =await getSocieteId(req.body.id);
+                    break;
+                case "siteId": elid =await getSocieteId(req.body.id);
+                    break;
+            }
+            console.log(elid)
+            if(elid){
+                obj= {...obj, [req.body.filter]: elid}
+            } else {
+                res.status(200).json("not found")
+            }
+        }
+        const objectifs = await prisma.objectif.findMany({
+          where:obj
+        })
+        
+        let result = objectifs
+        if (req.body.type == "somme"){
+            let s=0
+            objectifs.map((obj)=>{
+                s=s+ parseInt(obj.value)
+            })
+            result = s
+        } 
+        else if (objectifs.length >0) {
+           result= objectifs[0].value
+        } else {
+            result = 0
+        }
+        res.status(200).json(result)
+    } catch (error) {
+        // res.status(404).json({ error: error })
         next(error)
     }
 }
