@@ -113,7 +113,11 @@ exports.getUser = async (req, res, next) => {
           include: {
             societes: {
               include: {
-                societe:true
+                societe: {
+                  include: {
+                    sites: true
+                  }
+                }
               }
             },
             client: true,
@@ -123,7 +127,11 @@ exports.getUser = async (req, res, next) => {
           include: {
             client: {
               include: {
-                societes:true
+                societes: {
+                  include: {
+                    sites: true
+                  }
+                }
               }
             },
           }
