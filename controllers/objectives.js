@@ -193,8 +193,7 @@ exports.getFiltred = async (req, res, next) => {
                 s=s+ parseInt(obj.value)
             })
             result = s
-        } 
-        else if (objectifs.length >0) {
+        } else if (objectifs.length >0) {
            result= objectifs[0].value
         } else {
             result = 0
@@ -202,7 +201,8 @@ exports.getFiltred = async (req, res, next) => {
         console.log(result,req.body)
         res.status(200).json(parseInt(result))
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        // res.status(200).json(0)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
