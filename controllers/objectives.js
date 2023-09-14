@@ -186,7 +186,7 @@ exports.getFiltred = async (req, res, next) => {
           where:obj
         })
         
-        let result = objectifs
+        let result = 0
         if (req.body.type == "somme"){
             let s=0
             objectifs.map((obj)=>{
@@ -199,7 +199,8 @@ exports.getFiltred = async (req, res, next) => {
         } else {
             result = 0
         }
-        res.status(200).json(result)
+        console.log(result,req.body)
+        res.status(200).json(parseInt(result))
     } catch (error) {
         // res.status(404).json({ error: error })
         next(error)
