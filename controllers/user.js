@@ -227,8 +227,11 @@ exports.addPhoto = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.update({
       where: { email: req.body.email },
+      data:{
+        aciveInactive: true
+      }
     })
     if (!user) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
@@ -290,6 +293,7 @@ exports.login = async (req, res, next) => {
       where: { id: id },
       data:{
         resetLink: token,
+        aciveInactive: true
       }
     })
     // return true
@@ -339,8 +343,17 @@ exports.forgotPassword = async(req, res, next) => {
         utiliser FLEETRISK, veuillez noter votre Identifiant suivant&nbsp;: ${user.email}
         puis cliquer sur le lien ci-dessous.</p>
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;"><b>
-         <a href=${link}><span style="color:white;background:navy;padding:12px">Je me connecte</span></a></b></p>
+        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;">
+         <a style="background: navy;
+         padding: 10px 20px;
+         color: #fff;
+         text-decoration: none;
+         border-radius: 25px;    width: 40%;
+         margin: auto;
+         width: fit-content;
+         display: block;text-align:center"
+        href=${link}>Je me connecte</a>
+         </p>
         
         <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
             <a href="mailto:contact@fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank">contact@fleetrisk.fr</a> .</b> <b>

@@ -244,10 +244,10 @@ model Societe {
 }
 model SocieteManager {
   id           Int         @id @default(autoincrement())
-  manager   Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
-  managerId Int
-  societe   Societe   @relation(fields: [societeId], references: [id], onDelete: Cascade)
-  societeId Int
+  manager   Manager?   @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  managerId Int?
+  societe   Societe?   @relation(fields: [societeId], references: [id], onDelete: Cascade)
+  societeId Int?
 }
 model Site {
   id           Int         @id @default(autoincrement())
