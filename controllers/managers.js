@@ -81,6 +81,15 @@ exports.getUserManagers = async (req, res, next) => {
                 manager: {
                     include: {
                         client: true,
+                        societes: {
+                            include: {
+                                societe: {
+                                    include: {
+                                        sites: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 admin_client: true

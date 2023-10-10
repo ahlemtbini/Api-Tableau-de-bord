@@ -104,7 +104,7 @@ exports.getUsers = async (req, res, next) => {
 }
 exports.getUser = async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { id: Number(req.params.id) },
       include: {
         profile: true,
@@ -168,7 +168,6 @@ exports.editUser = async (req, res, next) => {
 // }
 
 exports.deleteUser = async (req, res, next) => {
-  console.log(req.params)
   try {
     const { id } = req.params
     const user = await prisma.user.delete({
@@ -206,7 +205,6 @@ exports.deleteProfile = async (req, res, next) => {
 }
 
 exports.addPhoto = async (req, res, next) => {
-  console.log(req.params,req.files)
   let photo = ""
   if (req.files) {
       const fName = req.files[0].filename;
@@ -233,7 +231,11 @@ exports.login = async (req, res, next) => {
         aciveInactive: true
       }
     })
-    if (!user) {
+
+    if ( user.role == "manager") {
+      return res.status(404).json({ error: "Les comptes manager sont sous maintenance" });
+    }
+    if (!user ) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
     }
     bcrypt.compare(req.body.mdp, user.mdp)

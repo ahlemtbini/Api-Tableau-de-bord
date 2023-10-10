@@ -91,7 +91,21 @@ exports.getUserClient = async (req, res, next) => {
                 },
                 manager: {
                     include: {
-                        client: true
+                        client: {
+                            include: {
+                                contrats: true,
+                                countrys: {
+                                    include: {
+                                        regions: true
+                                    }
+                                },
+                                societes: {
+                                    include: {
+                                        sites: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 
