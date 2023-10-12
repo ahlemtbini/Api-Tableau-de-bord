@@ -232,9 +232,9 @@ exports.login = async (req, res, next) => {
       }
     })
 
-    if ( user.role == "manager") {
-      return res.status(404).json({ error: "Les comptes manager sont sous maintenance" });
-    }
+    // if ( user.role == "manager") {
+    //   return res.status(404).json({ error: "Les comptes manager sont sous maintenance" });
+    // }
     if (!user ) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
     }

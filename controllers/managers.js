@@ -51,6 +51,7 @@ exports.getManagers = async (req, res, next) => {
         next(error)
     }
 }
+
 exports.getManager = async (req, res, next) => {
     try {
         const managers = await prisma.manager.findMany({
@@ -58,13 +59,25 @@ exports.getManager = async (req, res, next) => {
                 userId: parseInt(req.params.id)
             },
           include: {
-            client:true,
+            client: {
+                include: {
+                    countrys:{
+                        include: {
+                            regions: true
+                        }
+                    }
+                }
+            },
               user: true,
               societes: {
-                select: {
-                    societe:true,
+                include: {
+                    societe: {
+                        include: {
+                            sites: true
+                        }
+                    }
                 }
-              }
+            }
           }
         })
         res.status(200).json(managers)
@@ -73,6 +86,7 @@ exports.getManager = async (req, res, next) => {
         next(error)
     }
 }
+
 exports.getUserManagers = async (req, res, next) => {
     try {
         const user= await prisma.user.findUnique({
