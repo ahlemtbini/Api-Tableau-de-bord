@@ -138,8 +138,8 @@ model Chauffeur {
   region                 String
   user                   User                    @relation(fields: [userId], references: [id],onDelete: Cascade)
   userId                 Int                     @unique
-  site                   Site                    @relation(fields: [siteId], references: [id])
-  siteId                 Int                    
+  site                   Site ?                  @relation(fields: [siteId], references: [id])
+  siteId                 Int ?                   
   sinistres              Sinistre[]
   entretienPostAciidents EntretienPostAccident[]
   entretienVehicules     EntretienVehicule[]
@@ -256,7 +256,7 @@ model Site {
   tel         String
   adresse      String
   numSiret      String?
-  nbrChauffeur Int         @default(0)
+  nbrChauffeur Int?         @default(0)
   creerPar     Role
   isActive     Boolean     @default(true)
   clientId      Int
@@ -264,7 +264,6 @@ model Site {
   SocieteID    Int?
   chuaffeurs   Chauffeur[]
   objectifs Objectif[]
-
 }
 
 enum VehiculeTypeEnum {

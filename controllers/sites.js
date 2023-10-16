@@ -79,6 +79,8 @@ exports.getUserSites = async(req, res, next) => {
 
     var filteredSites = []
     if(user.role === "manager"){
+        console.log(user.manager?.societes)
+        // filteredSites = user.manager?.societes?.sites
         user.manager?.societes?.map(soc=>{
             console.log(soc)
             soc.societe.sites.map(site=>  filteredSites.push(site))
@@ -156,9 +158,16 @@ exports.createSite = async (req, res, next) => {
   }
 exports.editSite = async (req, res, next) => {
     const { id } = req.params
+    const site = await prisma.site.findUnique({
+        where: {id: Number(id)}
+    })
+    console.log(site)
     try {
-        const siteData = {...req.body}
-        const site= await prisma.site.update({
+        const siteData = {
+            ...site,
+            ...req.body,
+        }
+        const upSite= await prisma.site.update({
         where: { id: Number(id) },
         data: {
             ...siteData,
@@ -166,7 +175,7 @@ exports.editSite = async (req, res, next) => {
             SocieteID: Number(req.body.SocieteID)
         }
      })
-     res.status(200).json(site)
+     res.status(200).json(upSite)
     } catch (error) {
         next(error)
     //   res.status(404).json({error})

@@ -238,7 +238,6 @@ exports.editManager = async (req, res, next) => {
         const societesToDisconnect = oldSocietes.filter((existingSociete) =>
         !req.body.societes.some((updatedSociete) => updatedSociete.id === existingSociete.id)
         );
-        
         const arr = []
         req.body.societes.map((el,id)=>{
             arr.push({
@@ -249,7 +248,6 @@ exports.editManager = async (req, res, next) => {
                 }
             })
         })
-    
         // Connect the updated Client
         if(updatedUser.manager.clientId !== Number(req.body.clientId) ){
             
@@ -264,7 +262,6 @@ exports.editManager = async (req, res, next) => {
                 },
             });
         }
-
         const updatedManager = await prisma.manager.update({
             where: { id: updatedUser.manager.id },
             data: {
@@ -295,9 +292,6 @@ exports.editManager = async (req, res, next) => {
                 },
             });
         }
-
-
-
         res.status(200).json({ updatedUser, updatedManager });
     } catch (error) {
         next(error);
