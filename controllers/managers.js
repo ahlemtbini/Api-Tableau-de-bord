@@ -65,7 +65,8 @@ exports.getManager = async (req, res, next) => {
                         include: {
                             regions: true
                         }
-                    }
+                    },
+                    contrats: true
                 }
             },
               user: true,

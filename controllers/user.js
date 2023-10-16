@@ -330,38 +330,41 @@ exports.forgotPassword = async(req, res, next) => {
         to: email,
         from: '<contact@fleetrisk.fr>',
         subject: "Réinitialisation de mot de passe",
-        html: `<div>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
-            <img src="http://fleetrisk.fr/api/documents/logo_white.png.1687695777661.png" width="200px" max-width="200px" />
-        </b></p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Nous vous remercions
-        de votre inscription à votre espace FLEETRISK et vous confirmons que votre
-        compte est désormais actif.</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Pour commencer à
-        utiliser FLEETRISK, veuillez noter votre Identifiant suivant&nbsp;: ${user.email}
-        puis cliquer sur le lien ci-dessous.</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;">
-         <a style="background: navy;
-         padding: 10px 20px;
-         color: #fff;
-         text-decoration: none;
-         border-radius: 25px;    width: 40%;
-         margin: auto;
-         width: fit-content;
-         display: block;text-align:center"
-        href=${link}>Je me connecte</a>
-         </p>
-        
-        <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
-            <a href="mailto:contact@fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank">contact@fleetrisk.fr</a> .</b> <b>
-            <a href="https://fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://fleetrisk.fr&amp;source=gmail&amp;ust=1680863108559000&amp;usg=AOvVaw0ZYineXysI0H-2PyZQjk4X">https://fleetrisk.fr</a> . Politique de
-        confidentialité</b></p>
-        </div> `,
+        html: `<table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="center" bgcolor="#FFFFFF">
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>
+              <img src="https://fleetrisk.fr/api/documents/logo_white.png.1687695777661.png" width="200px" max-width="200px" />
+            </b></p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>&nbsp;</b></p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif"><b>Bonjour </b> ${user.prenom}</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Nous vous remercions
+            de votre inscription à votre espace FLEETRISK et vous confirmons que votre
+            compte est désormais actif.</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">Pour commencer à
+            utiliser FLEETRISK, veuillez noter votre Identifiant suivant&nbsp;: ${user.email}
+            puis cliquer sur le lien ci-dessous.</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif">&nbsp;</p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin: 20px 0px;">
+             <a style="background: navy;
+             padding: 10px 20px;
+             color: #fff;
+             text-decoration: none;
+             border-radius: 25px;    width: 40%;
+             margin: auto;
+             display: block;text-align:center"
+            href=${link}>Je me connecte</a>
+            </p>
+            <p align="center" style="text-align:center;margin:0cm;font-size:11pt;font-family:Calibri,sans-serif;margin-top:35px;"><b>Nous contacter . 
+                <a href="mailto:contact@fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank">contact@fleetrisk.fr</a> .</b> <b>
+                <a href="https://fleetrisk.fr" style="color:rgb(5,99,193)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://fleetrisk.fr&amp;source=gmail&amp;ust=1680863108559000&amp;usg=AOvVaw0ZYineXysI0H-2PyZQjk4X">https://fleetrisk.fr</a> . Politique de
+            confidentialité</b></p>
+          </td>
+        </tr>
+      </table>`,
       };
 
 
