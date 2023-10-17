@@ -222,7 +222,7 @@ exports.editManager = async (req, res, next) => {
         // Update the user information
         const updatedUser = await prisma.user.update({
             where: { id: Number(id) },
-            data: req.body.user,
+            data: {...req.body.user},
             include: {
                 manager: {
                     include: {
@@ -231,7 +231,6 @@ exports.editManager = async (req, res, next) => {
                 }
             }
         });
-
         const oldSocietes= updatedUser.manager.societes
 
         // Calculate which Societes to disconnect
