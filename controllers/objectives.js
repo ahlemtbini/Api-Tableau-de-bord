@@ -35,10 +35,10 @@ const getRegionId = async (name)=>{
 }
 const getSiteId = async (name)=>{
     try {
-        const region = await prisma.site.findFirst({
+        const site = await prisma.site.findFirst({
             where:{nom:name}
         }) 
-        return parseInt(region.id)
+        return parseInt(site.id)
     } catch (error) {
         next(error)   
     }
@@ -156,6 +156,47 @@ exports.deleteObjective = async (req, res, next) => {
         next(error)
     }
 }
+exports.getManagerAll = async (req, res, next) => {
+    try {
+        const id = parseInt(req.params.id)
+        const manager= await prisma.manager.findUnique({
+            where: {id: id},
+            include: {
+                societes: {
+                    include: {
+                        societe: true
+                    }
+                }
+            }
+        })
+        let obj={...req.body}        
+        if(manager){
+            const socs= manager.societes
+            const arr = []
+            socs.map((val)=>{
+                arr.push(val.societe.id)
+            })
+            obj={...obj, 
+                SocieteID: {
+                    in: arr
+                }
+            }
+            console.log('obj', obj)
+
+        }
+        const objectives = await prisma.objectif.findMany({
+            where: obj
+        })
+        let somme =0
+        objectives.map((obj)=>{
+            somme= somme+ parseInt(obj.value)
+        })
+        console.log('objectives',objectives)
+        res.status(200).json(somme)
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.getFiltred = async (req, res, next) => {
     try {
@@ -172,16 +213,18 @@ exports.getFiltred = async (req, res, next) => {
                     break;
                 case "SocieteID": elid =await getSocieteId(req.body.id);
                     break;
-                case "siteId": elid =await getSocieteId(req.body.id);
+                case "siteId": elid =await getSiteId(req.body.id);
                     break;
             }
-            console.log(elid)
             if(elid){
+        console.log('elid',elid)
+
                 obj= {...obj, [req.body.filter]: elid}
             } else {
                 res.status(200).json("not found")
             }
         }
+        console.log('obj',obj)
         const objectifs = await prisma.objectif.findMany({
           where:obj
         })
@@ -198,7 +241,7 @@ exports.getFiltred = async (req, res, next) => {
         } else {
             result = 0
         }
-        console.log(result,req.body)
+        // console.log(result,req.body)
         res.status(200).json(parseInt(result))
     } catch (error) {
         // res.status(200).json(0)
