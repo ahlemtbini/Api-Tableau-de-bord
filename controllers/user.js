@@ -128,8 +128,15 @@ exports.getUser = async (req, res, next) => {
             client: {
               include: {
                 societes: {
+                  include : {
+                    societe: true
+                  }
+                }
+              },
+              include: {
+                countrys: {
                   include: {
-                    sites: true
+                    regions: true
                   }
                 }
               }
@@ -322,8 +329,6 @@ exports.forgotPassword = async(req, res, next) => {
         { algorithm: "HS256" }
         )
         const link = process.env.CLIENT_URL + '/auth/reset-password/' + token;
-        console.log('test t',link)
-  
       updateUser(user.id,token)
 
       const options = {

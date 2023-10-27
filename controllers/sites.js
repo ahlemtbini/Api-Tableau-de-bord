@@ -79,16 +79,12 @@ exports.getUserSites = async(req, res, next) => {
 
     var filteredSites = []
     if(user.role === "manager"){
-        console.log(user.manager?.societes)
         // filteredSites = user.manager?.societes?.sites
         user.manager?.societes?.map(soc=>{
-            console.log(soc)
             soc.societe.sites.map(site=>  filteredSites.push(site))
         })
     }else if(user.role === "client_admin"){
-        console.log(user.admin_client)
         user.admin_client?.client?.societes?.map(soc=>{
-            console.log(soc)
             soc.sites.map(site=>  filteredSites.push(site))
         })
     } else {
@@ -118,7 +114,6 @@ exports.connectSites = async (req, res, next) => {
                 }
             })
         })
-        console.log(arr)
         const managers = await prisma.manager.create({
             data: {
                 clientId: Number(req.body.clientId),
@@ -161,7 +156,6 @@ exports.editSite = async (req, res, next) => {
     const site = await prisma.site.findUnique({
         where: {id: Number(id)}
     })
-    console.log(site)
     try {
         const siteData = {
             ...site,

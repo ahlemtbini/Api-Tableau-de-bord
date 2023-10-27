@@ -152,7 +152,6 @@ exports.getFiltredData =  async(req, res, next) => {
         if(el.value.length > 1){
             const arr = []
             el.value.map((val)=>{
-                console.log(val)
                 arr.push(parseInt(val))
             })
             obj ={...obj, [el.name]: {in: arr }}

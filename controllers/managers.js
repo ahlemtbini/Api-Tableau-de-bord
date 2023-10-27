@@ -279,7 +279,6 @@ exports.editManager = async (req, res, next) => {
         });
         // Disconnect the outdated Societes
         if(societesToDisconnect.length > 0){
-            console.log('societesToDisconnect',societesToDisconnect,'soc',req.body.societes)
             await prisma.manager.update({
                 where: { id: updatedUser.manager.id },
                 data: {

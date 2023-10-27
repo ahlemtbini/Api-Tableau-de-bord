@@ -32,7 +32,6 @@ exports.addSinistres = (req, res, next) => {
             const sinData= removeNullValues(sin)
             const decSinData = removeNullValues(decSin)
            
-            // console.log('test',sinData,decSinData)
             const sinis = await prisma.sinistre.create({
                 data: {
                     ...sinData,
@@ -84,7 +83,6 @@ exports.createAdmins = async (req, res, next) => {
             const data={id:el.id, userId:el.userId,clientID:el.clientID}
             formattedAdmins.push(data)
         })
-        // console.log(formattedAdmins)
         formattedAdmins.map(async(adminData)=>{
             const admin =await prisma.adminClient.create({
               data: {

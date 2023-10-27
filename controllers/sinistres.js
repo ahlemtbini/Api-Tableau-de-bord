@@ -18,7 +18,6 @@ exports.getSinistres = async (req, res, next) => {
     }
 }
 exports.getSinistre = async (req, res, next) => {
-    console.log( Number(req.params.id) )
     try {
         const dec = await prisma.declarationSinistre.findUnique({
             where: { DOSSIER: Number(req.params.id) },
@@ -334,7 +333,6 @@ exports.importExcel = async (req, res, next) => {
     
     exports.getFiltredData =  async(req, res, next) => {
         let obj={}
-        console.log('obj',req.body[0])
         req.body.map((el,id)=>{
             if(el.value?.length > 0){
                 if(el.name=== "DATE_SURVENANCE"){
@@ -408,16 +406,13 @@ exports.saveDocs =  async (req, res, next) => {
     }
 }
 exports.upDocs =  async (req, res, next) => {
-    console.log('links',typeof req.body,req.body)
     const links = Object.values(req.body)
     const paths = []
     links.map((doc,id)=>{
         const path= doc
-        console.log('doc',doc)
         paths.push('./documents/'+path.split('/')[5])
     })
  
-    console.log(paths)
 
     try {
         let arr = []

@@ -181,8 +181,6 @@ exports.getManagerAll = async (req, res, next) => {
                     in: arr
                 }
             }
-            console.log('obj', obj)
-
         }
         const objectives = await prisma.objectif.findMany({
             where: obj
@@ -191,7 +189,6 @@ exports.getManagerAll = async (req, res, next) => {
         objectives.map((obj)=>{
             somme= somme+ parseInt(obj.value)
         })
-        console.log('objectives',objectives)
         res.status(200).json(somme)
     } catch (error) {
         next(error)
@@ -217,14 +214,12 @@ exports.getFiltred = async (req, res, next) => {
                     break;
             }
             if(elid){
-        console.log('elid',elid)
 
                 obj= {...obj, [req.body.filter]: elid}
             } else {
                 res.status(200).json("not found")
             }
         }
-        console.log('obj',obj)
         const objectifs = await prisma.objectif.findMany({
           where:obj
         })
