@@ -14,7 +14,7 @@ exports.getClients = async (req, res, next) => {
                 },
                 societes: {
                     include: {
-                        sites: true
+                       sites: true
                     }
                 }
             }

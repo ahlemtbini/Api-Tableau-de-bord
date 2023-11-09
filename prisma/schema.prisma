@@ -141,7 +141,7 @@ model Chauffeur {
   site                   Site ?                  @relation(fields: [siteId], references: [id])
   siteId                 Int ?                   
   sinistres              Sinistre[]
-  entretienPostAciidents EntretienPostAccident[]
+  // entretienPostAciidents EntretienPostAccident[]
   entretienVehicules     EntretienVehicule[]
 }
 model Objectif {
@@ -388,51 +388,74 @@ model DeclarationSinistre {
 
 model EntretienPostAccident {
   id                           Int           @id @default(autoincrement())
+  // chauffeur                     Chauffeur ?             @relation(fields: [chauffeurId], references: [id])
+  // chauffeurId                   Int                     @unique
   // 1 - Identification
-  societe                                                         String
-  Entite                                                          String
-  nom_prenom_chauffeur                                            String
-  date_entree_dans_fonction                                       DateTime
-  Contrat                                                         ContractType
-  date_accident                                                   DateTime
-  declare_a_assureur                                              EPA_declared
-  date_entretien                                                  DateTime
-  entretien_realisee_par                                          String
+  dossier_sinistre                                                Int?
+  nom_prenom_chauffeur                                            String?
+  region                                                          String?
+  date_entree_dans_fonction                                       String?
+  date_accident                                                   String?
+  date_entretien                                                  String?
+  contrat                                                         ContractType?
+  site                                                            String?
+  entretien_realisee_par                                          String?
+  // declare_a_assureur                                              EPA_declared
+  // Entite                                                          String
   // 2 - Jour de l’accident
-  jour_de_survenance_de_accident                                  Jours
-  Dernier_jour_de_pause_hebdomadaire                              Jours
-  Heure_accident                                                  intervalle_des_heures
-  Heure_prise_service                                             intervalle_des_heures
-  temps_coduite_depuis_prise_servise_au_dernier_pause_obligatoire intervalle_de_temps_conduite
+  jour_de_survenance_de_accident                                  Jours?
+  Heure_accident                                                  String?
+  Heure_prise_service                                             String?
+  temps_coduite_depuis_prise_servise_au_dernier_pause_obligatoire String?
+  Dernier_jour_de_pause_hebdomadaire                              Jours?
   // 3 - Type de véhicule
-  Vehicule_habituel                                               Boolean
-  type_de_vehicule                                                String
-  chauffeur                                                       Chauffeur                    @relation(fields: [chauffeurID], references: [id])
-  chauffeurID                                                     Int
+  vehicule_inf_35                                                 String?
+  vehicule_sup_35                                                 String?
+  matiere_dangereuse                                              String?
+  dotation_de_vehicule                                            String?
+  formation_conduire_vhicule                                      String?
+  prise_en_main_accompagne                                        String?
+  vehicule_deja_conduit                                           String?
+  vehicule_habituel                                               String?
+  derniere_formation_date                                         String?
+  etat_chargemen_vehicule                                         String?
+  vehicule_adapte_au_mission                                      String?
+  non_dire_pourquoi                                               String?                       @db.Text
+  // type_de_vehicule                                                String
+  // chauffeur                                                       Chauffeur                    @relation(fields: [chauffeurID], references: [id])
+  // chauffeurID                                                     Int
+  
   // 4 - Conditions de survenance
-  meteo                                                           String //enum
-  luminosite                                                      String //enum
-  environement                                                    String //enum
-  configuration                                                   String //enum
-  type_de_voie                                                    String //enum
-  type_de_tiers                                                   String //enum
-  type_de_trajet                                                  String //enum
-  Kilometres_parcourus_avant_le_sinistre                          String //enum
-  Gestion_de_la_mission                                           String //enum
+  meteo                                                           String?
+  luminosite                                                      String?
+  environement                                                    String?
+  configuration                                                   String?
+  type_de_voie                                                    String?
+  type_de_tiers                                                   String?
+  type_de_trajet                                                  String?
+  kilometres_parcourus_avant_le_sinistre                          String?
+  circonstance_trajet                                             String?
+  distraction                                                     String?
+  comment_sentiez_vous                                            String?
   //5 - Nature du sinistre
-  Estimation_de_accident                                          String //enum
-  Genre_du_sinistre                                               String //enum
-  Degats                                                          String //enum
+  Estimation_de_accident                                          String?
+  Genre_du_sinistre                                               String?
+  Degats                                                          String?
+  estimation_cout                                                 String?
   // 6 - Impact sur le véhicule
-  endroit_impact                                                  String //enum
-  Expression_libre                                                String                       @db.Text
-  // 7 - Situations de survenance
-  Circonstance_de_accident                                        Int //enum 1..25
-  Evitabilite_de_accident                                         Int // enum 1..7
-  ifacteur_nfluence_survenance_accident                           Int // enum 1..6
-  Avis_Evitable_O_N                                               Boolean
-  Signature_responsable                                           Bytes
-  Signature_Conducteur                                            Bytes
+  endroit_impact                                                  String?
+  Expression_libre                                                String?                       @db.Text
+  // 7- Situation de Survenance
+  situation_de_survenance                                         String?
+  // 8 - Situations de survenance
+  Circonstance_de_accident                                        String?
+  Circonstance_de_accident_expression_libre                       String?                       @db.Text
+  Evitabilite_de_accident                                         String?
+  Evitabilite_de_accident_expression_libre                        String?                       @db.Text
+  Suggestion_limitation_de_risque                                 String?                       @db.Text
+  Avis_Evitable_O_N                                               String?
+  Signature_responsable                                           String?
+  Signature_Conducteur                                            String?
 }
 model EntretienVehicule {
   id                    Int       @id @default(autoincrement())

@@ -18,6 +18,7 @@ const sitesCtrl = require("../controllers/sites");
 const managersCtrl = require("../controllers/managers");
 const migrateCtrl = require("../controllers/migrateDB");
 const objectiveCtrl = require("../controllers/objectives");
+const postSinistreCtrl = require("../controllers/postSinistre");
 
 //Dashbord
 router.get(`/dashbord/userPrefrnces/:id`, userCtrl.getDashbordPrefrences)
@@ -147,6 +148,11 @@ router.get('/migrateUsers', migrateCtrl.createUsers)
 router.get('/admins', migrateCtrl.getAdmins)
 router.get('/migrateAdmins', migrateCtrl.createAdmins)
 router.get('/manags', migrateCtrl.getManagers)
+// post-sinistres
+router.get('/postSinistres', postSinistreCtrl.getEPS)
+router.post('/postSinistres/add', postSinistreCtrl.addEPS)
+router.put('/postSinistres/:id', postSinistreCtrl.upEPS)
+router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
 
 /*
 async function main() {
