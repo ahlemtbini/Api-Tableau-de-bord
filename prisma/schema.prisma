@@ -446,7 +446,8 @@ model EntretienPostAccident {
   endroit_impact                                                  String?
   Expression_libre                                                String?                       @db.Text
   // 7- Situation de Survenance
-  situation_de_survenance                                         String?
+  situation_de_survenance_conducteur                              String?
+  situation_de_survenance_tiers                                   String?
   // 8 - Situations de survenance
   Circonstance_de_accident                                        String?
   Circonstance_de_accident_expression_libre                       String?                       @db.Text
