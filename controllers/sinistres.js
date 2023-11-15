@@ -24,18 +24,21 @@ exports.getSinistre = async (req, res, next) => {
         })
         res.json(dec)
     } catch (error) {
-        // res.status(404).json({ error: error })
-        next(error)
+        res.status(404).json({ error: error })
+        // next(error)
     }
 }
 exports.getSinis = async (req, res, next) => {
     try {
-        const dec = await prisma.sinistre.findUnique({
+        const sinis = await prisma.sinistre.findUnique({
             where: { id: Number(req.params.id )},
+            include: {
+                declarationSinistre: true
+            }
         })
-        res.json(dec)
+        return res.json(sinis)
     } catch (error) {
-        res.status(404).json({ error: error })
+        return res.status(404).json({ error: error })
         // next(error)
     }
 }
