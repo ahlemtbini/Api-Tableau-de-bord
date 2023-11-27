@@ -403,11 +403,11 @@ model EntretienPostAccident {
   // declare_a_assureur                                              EPA_declared
   // Entite                                                          String
   // 2 - Jour de l’accident
-  jour_de_survenance_de_accident                                  Jours?
+  jour_de_survenance_de_accident                                  String?
   Heure_accident                                                  String?
   Heure_prise_service                                             String?
   temps_coduite_depuis_prise_servise_au_dernier_pause_obligatoire String?
-  Dernier_jour_de_pause_hebdomadaire                              Jours?
+  Dernier_jour_de_pause_hebdomadaire                              String?
   // 3 - Type de véhicule
   vehicule_inf_35                                                 String?
   vehicule_sup_35                                                 String?
