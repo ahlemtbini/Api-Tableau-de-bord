@@ -392,6 +392,8 @@ model EntretienPostAccident {
   // chauffeurId                   Int                     @unique
   // 1 - Identification
   dossier_sinistre                                                Int?
+  clientId                                                        Int?
+  societe                                                         String?
   nom_prenom_chauffeur                                            String?
   region                                                          String?
   date_entree_dans_fonction                                       String?

@@ -150,6 +150,7 @@ router.get('/migrateAdmins', migrateCtrl.createAdmins)
 router.get('/manags', migrateCtrl.getManagers)
 // post-sinistres
 router.get('/postSinistres', postSinistreCtrl.getEPS)
+router.post('/getUserEpsList', postSinistreCtrl.getUserEpsList)
 router.post('/postSinistres/add', postSinistreCtrl.addEPS)
 router.put('/postSinistres/:id', postSinistreCtrl.upEPS)
 router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
