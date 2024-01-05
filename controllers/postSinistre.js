@@ -72,15 +72,23 @@ exports.getUserEpsList = async (req, res, next) => {
 
 exports.addEPS = async (req, res, next) => {
   try {
-      const eps = await prisma.entretienPostAccident.create({
-          data: {
-              ...req.body
-          },
-      })
-      return res.json(eps)
+    const postSin= await prisma.entretienPostAccident.findFirst({
+        where: {dossier_sinistre: req.body.dossier_sinistre}
+    })
+    console.log('postSin',postSin)
+    if(postSin){
+        return res.status(404).json({ error: "Il existe un entretien pour ce sinistre" })
+    } else {
+        console.log('dosent exist')
+        const eps = await prisma.entretienPostAccident.create({
+            data: {
+                ...req.body
+            },
+        })
+        return res.json(eps)
+    }
   } catch (error) {
-      // res.status(404).json({ error: error })
-      next(error)
+      res.status(404).json({ error: error })
   }
 }
 
