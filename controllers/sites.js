@@ -18,6 +18,44 @@ exports.getSites = async(req, res, next) => {
         next(error)
     }
 }
+
+exports.getSitesByRegionID = async(req, res, next) => {
+    try {        
+        const region= await prisma.region.findUnique({
+            where: {id: parseInt(req.params.id)},
+            select: {
+               societes: {
+                select: {
+                    sites: true
+                }
+               }
+            }
+        })
+        const sites=[]
+        region.societes.map((soc)=>{
+            soc.sites.map((site)=>{
+                sites.push(site)
+            })
+        })
+
+        return res.status(200).json(sites)
+    } catch (error) {
+        next(error)
+    }
+}
+exports.getSiteByName = async(req, res, next) => {
+    try {        
+        const site= await prisma.site.findFirst({
+            where: {nom : req.params.name},
+        })
+        if(site){
+            return res.status(200).json(site)
+        }
+        return res.status(404).json({error: "Site introuvable"})
+    } catch (error) {
+        return res.status(404).json({error: "Site introuvable"})
+    }
+}
 exports.getSite = async(req, res, next) => {
     try {        
         const sites= await prisma.site.findUnique({

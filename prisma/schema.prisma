@@ -108,11 +108,11 @@ model DashbordPrefrences {
 
 model Profile {
   numTel            String?
-  date_de_naissance DateTime?     @db.Date
+  date_de_naissance String?
   typeContrat       ContractType?
-  dateEmbauche      DateTime?
+  dateEmbauche      String?
   creerPar          Role          @default(manager)
-  permisConduire    Bytes?
+  permisConduire    String?
   photo             String?
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            Int           @unique
@@ -146,6 +146,7 @@ model Manager {
 model Chauffeur {
   id                 Int                 @id @default(autoincrement())
   email              String              @unique
+  client             String
   siteName           String
   region             String
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -153,7 +154,6 @@ model Chauffeur {
   site               Site?               @relation(fields: [siteId], references: [id])
   siteId             Int?
   sinistres          Sinistre[]
-  // entretienPostAciidents EntretienPostAccident[]
   entretienVehicules EntretienVehicule[]
 }
 
