@@ -8,7 +8,11 @@ exports.getChauffeurs = async (req, res, next) => {
     try {
         const chauffeurs = await prisma.chauffeur.findMany({
           include: {
-            user: true
+            user: {
+              include: {
+                profile: true
+              }
+            }
           },
         })
         const arr= []
@@ -47,6 +51,7 @@ exports.addChauffeur = (req, res, next) => {
               email: req.body.email,
               role: req.body.role,
               mdp: hash,
+              numTel: req.body.numTel,
               chauffeur: {
                 create: {
                   email:req.body.email,
@@ -57,7 +62,6 @@ exports.addChauffeur = (req, res, next) => {
               },
               profile: {
                 create: {
-                  numTel: req.body.numTel,
                   date_de_naissance: req.body.date_de_naissance,
                   typeContrat: req.body.typeContrat,
                   dateEmbauche: req.body.dateEmbauche,
@@ -82,26 +86,42 @@ exports.addChauffeur = (req, res, next) => {
   exports.editChauffeur = async (req, res, next) => {
     try {
         const { id } = req.params
-        const admin = await prisma.adminClient.update({
+        const chauffeur = await prisma.chauffeur.update({
             where: { id: Number(id) },
             data: {
-              clientID: Number(req.body.clientID),
+              email:req.body.email,
+              client: req.body.client,
+              siteName: req.body.siteName,
+              region: req.body.region
+            },
+            include: {
+              user: true,
             }
         })
-        delete req.body.clientID
-        try {
         const user = await prisma.user.update({
-          where: { id: admin.userId},
-          data: req.body
+          where:{ id: chauffeur.userId },
+          data:{
+            nom: req.body.nom,
+            prenom: req.body.prenom,
+            email: req.body.email,
+            role: req.body.role,
+            numTel: req.body.numTel,
+            profile: {
+              update: {
+                date_de_naissance: req.body.date_de_naissance,
+                typeContrat: req.body.typeContrat,
+                dateEmbauche: req.body.dateEmbauche,
+                creerPar: req.body.creerPar,
+                permisConduire: req.body.permisConduire,
+                photo: req.body.photo,
+              }
+            }
+          }
         })
-        } catch (error) {
-          // res.status(404).json({ error: "email exise déja" })
-          next(error)
-        }
-        res.status(200).json("client a été modifié avec succès")
+        console.log(req.body.numTel,user)
+        res.status(200).json("Le chaufffeur a été modifié avec succès")
     } catch (error) {
-        res.status(404).json({ error: "email exise déja" })
-        // next(error)
+        res.status(404).json({ error: "modification"})
     }
 }
 exports.getAdminSinistres = async (req, res, next) => {
