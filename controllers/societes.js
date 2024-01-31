@@ -23,6 +23,52 @@ exports.getSocietes = async (req, res, next) => {
         res.status(404).json({ error: error })
     }
 }
+exports.getSocietesByUserId = async (req, res, next) => {
+    try {
+        const user= await prisma.user.findUnique({
+            where: {id: Number(req.body.userId)},
+            include: {
+                admin_client: true,
+                manager: {
+                    select: {
+                        societes: {
+                            select:{
+                                societe: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        let obj= {regionId: Number(req.body.regionId)}
+        if (user.role == "manager"){
+            // obj= {...obj, managers: {some:{id:user.manager.id}}}
+            const societes = []
+            user.manager.societes.map((soc)=>{
+                societes.push(soc.societe)
+            })
+            return res.status(200).json(societes)
+        }
+        console.log(user.manager,obj)
+        const societes = await prisma.societe.findMany({
+            where:{...obj },
+            include: {
+                contrat: true,
+                country: true,
+                region:true,
+                client: true,
+                managers: {
+                    select:{
+                        manager:true
+                    }
+                }
+            }
+        })
+        res.status(200).json(societes)
+    } catch (error) {
+        res.status(404).json({ error: next(error) })
+    }
+}
 exports.getCountries = async(req, res, next) => {
     try {        
         const countries= await prisma.country.findMany({

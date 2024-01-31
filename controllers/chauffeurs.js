@@ -3,6 +3,7 @@ const prisma = new PrismaClient()
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const send_mail = require("../utility/sendEmail");
+const { copySync } = require('fs-extra');
 
 exports.getChauffeurs = async (req, res, next) => {
     try {
@@ -20,6 +21,111 @@ exports.getChauffeurs = async (req, res, next) => {
     } catch (error) {
         res.status(404).json({ error: error })
         // next(error)
+    }
+}
+exports.getUserChauffeurs = async (req, res, next) => {
+    try {
+        const user= await prisma.user.findUnique({
+              where: {id: Number(req.params.id)},
+              include: {
+                  manager: {
+                      include: {
+                          client: true,
+                          societes: {
+                              include: {
+                                  societe: {
+                                      include: {
+                                          sites: true
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  admin_client: {
+                      include: {
+                          client: true
+                      }
+                  },
+              }
+          })
+          //  console.log(user)
+      
+          if(user.role == "client_admin"){
+              const chauffeurs = await prisma.chauffeur.findMany({
+                  where: {
+                      clientId: user.admin_client.clientID
+                  },
+                  include: {
+                    user: {
+                      include: {
+                        profile: true
+                      }
+                    }
+                  },
+              })
+              return   res.status(200).json(chauffeurs)
+          } else if(user.role == "manager"){
+              const societesIds=[]
+              user.manager.societes.map((soc)=>{
+                societesIds.push(String(soc.societe.id))
+              })
+              console.log('societesIds',societesIds)
+              const chauffeurs = await prisma.chauffeur.findMany({
+                  where: {
+                      societe: {
+                        in: societesIds,
+                      },
+                  },
+                  include: {
+                    user: {
+                      include: {
+                        profile: true
+                      }
+                    }
+                  },
+              })
+              console.log(chauffeurs)
+              return   res.status(200).json(chauffeurs)
+          } else if(user.role == "super_admin"){
+              const chauffeurs = await prisma.chauffeur.findMany({
+                include: {
+                  user: {
+                    include: {
+                      profile: true
+                    }
+                  }
+                },
+              })
+              return   res.status(200).json(chauffeurs)
+          }
+     
+    } catch (error) {
+        res.status(404).json({ error: next(error) })
+    }
+}
+const getChauffeursForUser = async(id)=>{
+
+}
+exports.getToExport = async (req, res, next) => {
+  try {
+      const clients= await prisma.client.findMany()
+      const regions= await prisma.region.findMany()
+      const sites= await prisma.site.findMany()
+      const arr = await getChauffeursForUser(req.params.id)
+      const chauffeurs=[]
+      arr.map((el)=>{
+        const obj= {
+          ...el, 
+          nomClient: clients.find(cli=> cli.id == parseInt(el.client)).nomClient,
+          nomRegion: regions.find(cli=> cli.id == parseInt(el.region)).name,
+          nomSite: sites.find(cli=> cli.id == parseInt(el.siteName)).nom,
+        }
+        chauffeurs.push(obj)
+      })
+        res.status(200).json(chauffeurs)
+    } catch (error) {
+        res.status(404).json({ error: error })
     }
 }
 exports.getChauffeur = async (req, res, next) => {
@@ -55,9 +161,10 @@ exports.addChauffeur = (req, res, next) => {
               chauffeur: {
                 create: {
                   email:req.body.email,
-                  client: req.body.client,
+                  client: String(req.body.client),
+                  region: req.body.region,
+                  societe: req.body.societe,
                   siteName: req.body.siteName,
-                  region: req.body.region
                 }
               },
               profile: {
@@ -91,8 +198,9 @@ exports.addChauffeur = (req, res, next) => {
             data: {
               email:req.body.email,
               client: req.body.client,
+              region: req.body.region,
+              societe: req.body.societe,
               siteName: req.body.siteName,
-              region: req.body.region
             },
             include: {
               user: true,

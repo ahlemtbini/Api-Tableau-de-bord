@@ -147,8 +147,9 @@ model Chauffeur {
   id                 Int                 @id @default(autoincrement())
   email              String              @unique
   client             String
-  siteName           String
-  region             String
+  societe            String?
+  siteName           String?
+  region             String?
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             Int                 @unique
   site               Site?               @relation(fields: [siteId], references: [id])

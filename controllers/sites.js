@@ -19,6 +19,26 @@ exports.getSites = async(req, res, next) => {
     }
 }
 
+exports.getSitesBySocieteId = async(req, res, next) => {
+    try {        
+        const region= await prisma.societe.findUnique({
+            where: {id: parseInt(req.params.id)},
+            include: {
+                sites: true
+            }
+        })
+        const sites= region.sites
+        // region.societes.map((soc)=>{
+        //     soc.sites.map((site)=>{
+        //         sites.push(site)
+        //     })
+        // })
+
+        return res.status(200).json(sites)
+    } catch (error) {
+        next(error)
+    }
+}
 exports.getSitesByRegionID = async(req, res, next) => {
     try {        
         const region= await prisma.region.findUnique({

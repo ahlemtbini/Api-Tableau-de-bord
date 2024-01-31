@@ -74,7 +74,8 @@ exports.getManager = async (req, res, next) => {
                 include: {
                     societe: {
                         include: {
-                            sites: true
+                            sites: true,
+                            region: true
                         }
                     }
                 }

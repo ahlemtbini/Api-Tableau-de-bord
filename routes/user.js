@@ -99,12 +99,14 @@ router.put('/admins/:id', adminsCtrl.editAdmin);
 router.post('/admins/addClient', adminsCtrl.addClient)
 // admins
 router.get('/chauffeurs', chauffeurCtrl.getChauffeurs)
+router.get('/chauffeurs/user/:id', chauffeurCtrl.getUserChauffeurs)
+router.get('/chauffeurs/export/:id', chauffeurCtrl.getToExport)
 router.get('/chauffeurs/:id', chauffeurCtrl.getChauffeur)
 router.post('/chauffeurs/add', chauffeurCtrl.addChauffeur)
 router.put('/chauffeurs/:id', chauffeurCtrl.editChauffeur)
 // societes
 router.get('/societes', societesCtrl.getSocietes)
-router.get('/societes/:id', societesCtrl.getSociete)
+router.post('/UserSocietesByRegion', societesCtrl.getSocietesByUserId)
 router.get('/countries/:id', societesCtrl.getCountry)
 router.post('/societes/add', societesCtrl.addSociete)
 router.put('/societes/:id', societesCtrl.editSociete);
@@ -128,6 +130,7 @@ router.delete('/managers/:id', managersCtrl.deleteManager);
 
 // sites
 router.get('/sites', sitesCtrl.getSites)
+router.get('/sites/bySoiciete/:id', sitesCtrl.getSitesBySocieteId)
 router.get('/sites/byRegion/:id', sitesCtrl.getSitesByRegionID)
 router.get('/sites/byName/:name', sitesCtrl.getSiteByName)
 router.get('/sites/:id', sitesCtrl.getSite)
