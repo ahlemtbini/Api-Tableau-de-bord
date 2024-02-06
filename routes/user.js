@@ -7,6 +7,7 @@ const prisma = new PrismaClient({
 const { findSync } = require("@prisma/client/runtime");
 
 const multer = require("multer")
+const fleetriskAuth = require("../middlewares/fleetrisk");
 const upload = require("../middlewares/multer-config")
 
 const userCtrl = require("../controllers/user");
@@ -20,6 +21,7 @@ const managersCtrl = require("../controllers/managers");
 const migrateCtrl = require("../controllers/migrateDB");
 const objectiveCtrl = require("../controllers/objectives");
 const postSinistreCtrl = require("../controllers/postSinistre");
+const fleetriskCtrl = require("../controllers/fleetriskApi");
 
 //Dashbord
 router.get(`/dashbord/userPrefrnces/:id`, userCtrl.getDashbordPrefrences)
@@ -165,6 +167,13 @@ router.post('/postSinistres/add', postSinistreCtrl.addEPS)
 router.put('/postSinistres/:id', postSinistreCtrl.upEPS)
 router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
 
+
+// fleetrisk api
+router.post('/fleetrisk/dashbord',fleetriskAuth, fleetriskCtrl.getGraphs)
+router.get('/fleetrisk/admins', fleetriskCtrl.getAdmins)
+router.post('/fleetrisk/signup', fleetriskCtrl.register)
+router.post('/fleetrisk/login', fleetriskCtrl.login)
+
 /*
 async function main() {
   // ... you will write your Prisma Client queries here
@@ -180,20 +189,5 @@ main()
     process.exit(1)
   })
 */
-// router.get('/profile', async (req, res, next) => {
-//   try {
-//     const { id } = req.params
-//       const admin = await prisma.superAdmin.findUnique({
-//         where:{
-//           id: parseInt(id)
-//         },select: {
-//           clients:true
-//         }
-//       })
-//       res.status(200).json(admin)
-//   } catch (error) {
-//       // res.status(404).json({ error: error })
-//       next(error)
-//   }
-// });
+
 module.exports = router;

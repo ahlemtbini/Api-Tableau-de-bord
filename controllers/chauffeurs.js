@@ -104,28 +104,106 @@ exports.getUserChauffeurs = async (req, res, next) => {
         res.status(404).json({ error: next(error) })
     }
 }
-const getChauffeursForUser = async(id)=>{
-
+const getChauffeursForUser = async (id) => {
+    try {
+        const user= await prisma.user.findUnique({
+              where: {id: Number(id)},
+              include: {
+                  manager: {
+                      include: {
+                          client: true,
+                          societes: {
+                              include: {
+                                  societe: {
+                                      include: {
+                                          sites: true
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  admin_client: {
+                      include: {
+                          client: true
+                      }
+                  },
+              }
+          })
+          if(user.role == "client_admin"){
+              const chauffeurs = await prisma.chauffeur.findMany({
+                  where: {
+                      clientId: user.admin_client.clientID
+                  },
+                  include: {
+                    user: {
+                      include: {
+                        profile: true
+                      }
+                    }
+                  },
+              })
+              return   chauffeurs
+          } else if(user.role == "manager"){
+              const societesIds=[]
+              user.manager.societes.map((soc)=>{
+                societesIds.push(String(soc.societe.id))
+              })
+              console.log('societesIds',societesIds)
+              const chauffeurs = await prisma.chauffeur.findMany({
+                  where: {
+                      societe: {
+                        in: societesIds,
+                      },
+                  },
+                  include: {
+                    user: {
+                      include: {
+                        profile: true
+                      }
+                    }
+                  },
+              })
+              return chauffeurs
+          } else if(user.role == "super_admin"){
+              const chauffeurs = await prisma.chauffeur.findMany({
+                include: {
+                  user: {
+                    include: {
+                      profile: true
+                    }
+                  }
+                },
+              })
+              return chauffeurs
+          }
+     
+    } catch (error) {
+       return null
+    }
 }
+
 exports.getToExport = async (req, res, next) => {
   try {
       const clients= await prisma.client.findMany()
       const regions= await prisma.region.findMany()
       const sites= await prisma.site.findMany()
+      const societes= await prisma.societe.findMany()
       const arr = await getChauffeursForUser(req.params.id)
       const chauffeurs=[]
       arr.map((el)=>{
         const obj= {
           ...el, 
           nomClient: clients.find(cli=> cli.id == parseInt(el.client)).nomClient,
-          nomRegion: regions.find(cli=> cli.id == parseInt(el.region)).name,
-          nomSite: sites.find(cli=> cli.id == parseInt(el.siteName)).nom,
+          nomRegion: el.region && regions.find(cli=> cli.id == parseInt(el.region)).name,
+          nomSociete: el.societe && societes.find(cli=> cli.id == parseInt(el.societe)).name,
+          nomSite: el.siteName && sites.find(cli=> cli.id == parseInt(el.siteName)).nom,
         }
         chauffeurs.push(obj)
       })
         res.status(200).json(chauffeurs)
     } catch (error) {
-        res.status(404).json({ error: error })
+        res.status(404).json({ error: next(error) })
     }
 }
 exports.getChauffeur = async (req, res, next) => {

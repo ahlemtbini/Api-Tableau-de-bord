@@ -493,3 +493,14 @@ model EntretienVehicule {
   chauffeur             Chauffeur @relation(fields: [chauffeurID], references: [id])
   chauffeurID           Int
 }
+
+model apiAdmin {
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  nom           String?
+  prenom        String?
+  mdp           String? @default("default")
+  role          String
+  resetLink     String? @db.Text
+  aciveInactive Boolean @default(false)
+}
