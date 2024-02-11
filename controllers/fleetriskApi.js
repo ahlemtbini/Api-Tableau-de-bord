@@ -182,10 +182,10 @@ const PrepareDayData = (sinis)=>{
     })
   }
   // console.log(upSin)
-  const sinsPerDay =[]
+  let sinsPerDay ={}
   upSin.map((el,id)=>{
     const key= week[id]
-    sinsPerDay.push({[key]: el.length})
+    sinsPerDay = {...sinsPerDay, [key]: el.length }
   })
   return sinsPerDay
 }
@@ -205,11 +205,12 @@ const PrepareMonthData = (sinis,year)=>{
       }
     }
   })
-  const sinsPerMonth =[]
+  let sinsPerMonth ={}
   const months= ["Janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
   upSin.map((el,id)=>{
     const key= months[id-1]
-    sinsPerMonth.push({[key]: el.length})
+    sinsPerMonth= {...sinsPerMonth, [key]: el.length}
+    // sinsPerMonth.push({[key]: el.length})
   })
   return sinsPerMonth
 }
@@ -334,7 +335,7 @@ const getGraph10 = (sinis) =>{
   });
 
   let arrData = upArr
-    console.log(upArr,'test')
+    // console.log(upArr,'test')
     upArr.map((el,id)=>{
       arrData[id] = { [updatedArray[id]] : el*100/sinis.length}
     })
@@ -401,7 +402,8 @@ const getGraph11 = (sinis) => {
 const getGraph12 = (sinis) =>{
   const upSin = []
   const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+  // const currentYear = currentDate.getFullYear();
+  const currentYear = '2023'
 
   const week=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]
   for(let key in week){
@@ -441,19 +443,19 @@ const getGraph12 = (sinis) =>{
               s4= s4+1
           }
       })
+      // console.log('respo',s1,s2,s3,s4)
       result.push({nbre: el.length,respo: s1, nonResp: s2, partagee:s3,autres:s4})
       responsable.push(s1*100/nbre)
       nonResponsable.push(s2*100/nbre)
       responsabilitePartagee.push(s3*100/nbre)
       autres.push(s4*100/nbre)
   })
-  return  [
-      {"Responsable": responsable },
-      {"Non responsable": nonResponsable },
-      {"Partagée": responsabilitePartagee },
-      {"Indéterminé": autres },
-    ]
- 
+
+  const res=[]
+  week.map((day,id)=>{
+    res.push({[day]: {'responsable': responsable[id], 'nonResponsable': nonResponsable[id], 'responsabilitePartagee': responsabilitePartagee[id], 'Indétérminé': autres[id] } })
+  })
+  return res
 }
 
 const getGraph13 = (sinis) =>{
@@ -543,7 +545,23 @@ const getGraph17_1 = (sinis) =>{
   return upSin
 }
 const getGraph17_2 = (sinis) =>{
+  const names=[]
+  const upArr=[]
+  sinis.map((sin,key)=>{
+      const CR= parseInt(sin.CHARGE_REELLE)
+      if(!isNaN(CR)){
+          upArr.push([CR,sin.CONDUCTEUR,sin.REGION,sin.SOCIETE,sin.DATE_SURVENANCE])
+      }
+  })
+  upArr.sort((a, b) => a[0] - b[0]);
+  const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
+  const headers =["charge réelle","Conducteur","Région","Société","Date de survenance"]
 
+  const res= []
+  firstFiveArrays.map((el,id)=>{
+    res.push({[headers[id]]: el})
+  })
+  return res
 }
 
 
@@ -568,7 +586,7 @@ exports.getGraphs = async (req, res, next) => {
         ...obj
       }
     })
-    console.log('nbr sinis: ',sinis.length)
+    // console.log('nbr sinis: ',sinis.length)
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
@@ -587,23 +605,21 @@ exports.getGraphs = async (req, res, next) => {
 
     const graph4 = getGraph4(sinis)
       let dashbord = {
-        graph1: getGraph1(sinis),
-        graph2: getGraph2(sinis),
-        graph3: getGraph3(objectif),
-        graph4: graph4,
-        graph5: getGraph5(graph4, objectif),
-        graph6: getGraph6(sinis, req.body.annee),
-        graph7: getGraph7(sinis),
-        graph8: getGraph8(sinis),
-        graph9: getGraph9(sinis,req.body.body),
-        graph10: getGraph10(sinis),
-        graph11: getGraph11(sinis),
-        graph12: getGraph12(sinis),
-        graph13: getGraph13(sinis),
-        'S/C': getGraph14(sinis),
+        "Nombre de sinistres" : getGraph1(sinis),
+        "Nbr. sinistres par jour": getGraph2(sinis),
+        "Objectifs charge sinistres": getGraph3(objectif),
+        "Charge estimée": graph4,
+        "Taux de respect de l'objectif": getGraph5(graph4, objectif),
+        "Saisonnalité de la fréquence sinistre": getGraph6(sinis, req.body.annee),
+        "Coût Sinistre Moyen": getGraph7(sinis),
+        "Liste Chauffeur Récidiviste": getGraph8(sinis),
+        "Répartition des sinistres par": getGraph9(sinis,req.body.body),
+        "Répartition des sinistres par cas": getGraph10(sinis),
+        "Responsabilité": getGraph11(sinis),
+        "Jour de la semaine vs Responsabilité": getGraph12(sinis),
+        "Sinistres par plages horaires": getGraph13(sinis),
         'Année de véhicule': getGraph17_1(sinis),
-        'Année de véhicule': getGraph17_1(sinis),
-        
+        'Top 5 sinistres': getGraph17_2(sinis),
       }
 
       res.status(200).json(dashbord)
