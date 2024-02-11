@@ -114,8 +114,10 @@ const getGraph2 = (sinis)=>{
 }
 
 const separateurMilier = (x)=>{
-  const numberString = x.toString();
-  return numberString.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+  if(x){
+    const numberString = x.toString();
+    return numberString.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+  }
 }
 
 const getGraph3 = (objectif)=>{
