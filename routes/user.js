@@ -171,6 +171,7 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
 // fleetrisk api
 router.post('/fleetrisk/dashbord',fleetriskAuth, fleetriskCtrl.getGraphs)
 router.get('/fleetrisk/admins', fleetriskCtrl.getAdmins)
+router.delete('/fleetrisk/delete-admins', fleetriskCtrl.deleteAdmins)
 router.post('/fleetrisk/signup', fleetriskCtrl.register)
 router.post('/fleetrisk/login', fleetriskCtrl.login)
 

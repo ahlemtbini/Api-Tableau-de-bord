@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
   try {
     const authType= req.headers.authorization.split(" ")[0];
     const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = decode(token, process.env.ENCRYPT_KEY)
+    const decodedToken = decode(token, process.env.FLEET_ENCRYPT)
     if(authType.toLowerCase() == 'basic'){
       console.log('basic',authType,'token','decoded',decodedToken)
       // bcrypt.compare(decodedToken.mdp, user.mdp)

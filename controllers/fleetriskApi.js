@@ -2,7 +2,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-const { decode } = require('jsonwebtoken')
+const { decode } = require('jsonwebtoken');
+const fleetrisk = require('../middlewares/fleetrisk');
 
 exports.getAdmins = async (req, res, next) => {
     try {
@@ -35,6 +36,14 @@ exports.register = (req, res, next) => {
     return res.status(400).json("ce email existe déja!")
   }
 }
+exports.deleteAdmins =async (req, res, next) => {
+  try {
+   const admins= await prisma.apiAdmin.deleteMany({})
+   return res.status(200).json("api admins deleted")
+  } catch (error) {
+    return res.status(400).json("ce email existe déja!")
+  }
+}
 
 exports.login = async (req, res, next) => {
   try {
@@ -59,7 +68,7 @@ exports.login = async (req, res, next) => {
         role: user.role,
         expiresIn: 3600000
       },
-      process.env.ENCRYPT_KEY,
+      process.env.FLEET_ENCRYPT,
       { algorithm: "HS256" }
       )})
     })
@@ -282,13 +291,13 @@ const getGraph9 = (sinis,props) =>{
   const arr=[]
   const upArr=[]
   const nameSet = new Set();
-    sinis.forEach(obj => {
-        if (!nameSet.has(obj[filtreStr])) {
-            nameSet.add(obj[filtreStr]);
-              arr.push(obj[filtreStr] !== null ? obj[filtreStr] : "Indeterminé")
-        }
-    });
-    
+  sinis.forEach(obj => {
+      if (!nameSet.has(obj[filtreStr])) {
+          nameSet.add(obj[filtreStr]);
+            arr.push(obj[filtreStr] !== null ? obj[filtreStr] : "Indeterminé")
+      }
+  });
+  if(arr.length>0){
     arr.map((value,id)=>{
       let somme = 0
       sinis.map((sin)=>{
@@ -300,6 +309,7 @@ const getGraph9 = (sinis,props) =>{
       })
       upArr[id]= {[arr[id]]: Math.round(somme)}
     })
+  }
     return upArr
 }
 
@@ -478,7 +488,6 @@ const getGraph13 = (sinis) =>{
   return { 'nbr': nbrArr, '%': upSin}
 }
 
-
 const getGraph14 = (sinis) =>{
   const upSin=[]
   sinis.filter((sin,key)=> {
@@ -586,7 +595,7 @@ exports.getGraphs = async (req, res, next) => {
         ...obj
       }
     })
-    // console.log('nbr sinis: ',sinis.length)
+    console.log('nbr sinis: ',sinis.length)
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
@@ -597,10 +606,10 @@ exports.getGraphs = async (req, res, next) => {
     let objectif
     if(req.body.annee){
       const chosenObjectif= client.objectifs.find(obj => obj.year == req.body.annee)
-      objectif = chosenObjectif.value
+      objectif = chosenObjectif?.value
     } else {
       const chosenObjectif= client.objectifs.find(obj => obj.year == new Date().getFullYear())
-      objectif = chosenObjectif ? chosenObjectif.value : client.objectifs[0].value
+      objectif = chosenObjectif ? chosenObjectif?.value : client.objectifs[0]?.value
     }
 
     const graph4 = getGraph4(sinis)
