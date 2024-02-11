@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
 
     } else {
       console.log('bearer',authType,'token',decodedToken)
-      if (decodedToken.email == 'api.admin@fleetrisk.fr' && decodedToken.id == 7 && decodedToken.role == 'admin_api_fleetrisk') {
+      if (decodedToken.email == 'api.admin@fleetrisk.fr' && decodedToken.role == 'admin_api_fleetrisk') {
           const user = await prisma.apiAdmin.findUnique({
               where: {id: decodedToken.id}
           })
