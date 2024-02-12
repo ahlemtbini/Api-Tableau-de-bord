@@ -110,8 +110,12 @@ const roundNumber = (x,n)=>{
   return Math.round(x*y)/y
 }
 const getGraph2 = (sinis,annee)=>{
-  const aujourdhui =  new Date();  // Get the current date
-  const currentYear =annee ?annee : new Date().getFullYear()
+  let aujourdhui =  new Date();  // Get the current date
+  let currentYear = new Date().getFullYear()
+  if(parseInt(annee) !== new Date().getFullYear() ){
+    aujourdhui =  new Date(annee+"-12-31"); 
+    currentYear= parseInt(annee)
+  }
   console.log('current yrear',currentYear)
   // const currentYear =2023
   const debutAnnee =  new Date(currentYear+'-01-01'); 
@@ -133,7 +137,7 @@ const getGraph2 = (sinis,annee)=>{
   const daysFromStartOfYear = Math.floor(difference / (1000 * 60 * 60 * 24));
   console.log(difference,daysFromStartOfYear,upSin.length)
   const res=roundNumber((upSin.length/daysFromStartOfYear),2)
-  return res
+  return {res:res,"nbre de sinistres":upSin.length, "nbre de jours depuis debut d'année":daysFromStartOfYear }
 }
 
 const separateurMilier = (x)=>{
@@ -424,11 +428,15 @@ const getGraph11 = (sinis) => {
         s4=0
       }
     })
+    const nps1 = Math.round(s1 * 100 / sinis.length)
+    const nps2 = Math.round(s2 * 100 / sinis.length)
+    const nps3 = Math.round(s3 * 100 / sinis.length)
+    const nps4 = Math.round(s4 * 100 / sinis.length)
     tabNbr=[
-      {title:"Responsable", value: separateurMilier(s1)},
-      {title:"Non responsable", value:separateurMilier(s2)},
-      {title:"Partagée", value:separateurMilier(s3)},
-      {title:"Indéterminé", value:separateurMilier(s4)},
+      {title:"Responsable", value: separateurMilier(s1),percentage: nps1},
+      {title:"Non responsable", value:separateurMilier(s2),percentage: nps2},
+      {title:"Partagée", value:separateurMilier(s3),percentage: nps3},
+      {title:"Indéterminé", value:separateurMilier(s4),percentage: nps4},
     ]
   upArr=[s1,s2,s3,s4]
   return {'nbr': tabNbr, '%': tabPer}
@@ -576,7 +584,7 @@ const getGraph17_1 = (sinis) =>{
   upSin.map((el,id)=>{
       tab.push({title:upYears[id],value:el, percentage:Math.round((el / sum) * 100)})
   })
-  return upSin
+  return tab
 }
 const getGraph17_2 = (sinis) =>{
   const names=[]
@@ -638,23 +646,23 @@ exports.getGraphs = async (req, res, next) => {
 
     const sinis=removeDoubles(sinistres)
 
-    const graph4 = getGraph4(sinis)
+    const graph4 = getGraph4(sinistres)
       let dashbord = {
         "Nombre de sinistres" : {"tous":sinistres.length, "sansDoublons": sinis.length},
         "Nbr. sinistres par jour": getGraph2(sinis,parseInt(req.body.annee)),
         "Objectifs charge sinistres": getGraph3(objectif),
         "Charge estimée": graph4,
-        "Taux de respect de l'objectif": getGraph5(graph4, objectif),
-        "Saisonnalité de la fréquence sinistre": getGraph6(sinis, req.body.annee),
         "Coût Sinistre Moyen": getGraph7(sinis),
-        "Liste Chauffeur Récidiviste": getGraph8(sinis),
         "Répartition des sinistres par": getGraph9(sinis,req.body.body),
         "Répartition des sinistres par cas": getGraph10(sinis),
+        "Taux de respect de l'objectif": getGraph5(graph4, objectif),
+        'Top 5 sinistres': getGraph17_2(sinis),
+        "Saisonnalité de la fréquence sinistre": getGraph6(sinis, req.body.annee),
+        "Liste Chauffeur Récidiviste": getGraph8(sinis),
         "Responsabilité": getGraph11(sinis),
         "Jour de la semaine vs Responsabilité": getGraph12(sinis),
-        "Sinistres par plages horaires": getGraph13(sinis),
         'Année de véhicule': getGraph17_1(sinis),
-        'Top 5 sinistres': getGraph17_2(sinis),
+        "Sinistres par plages horaires": getGraph13(sinis),
       }
 
       res.status(200).json(dashbord)
