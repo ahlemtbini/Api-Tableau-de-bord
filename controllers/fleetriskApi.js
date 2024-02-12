@@ -79,7 +79,26 @@ exports.login = async (req, res, next) => {
 }
 
 const getGraph1 = (sinis)=>{
-  return sinis?.length
+    const upSin = [];
+    const nameSet = new Set();
+    let x=[]
+    sinis.forEach(obj => {
+    if(obj.REF_SINISTRE_ASUREUR){
+        if (!nameSet.has(obj.REF_SINISTRE_ASUREUR)) {
+            nameSet.add(obj.REF_SINISTRE_ASUREUR);
+            upSin.push(obj);
+        }else {
+            x.push(obj.REF_SINISTRE_ASUREUR)
+        }
+    } else {
+        upSin.push(obj);
+            // if (!nameSet.has(obj.DOSSIER)) {
+            //     nameSet.add(obj.DOSSIER);
+            // } 
+    }
+    });
+    // console.log(x)
+  return upSin.length
 }
 const dateToNumber=(a)=>{
   return  Number((a.split('-')[2]) + ((a.split('-')[1])) + (a.split('-')[0]))
@@ -115,9 +134,9 @@ const getGraph2 = (sinis)=>{
 
 const separateurMilier = (x)=>{
   if(x){
-    const numberString = x.toString();
+    const numberString = x?.toString();
     return numberString.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
-  }
+  } 
 }
 
 const getGraph3 = (objectif)=>{
@@ -131,7 +150,7 @@ const getMonthFr= (date) =>{
 
 const getCurrentMonth= () =>{
   const currentDate = new Date();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const month = (currentDate.getMonth() + 1)?.toString().padStart(2, '0');
   return month;
 }
 
