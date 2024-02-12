@@ -91,12 +91,12 @@ const removeDoubles = (sinis)=>{
             x.push(obj.REF_SINISTRE_ASUREUR)
         }
     } else {
-      // if (!nameSet.has(obj.DOSSIER)) {
-      //   nameSet.add(obj.DOSSIER);
-      //   upSin.push(obj);
-      // } else {
-      //   x.push(obj.obj.DOSSIER)
-      // }
+        if (!nameSet.has(obj.DOSSIER)) {
+          nameSet.add(obj.DOSSIER);
+          upSin.push(obj);
+        } else {
+          x.push(obj.obj.DOSSIER)
+        }
     }
     });
     // console.log(x)
@@ -640,7 +640,7 @@ exports.getGraphs = async (req, res, next) => {
 
     const graph4 = getGraph4(sinis)
       let dashbord = {
-        "Nombre de sinistres" : sinis.length,
+        "Nombre de sinistres" : {"tous":sinistres.length, "sansDoublons": sinis.length},
         "Nbr. sinistres par jour": getGraph2(sinis,parseInt(req.body.annee)),
         "Objectifs charge sinistres": getGraph3(objectif),
         "Charge estimée": graph4,

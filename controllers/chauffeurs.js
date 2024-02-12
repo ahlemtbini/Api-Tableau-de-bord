@@ -223,46 +223,51 @@ exports.getChauffeur = async (req, res, next) => {
         // next(error)
     }
 }
-exports.addChauffeur = (req, res, next) => {
+exports.addChauffeur = async(req, res, next) => {
     try {
-      const unhasheMdp = req.body.mdp ? req.body.mdp :"default"
-      bcrypt.hash(unhasheMdp, 10)
-      .then(async(hash)=>{
-        const user = await prisma.user.create({
-            data: {
-              nom: req.body.nom,
-              prenom: req.body.prenom,
-              email: req.body.email,
-              role: req.body.role,
-              mdp: hash,
-              numTel: req.body.numTel,
-              chauffeur: {
-                create: {
-                  email:req.body.email,
-                  client: String(req.body.client),
-                  region: req.body.region,
-                  societe: req.body.societe,
-                  siteName: req.body.siteName,
-                }
-              },
-              profile: {
-                create: {
-                  date_de_naissance: req.body.date_de_naissance,
-                  typeContrat: req.body.typeContrat,
-                  dateEmbauche: req.body.dateEmbauche,
-                  creerPar: req.body.creerPar,
-                  permisConduire: req.body.permisConduire,
-                  photo: req.body.photo,
+      const emailExist = await prisma.user.findUnique({where:{email: req.body.email}})
+      if(!emailExist){
+        const unhasheMdp = req.body.mdp ? req.body.mdp :"default"
+        bcrypt.hash(unhasheMdp, 10)
+        .then(async(hash)=>{
+          const user = await prisma.user.create({
+              data: {
+                nom: req.body.nom,
+                prenom: req.body.prenom,
+                email: req.body.email,
+                role: req.body.role,
+                mdp: hash,
+                numTel: req.body.numTel,
+                chauffeur: {
+                  create: {
+                    email:req.body.email,
+                    client: String(req.body.client),
+                    region: req.body.region,
+                    societe: req.body.societe,
+                    siteName: req.body.siteName,
+                  }
+                },
+                profile: {
+                  create: {
+                    date_de_naissance: req.body.date_de_naissance,
+                    typeContrat: req.body.typeContrat,
+                    dateEmbauche: req.body.dateEmbauche,
+                    creerPar: req.body.creerPar,
+                    permisConduire: req.body.permisConduire,
+                    photo: req.body.photo,
+                  }
                 }
               }
-            }
+          })
+      
+          console.log(hash,user)
+  
+          return res.status(200).json(user)
         })
-    
-        console.log(hash,user)
-
-        return res.status(200).json(user)
-      })
-      .catch((error)=>res.status(404).json({error: next(error)}))
+        .catch((error)=>res.status(404).json({error: next(error)}))
+      } else {
+        return res.status(404).json({error: "L'email du chauffeur existe déja"})
+      }
     } catch (error) {
      return res.status(404).json({error:next(error)})
     }

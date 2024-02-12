@@ -44,8 +44,9 @@ const storage = multer.diskStorage({
     filename: (req, file, callback) => {
         console.log(file,'f')
         let name = file.originalname.split(' ').join('_');
-        name = name.split('.pdf')[0]
         const extension = MIME_TYPES[file.mimetype];
+        name = name.split('.pdf')[0]
+        // name = name.split('.pdf')[0]
         callback(null, name + '.' + Date.now() + '.' + extension);
     }
 })
