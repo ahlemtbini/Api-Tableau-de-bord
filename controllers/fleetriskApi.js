@@ -78,7 +78,7 @@ exports.login = async (req, res, next) => {
   }
 }
 
-const getGraph1 = (sinis)=>{
+const removeDoubles = (sinis)=>{
     const upSin = [];
     const nameSet = new Set();
     let x=[]
@@ -91,14 +91,16 @@ const getGraph1 = (sinis)=>{
             x.push(obj.REF_SINISTRE_ASUREUR)
         }
     } else {
-        upSin.push(obj);
-            // if (!nameSet.has(obj.DOSSIER)) {
-            //     nameSet.add(obj.DOSSIER);
-            // } 
+      // if (!nameSet.has(obj.DOSSIER)) {
+      //   nameSet.add(obj.DOSSIER);
+      //   upSin.push(obj);
+      // } else {
+      //   x.push(obj.obj.DOSSIER)
+      // }
     }
     });
     // console.log(x)
-  return upSin.length
+  return upSin
 }
 const dateToNumber=(a)=>{
   return  Number((a.split('-')[2]) + ((a.split('-')[1])) + (a.split('-')[0]))
@@ -107,9 +109,10 @@ const roundNumber = (x,n)=>{
   const y= Math.pow(10,n)
   return Math.round(x*y)/y
 }
-const getGraph2 = (sinis)=>{
+const getGraph2 = (sinis,annee)=>{
   const aujourdhui =  new Date();  // Get the current date
-  const currentYear =new Date().getFullYear()
+  const currentYear =annee ?annee : new Date().getFullYear()
+  console.log('current yrear',currentYear)
   // const currentYear =2023
   const debutAnnee =  new Date(currentYear+'-01-01'); 
   const difference =  aujourdhui - debutAnnee
@@ -128,6 +131,7 @@ const getGraph2 = (sinis)=>{
   })
   // Convert the difference to days
   const daysFromStartOfYear = Math.floor(difference / (1000 * 60 * 60 * 24));
+  console.log(difference,daysFromStartOfYear,upSin.length)
   const res=roundNumber((upSin.length/daysFromStartOfYear),2)
   return res
 }
@@ -611,12 +615,11 @@ exports.getGraphs = async (req, res, next) => {
     if(req.body.site){
       obj= {...obj, SITE: req.body.site }
     }
-    const sinis = await prisma.declarationSinistre.findMany({
+    const sinistres = await prisma.declarationSinistre.findMany({
       where: {
         ...obj
       }
     })
-    console.log('nbr sinis: ',sinis.length)
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
@@ -633,10 +636,12 @@ exports.getGraphs = async (req, res, next) => {
       objectif = chosenObjectif ? chosenObjectif?.value : client.objectifs[0]?.value
     }
 
+    const sinis=removeDoubles(sinistres)
+
     const graph4 = getGraph4(sinis)
       let dashbord = {
-        "Nombre de sinistres" : getGraph1(sinis),
-        "Nbr. sinistres par jour": getGraph2(sinis),
+        "Nombre de sinistres" : sinis.length,
+        "Nbr. sinistres par jour": getGraph2(sinis,parseInt(req.body.annee)),
         "Objectifs charge sinistres": getGraph3(objectif),
         "Charge estimée": graph4,
         "Taux de respect de l'objectif": getGraph5(graph4, objectif),
