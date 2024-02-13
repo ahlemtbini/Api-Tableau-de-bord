@@ -36,7 +36,7 @@ const MIME_TYPES = {
     'application/vnd.ms-powerpoint.slideshow.macroEnabled.12': 'ppsm',
     'application/vnd.ms-access': 'mdb'
 }
-console.log('multer')
+// console.log('multer')
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, './documents/')
@@ -44,10 +44,12 @@ const storage = multer.diskStorage({
     filename: (req, file, callback) => {
         console.log(file,'f')
         let name = file.originalname.split(' ').join('_');
+        // name = file.originalname.split('.').join('_');
         const extension = MIME_TYPES[file.mimetype];
-        name = name.split('.pdf')[0]
+        name = name.split(extension)[0]
+        console.log('name',name)
         // name = name.split('.pdf')[0]
-        callback(null, name + '.' + Date.now() + '.' + extension);
+        callback(null, name  + Date.now() + '.' + extension);
     }
 })
 

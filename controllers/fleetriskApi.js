@@ -61,7 +61,6 @@ exports.login = async (req, res, next) => {
       if (!valid) {
         return res.status(401).json({ error: "Mot de passe incorrect !" });
       }
-      
       return res.status(200).json({token: jwt.sign({
         id: user.id,
         email: user.email,
@@ -318,7 +317,7 @@ const getGraph9 = (sinis,props) =>{
   else if(props?.region){ filtreStr= "SOCIETE"}
   else { filtreStr= "REGION"}
   const arr=[]
-  const upArr=[]
+  let upArr={}
   const nameSet = new Set();
   sinis.forEach(obj => {
       if (!nameSet.has(obj[filtreStr])) {
@@ -336,7 +335,7 @@ const getGraph9 = (sinis,props) =>{
           }
         }
       })
-      upArr[id]= {[arr[id]]: Math.round(somme)}
+      upArr = {...upArr, [arr[id]]: Math.round(somme)}
     })
   }
     return upArr
@@ -373,8 +372,7 @@ const getGraph10 = (sinis) =>{
     return item;
   });
 
-  let arrData = upArr
-    // console.log(upArr,'test')
+  let arrData = []
     upArr.map((el,id)=>{
       arrData[id] = { [updatedArray[id]] : el*100/sinis.length}
     })
@@ -428,10 +426,11 @@ const getGraph11 = (sinis) => {
         s4=0
       }
     })
-    const nps1 = Math.round(s1 * 100 / sinis.length)
-    const nps2 = Math.round(s2 * 100 / sinis.length)
-    const nps3 = Math.round(s3 * 100 / sinis.length)
-    const nps4 = Math.round(s4 * 100 / sinis.length)
+    let sommeNbr = s1+s2+s3+s4
+    const nps1 = Math.round(s1 * 100 / sommeNbr)
+    const nps2 = Math.round(s2 * 100 / sommeNbr)
+    const nps3 = Math.round(s3 * 100 / sommeNbr)
+    const nps4 = Math.round(s4 * 100 / sommeNbr)
     tabNbr=[
       {title:"Responsable", value: separateurMilier(s1),percentage: nps1},
       {title:"Non responsable", value:separateurMilier(s2),percentage: nps2},
@@ -649,20 +648,20 @@ exports.getGraphs = async (req, res, next) => {
     const graph4 = getGraph4(sinistres)
       let dashbord = {
         "Nombre de sinistres" : {"tous":sinistres.length, "sansDoublons": sinis.length},
-        "Nbr. sinistres par jour": getGraph2(sinis,parseInt(req.body.annee)),
+        "Nbr. sinistres par jour": getGraph2(sinistres,parseInt(req.body.annee)),
         "Objectifs charge sinistres": getGraph3(objectif),
         "Charge estimée": graph4,
-        "Coût Sinistre Moyen": getGraph7(sinis),
-        "Répartition des sinistres par": getGraph9(sinis,req.body.body),
-        "Répartition des sinistres par cas": getGraph10(sinis),
+        "Coût Sinistre Moyen": getGraph7(sinistres),
+        "Répartition des sinistres par": getGraph9(sinistres,req.body.body),
+        "Répartition des sinistres par cas": getGraph10(sinistres),
         "Taux de respect de l'objectif": getGraph5(graph4, objectif),
-        'Top 5 sinistres': getGraph17_2(sinis),
-        "Saisonnalité de la fréquence sinistre": getGraph6(sinis, req.body.annee),
-        "Liste Chauffeur Récidiviste": getGraph8(sinis),
-        "Responsabilité": getGraph11(sinis),
-        "Jour de la semaine vs Responsabilité": getGraph12(sinis),
-        'Année de véhicule': getGraph17_1(sinis),
-        "Sinistres par plages horaires": getGraph13(sinis),
+        'Top 5 sinistres': getGraph17_2(sinistres),
+        "Saisonnalité de la fréquence sinistre": getGraph6(sinistres, req.body.annee),
+        "Liste Chauffeur Récidiviste": getGraph8(sinistres),
+        "Responsabilité": getGraph11(sinistres),
+        "Jour de la semaine vs Responsabilité": getGraph12(sinistres),
+        'Année de véhicule': getGraph17_1(sinistres),
+        "Sinistres par plages horaires": getGraph13(sinistres),
       }
 
       res.status(200).json(dashbord)
