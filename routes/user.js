@@ -106,6 +106,7 @@ router.get('/chauffeurs/export/:id', chauffeurCtrl.getToExport)
 router.get('/chauffeurs/:id', chauffeurCtrl.getChauffeur)
 router.post('/chauffeurs/add', chauffeurCtrl.addChauffeur)
 router.put('/chauffeurs/:id', chauffeurCtrl.editChauffeur)
+router.post('/chauffeurs/import', upload, chauffeurCtrl.importChauffeurs)
 // societes
 router.get('/societes', societesCtrl.getSocietes)
 router.post('/UserSocietesByRegion', societesCtrl.getSocietesByUserId)

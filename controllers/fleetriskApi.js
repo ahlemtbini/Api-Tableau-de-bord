@@ -222,6 +222,7 @@ const PrepareDayData = (sinis)=>{
   let sinsPerDay ={}
   upSin.map((el,id)=>{
     const key= week[id]
+    console.log(id)
     sinsPerDay = {...sinsPerDay, [key]: el.length }
   })
   return sinsPerDay
@@ -438,14 +439,14 @@ const getGraph11 = (sinis) => {
       {title:"Indéterminé", value:separateurMilier(s4),percentage: nps4},
     ]
   upArr=[s1,s2,s3,s4]
-  return {'nbr': tabNbr, '%': tabPer}
+  return {'charge': tabNbr, '%': tabPer}
 }
 
-const getGraph12 = (sinis) =>{
+const getGraph12 = (sinis,annee) =>{
   const upSin = []
   const currentDate = new Date();
-  // const currentYear = currentDate.getFullYear();
-  const currentYear = '2023'
+  const currentYear = annee? annee : currentDate.getFullYear();
+  // const currentYear = '2023'
 
   const week=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]
   for(let key in week){
@@ -493,9 +494,9 @@ const getGraph12 = (sinis) =>{
       autres.push(s4*100/nbre)
   })
 
-  const res=[]
+  let res={}
   week.map((day,id)=>{
-    res.push({[day]: {'responsable': responsable[id], 'nonResponsable': nonResponsable[id], 'responsabilitePartagee': responsabilitePartagee[id], 'Indétérminé': autres[id] } })
+    res = {...res, [day]: {'responsable': Math.round(responsable[id]), 'nonResponsable': Math.round(nonResponsable[id]), 'responsabilitePartagee': Math.round(responsabilitePartagee[id]), 'Indétérminé': Math.round(autres[id]) } }
   })
   return res
 }
@@ -652,14 +653,14 @@ exports.getGraphs = async (req, res, next) => {
         "Objectifs charge sinistres": getGraph3(objectif),
         "Charge estimée": graph4,
         "Coût Sinistre Moyen": getGraph7(sinistres),
-        "Répartition des sinistres par": getGraph9(sinistres,req.body.body),
+        "Répartition des sinistres par": getGraph9(sinistres,req.body),
         "Répartition des sinistres par cas": getGraph10(sinistres),
         "Taux de respect de l'objectif": getGraph5(graph4, objectif),
         'Top 5 sinistres': getGraph17_2(sinistres),
         "Saisonnalité de la fréquence sinistre": getGraph6(sinistres, req.body.annee),
         "Liste Chauffeur Récidiviste": getGraph8(sinistres),
         "Responsabilité": getGraph11(sinistres),
-        "Jour de la semaine vs Responsabilité": getGraph12(sinistres),
+        "Jour de la semaine vs Responsabilité": getGraph12(sinistres,req.body.annee),
         'Année de véhicule': getGraph17_1(sinistres),
         "Sinistres par plages horaires": getGraph13(sinistres),
       }
