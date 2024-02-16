@@ -115,7 +115,7 @@ const getGraph2 = (sinis,annee)=>{
     aujourdhui =  new Date(annee+"-12-31"); 
     currentYear= parseInt(annee)
   }
-  console.log('current yrear',currentYear)
+  // console.log('current yrear',currentYear)
   // const currentYear =2023
   const debutAnnee =  new Date(currentYear+'-01-01'); 
   const difference =  aujourdhui - debutAnnee
@@ -134,7 +134,7 @@ const getGraph2 = (sinis,annee)=>{
   })
   // Convert the difference to days
   const daysFromStartOfYear = Math.floor(difference / (1000 * 60 * 60 * 24));
-  console.log(difference,daysFromStartOfYear,upSin.length)
+  // console.log(difference,daysFromStartOfYear,upSin.length)
   const res=roundNumber((upSin.length/daysFromStartOfYear),2)
   return {res:res,"nbre de sinistres":upSin.length, "nbre de jours depuis debut d'année":daysFromStartOfYear }
 }
@@ -222,7 +222,6 @@ const PrepareDayData = (sinis)=>{
   let sinsPerDay ={}
   upSin.map((el,id)=>{
     const key= week[id]
-    console.log(id)
     sinsPerDay = {...sinsPerDay, [key]: el.length }
   })
   return sinsPerDay
@@ -447,17 +446,20 @@ const getGraph12 = (sinis,annee) =>{
   const currentDate = new Date();
   const currentYear = annee? annee : currentDate.getFullYear();
   // const currentYear = '2023'
-
+  let daysData = {}
   const week=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]
   for(let key in week){
     const upJour =upSin[key] ? [...upSin[key]] : []
     sinis.map((sin)=>{
       const date= sin.DATE_SURVENANCE 
       if(getYear(date) == currentYear){
-        if(getDayName(date) == week[key]){
+        const dayName=getDayName(date)
+        if(dayName == week[key]){
             // console.log(getDayName(date) ,week[key])
             upJour.push(sin)
             upSin[key] = upJour
+            daysData= {...daysData, [dayName]: upJour}
+            // daysData[dayName].push(sin.POURCENTAGE_RC )
           }
       }
     })
@@ -466,39 +468,45 @@ const getGraph12 = (sinis,annee) =>{
   const nonResponsable =[]
   const responsabilitePartagee = []
   const autres = []
-  const result=[]
-  upSin.map(el=>{
-      const nbre= el.length
-      let s1=0
-      let s2=0
-      let s3=0
-      let s4=0
-      el.map((sin)=>{
-          if(sin.POURCENTAGE_RC == 100){
-              s1= s1+1
-          }
-          else if(sin.POURCENTAGE_RC == 0){
-              s2= s2+1
-          }
-          else if(sin.POURCENTAGE_RC  == 50){
-              s3= s3+1
-          }  else {
-              s4= s4+1
-          }
-      })
-      // console.log('respo',s1,s2,s3,s4)
-      result.push({nbre: el.length,respo: s1, nonResp: s2, partagee:s3,autres:s4})
-      responsable.push(s1*100/nbre)
-      nonResponsable.push(s2*100/nbre)
-      responsabilitePartagee.push(s3*100/nbre)
-      autres.push(s4*100/nbre)
+  let result={}
+  console.log('length',daysData.length)
+  Object.entries(daysData).map((val,key)=>{
+    const el =val[1]
+    console.log(val[0],el.length)
+        const nbre= el.length
+        let s1=0
+        let s2=0
+        let s3=0
+        let s4=0
+        el.map((sin)=>{
+            if(sin.POURCENTAGE_RC == 100){
+                s1= s1+1
+            }
+            else if(sin.POURCENTAGE_RC == 0){
+                s2= s2+1
+            }
+            else if(sin.POURCENTAGE_RC  == 50){
+                s3= s3+1
+            }  else {
+                s4= s4+1
+            }
+        })
+        // console.log('respo',s1,s2,s3,s4)
+        result={...result, [val[0]] : {"nbre de sinistre par jour": el.length,responsable: {nbre:s1, '%': Math.round(s1*100/el.length)}, nonResponsable: {nbre:s2, '%': Math.round(s2*100/el.length)}, "partagée":{nbre:s3, '%': Math.round(s3*100/el.length)},"Indétérminé":{nbre:s4, '%': Math.round(s4*100/el.length)}}}
+        responsable.push(s1*100/nbre)
+        nonResponsable.push(s2*100/nbre)
+        responsabilitePartagee.push(s3*100/nbre)
+        autres.push(s4*100/nbre)
   })
-
+ 
   let res={}
   week.map((day,id)=>{
+    // console.log('id',id)
     res = {...res, [day]: {'responsable': Math.round(responsable[id]), 'nonResponsable': Math.round(nonResponsable[id]), 'responsabilitePartagee': Math.round(responsabilitePartagee[id]), 'Indétérminé': Math.round(autres[id]) } }
   })
-  return res
+  console.log('res',result)
+
+  return result
 }
 
 const getGraph13 = (sinis) =>{
