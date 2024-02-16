@@ -631,14 +631,45 @@ exports.getGraphs = async (req, res, next) => {
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
-        objectifs: true
+        objectifs: true,
       }
     })
-    // console.log('client: ',objectif)
+    // console.log('client: ',client)
     let objectif
     if(req.body.annee){
-      const chosenObjectif= client.objectifs.find(obj => obj.year == req.body.annee)
-      objectif = chosenObjectif?.value
+      if(!req.body.region && !req.body.societe && !req.body.site && req.body.annee){
+        const chosenObjectif= client.objectifs.find(obj => obj.year == req.body.annee)
+        objectif = chosenObjectif?.value
+      } else if(!req.body.societe && !req.body.site && req.body.annee && req.body.region) {
+        const region = await prisma.region.findFirst({
+          where: {name: req.body.region},
+          include: {objectifs: true}
+        })
+        const chosen= region.objectifs.find((obj=>obj.year == req.body.annee))
+        objectif= chosen?.value
+     
+      } else if (req.body.societe && !req.body.site && req.body.annee ){
+        const societe= await prisma.societe.findFirst({
+          where: {name: req.body.societe},
+          include: {
+            objectifs: true
+          }
+        })
+        const chosen= societe.objectifs.find((obj=>obj.year == req.body.annee))
+        objectif= chosen?.value
+      } else if (req.body.site && req.body.annee ){
+        const site= await prisma.site.findFirst({
+          where: {nom: req.body.site},
+          include: {
+            objectifs: true
+          }
+        })
+        const chosen= site.objectifs.find((obj=>obj.year == req.body.annee))
+        objectif= chosen?.value
+      } else {
+        objectif = 0
+      }
+
     } else {
       const chosenObjectif= client.objectifs.find(obj => obj.year == new Date().getFullYear())
       objectif = chosenObjectif ? chosenObjectif?.value : client.objectifs[0]?.value
