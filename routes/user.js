@@ -173,8 +173,10 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
 /**
  * @swagger
  * tags:
- *   name: FleetRisk
- *   description: tableau de bord
+ *   name: FleetRisk signup
+ *   description: Création du compte utilisateur qui permet l'accès à l'API
+ *   order: 1
+
  */
 
 /**
@@ -188,13 +190,175 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  *       description: Ajouter ici votre token pour acceder au API
  */
 
+/** 
+ * @swagger
+ *  /fleetrisk/signup:
+ *    post:
+ *      tags: [FleetRisk signup]
+ *      summary: A exécuter une seule fois pour la création du compte
+ *      consumes:
+ *        - application/json
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          name: user
+ *          description: Informations utilisateur pour l'inscription
+ *          required: true
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *                format: email
+ *                example: api.admin@fleetrisk.fr
+ *              nom:
+ *                type: string
+ *                example: fleetrisk
+ *              prenom:
+ *                type: string
+ *                example: api admin
+ *              role:
+ *                type: string
+ *                example: admin_api_fleetrisk
+ *              mdp:
+ *                type: string
+ *                example: Mcxl.kj5dd.sqd!
+ *            example:
+ *              email: api.admin@fleetrisk.fr
+ *              nom: fleetrisk
+ *              prenom: api admin
+ *              role: admin_api_fleetrisk
+ *              mdp: Mcxl.kj5dd.sqd!
+ *      responses:
+ *        200:
+ *          description: Inscription réussie
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: success
+ *              message:
+ *                type: string
+ *                example: Utilisateur inscrit avec succès
+ *        400:
+ *          description: Requête incorrecte - Entrée invalide
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: error
+ *              message:
+ *                type: string
+ *                example: Entrée invalide, veuillez vérifier votre requête
+ *        500:
+ *          description: Erreur interne du serveur
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: error
+ *              message:
+ *                type: string
+ *                example: Erreur interne du serveur, veuillez réessayer plus tard
+ */
+router.post('/fleetrisk/signup', fleetriskCtrl.register);
+/**
+ * @swagger
+ * tags:
+ *   name: FleetRisk login
+ *   description: Connexion avec le compte utilisateur déjà créé et qui permet l'accès aux données de l'API
+ *   order: 2
+
+ */
+
+/** 
+ * @swagger
+ *  /fleetrisk/login:
+ *    post:
+ *      tags: [FleetRisk login]
+ *      summary: A exécuter pour générer le token
+ *      consumes:
+ *        - application/json
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          name: user
+ *          description: Email d'utilisateur et mot de passe
+ *          required: true
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *                format: email
+ *                example: api.admin@fleetrisk.fr
+ *              mdp:
+ *                type: string
+ *                example: Mcxl.kj5dd.sqd!
+ *            example:
+ *              email: api.admin@fleetrisk.fr
+ *              mdp: Mcxl.kj5dd.sqd!
+ *      responses:
+ *        200:
+ *          description: Connexion réussie (Cette requête va générer un Token à utiliser par la suite pour pouvoir accèder aux données du dashboard)
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: success
+ *              message:
+ *                type: string
+ *                example: Utilisateur connecté avec succès
+ *              token:
+ *                type: string
+ *                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *        400:
+ *          description: Requête incorrecte - Entrée invalide
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: error
+ *              message:
+ *                type: string
+ *                example: Entrée invalide, veuillez vérifier votre requête
+ *        500:
+ *          description: Erreur interne du serveur
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: error
+ *              message:
+ *                type: string
+ *                example: Erreur interne du serveur, veuillez réessayer plus tard
+ */
+router.post('/fleetrisk/login', fleetriskCtrl.login)
+
+/**
+ * @swagger
+ * tags:
+ *   name: FleetRisk dashboard
+ *   description: tableau de bord
+ *   order: 3
+
+ */
+
 /**
  * @swagger
  * /fleetrisk/dashboard:
  *   post:
  *     summary: Obtenez les graphiques du tableau de bord FleetRisk
  *     description: Récupère les données graphiques pour le tableau de bord FleetRisk.
- *     tags: [FleetRisk]
+ *     tags: [FleetRisk dashboard]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -514,6 +678,7 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  *       500:
  *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
  */
+
 // fleetrisk api
 router.post('/fleetrisk/dashbord',fleetriskAuth, fleetriskCtrl.getGraphs)
 router.get('/fleetrisk/admins', fleetriskCtrl.getAdmins)
