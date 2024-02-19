@@ -128,7 +128,7 @@ model AdminClient {
   id       Int     @id @default(autoincrement())
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int     @unique
-  client   Client? @relation(fields: [clientID], references: [id])
+  client   Client? @relation(fields: [clientID], references: [id], map: "clientID_FK")
   clientID Int?
 }
 
