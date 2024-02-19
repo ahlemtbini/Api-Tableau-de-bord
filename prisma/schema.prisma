@@ -94,7 +94,6 @@ model User {
   super_admin        SuperAdmin?
   admin_client       AdminClient?
   manager            Manager?
-  chauffeur          Chauffeur?
 }
 
 model DashbordPrefrences {
@@ -144,18 +143,25 @@ model Manager {
 }
 
 model Chauffeur {
-  id                 Int                 @id @default(autoincrement())
-  email              String              @unique
-  client             String
-  societe            String?
-  siteName           String?
-  region             String?
-  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             Int                 @unique
-  site               Site?               @relation(fields: [siteId], references: [id])
-  siteId             Int?
-  sinistres          Sinistre[]
-  entretienVehicules EntretienVehicule[]
+  id                Int                 @id @default(autoincrement())
+  nom               String?
+  prenom            String?
+  email             String              @unique
+  numTel            String?
+  date_de_naissance String?
+  typeContrat       ContractType?
+  dateEmbauche      String?
+  creerPar          Role          
+  permisConduire    String?
+  photo             String?
+  client            String?
+  clientName        String?
+  region            String?
+  regionName        String?
+  societe           String?
+  societeName       String?
+  site              String?
+  siteName          String?
 }
 
 model Objectif {
@@ -282,7 +288,6 @@ model Site {
   clientId     Int
   Societe      Societe?    @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
   SocieteID    Int?
-  chuaffeurs   Chauffeur[]
   objectifs    Objectif[]
 }
 
@@ -328,7 +333,7 @@ enum BolType {
 model Sinistre {
   id                    Int                  @id @default(autoincrement())
   etat                  Etat?                @default(recu)
-  chauffeur             Chauffeur?           @relation(fields: [chauffeurEmail], references: [email])
+  chauffeur             String?
   chauffeurEmail        String?
   creatorRole           Role?                @map("créer par")
   creatorId             String?              @map("id créateur")
@@ -342,15 +347,6 @@ model Sinistre {
   declarationSinistre   DeclarationSinistre?
   // documents            SinistreDocuments?
 }
-
-// model SinistreDocuments {
-//   sinistre                      Sinistre       @relation(fields: [sinistreId], references: [id], onDelete: Cascade)
-//   sinistreId         Int        @unique
-//   constat                       String?
-//   permis_conduire               String?
-//   carte_grise                   String?
-//   declaration_chauffeur         String?
-// }
 
 model DeclarationSinistre {
   sinistre                       Sinistre @relation(fields: [DOSSIER], references: [id], onDelete: Cascade)
@@ -490,7 +486,6 @@ model EntretienVehicule {
   description_entretien String    @db.Text
   type_vehicule         String
   matricule             String
-  chauffeur             Chauffeur @relation(fields: [chauffeurID], references: [id])
   chauffeurID           Int
 }
 

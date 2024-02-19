@@ -182,8 +182,7 @@ exports.deleteUser = async (req, res, next) => {
     })
     return res.json(user)
   } catch (error) {
-    // return res.status(404).json({ error: error })
-    next(error)
+    return res.status(404).json({ error: next(error) })
   }
 }
 
