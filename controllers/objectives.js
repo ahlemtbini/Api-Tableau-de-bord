@@ -198,7 +198,6 @@ exports.getManagerAll = async (req, res, next) => {
 }
 
 exports.getFiltred = async (req, res, next) => {
-    console.log('body',req.body)
     try {
         let obj ={}
         if(req.body.year){
@@ -228,7 +227,6 @@ exports.getFiltred = async (req, res, next) => {
         const objectifs = await prisma.objectif.findMany({
           where:obj
         })
-        console.log('obj',obj,objectifs)
         
         let result = 0
         if (req.body.type == "somme"){

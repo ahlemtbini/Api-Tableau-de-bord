@@ -372,11 +372,15 @@ const getGraph10 = (sinis) =>{
     return item;
   });
 
-  let arrData = []
+  let nbreData = {}
     upArr.map((el,id)=>{
-      arrData[id] = { [updatedArray[id]] : el*100/sinis.length}
+      nbreData =  {...nbreData, [updatedArray[id]] : sinis.length}
     })
-  return {nbe:upArr,'%': arrData}
+  let arrData = {}
+    upArr.map((el,id)=>{
+      arrData= {...arrData, [updatedArray[id]] : el*100/sinis.length}
+    })
+  return {nbre:nbreData,'pourcentage': arrData}
 }
 
 const getGraph11 = (sinis) => {
@@ -389,8 +393,8 @@ const getGraph11 = (sinis) => {
   let tabPer=[]
   let tabNbr=[]
   let partagee= []
-  // if(type == '%'){
-    sinis.map((sin)=>{
+
+  sinis.map((sin)=>{
         if(sin.POURCENTAGE_RC == 100){
             s1 = s1+1
         } else if (sin.POURCENTAGE_RC == 0){
@@ -414,7 +418,7 @@ const getGraph11 = (sinis) => {
       {title:"Partagée",value: s3, percentage:ps3},
       {title:"Indéterminé",value: s4, percentage:ps4},
     ]
-  // } else {
+
     sinis.map((sin)=>{
       if(sin.POURCENTAGE_RC == 100){
           s1 =!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(s1+ parseFloat(sin.CHARGE_REELLE)) : s1
@@ -438,7 +442,7 @@ const getGraph11 = (sinis) => {
       {title:"Indéterminé", value:separateurMilier(s4),percentage: nps4},
     ]
   upArr=[s1,s2,s3,s4]
-  return {'charge': tabNbr, '%': tabPer}
+  return {'charge': tabNbr, 'pourcentage': tabPer}
 }
 
 const getGraph12 = (sinis,annee) =>{
@@ -469,7 +473,7 @@ const getGraph12 = (sinis,annee) =>{
   const responsabilitePartagee = []
   const autres = []
   let result={}
-  console.log('length',daysData.length)
+  // console.log('length',daysData.length)
   Object.entries(daysData).map((val,key)=>{
     const el =val[1]
     console.log(val[0],el.length)
@@ -504,8 +508,6 @@ const getGraph12 = (sinis,annee) =>{
     // console.log('id',id)
     res = {...res, [day]: {'responsable': Math.round(responsable[id]), 'nonResponsable': Math.round(nonResponsable[id]), 'responsabilitePartagee': Math.round(responsabilitePartagee[id]), 'Indétérminé': Math.round(autres[id]) } }
   })
-  console.log('res',result)
-
   return result
 }
 
@@ -526,7 +528,7 @@ const getGraph13 = (sinis) =>{
         upSin[key]= { [hours[key]] : s*100/sinis.length }
         total=total+upSin[key]
   }
-  return { 'nbr': nbrArr, '%': upSin}
+  return { 'nbr': nbrArr, 'pourcentage': upSin}
 }
 
 const getGraph14 = (sinis) =>{
@@ -600,18 +602,18 @@ const getGraph17_2 = (sinis) =>{
   sinis.map((sin,key)=>{
       const CR= parseInt(sin.CHARGE_REELLE)
       if(!isNaN(CR)){
-          upArr.push([CR,sin.CONDUCTEUR,sin.REGION,sin.SOCIETE,sin.DATE_SURVENANCE])
+          upArr.push({"charge réelle":CR,"Conducteur":sin.CONDUCTEUR,"Région":sin.REGION,"Société":sin.SOCIETE,"Date de survenance":sin.DATE_SURVENANCE})
       }
   })
   upArr.sort((a, b) => a[0] - b[0]);
   const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
   const headers =["charge réelle","Conducteur","Région","Société","Date de survenance"]
 
-  const res= []
-  firstFiveArrays.map((el,id)=>{
-    res.push({[headers[id]]: el})
-  })
-  return res
+  // const res= []
+  // firstFiveArrays.map((el,id)=>{
+  //   res.push({[headers[id]]: el})
+  // })
+  return upArr
 }
 
 
