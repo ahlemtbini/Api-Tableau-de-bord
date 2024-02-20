@@ -30,7 +30,7 @@ exports.register = (req, res, next) => {
       return res.status(200).json(user)
     })
     .catch(error=>{
-      next(error)
+      res.status(404).json({ error: "impossible de se registrer" })
     })
   } catch (error) {
     return res.status(400).json("ce email existe déja!")
@@ -708,6 +708,6 @@ exports.getGraphs = async (req, res, next) => {
 
       res.status(200).json(dashbord)
   } catch (error) {
-      res.status(404).json({ error: next(error) })
+      res.status(404).json({ error: "Mauvaise req" })
   }
 }
