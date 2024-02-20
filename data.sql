@@ -58,6 +58,7 @@ CREATE TABLE `adminclient` (
   `clientID` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `AdminClient_userId_key` (`userId`),
+  KEY `AdminClient_clientID_fkey` (`clientID`),
   CONSTRAINT `AdminClient_clientID_fkey` FOREIGN KEY (`clientID`) REFERENCES `client` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `AdminClient_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

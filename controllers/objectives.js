@@ -82,6 +82,7 @@ exports.getByName = async (req, res, next) => {
 }
 exports.getAll = async (req, res, next) => {
     try {
+        
         let obj ={}
         if(req.body.type == 'client'){
             obj= {...obj, ClientID: Number(req.body.id) }
@@ -98,6 +99,7 @@ exports.getAll = async (req, res, next) => {
         const objectifs = await prisma.objectif.findMany({
           where:obj
         })
+        console.log(obj,objectifs)
         res.status(200).json(objectifs)
     } catch (error) {
         // res.status(404).json({ error: error })

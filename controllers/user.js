@@ -237,7 +237,7 @@ exports.login = async (req, res, next) => {
         aciveInactive: true
       }
     })
-
+    console.log(user)
     // if ( user.role == "manager") {
     //   return res.status(404).json({ error: "Les comptes manager sont sous maintenance" });
     // }
