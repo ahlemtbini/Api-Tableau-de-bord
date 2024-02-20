@@ -18,7 +18,7 @@ const chauffeurCtrl = require("../controllers/chauffeurs");
 const societesCtrl = require("../controllers/societes");
 const sitesCtrl = require("../controllers/sites");
 const managersCtrl = require("../controllers/managers");
-const migrateCtrl = require("../controllers/migrateDB");
+// const migrateCtrl = require("../controllers/migrateDB");
 const objectiveCtrl = require("../controllers/objectives");
 const postSinistreCtrl = require("../controllers/postSinistre");
 const fleetriskCtrl = require("../controllers/fleetriskApi");
@@ -156,12 +156,12 @@ router.post('/objectifs/filter', objectiveCtrl.getFiltred)
 // router.delete('/objectives/:id', sitesCtrl.deleteSite);
 
 // migrate
-router.get('/sinis', migrateCtrl.getSinistres)
-router.get('/migrateSinis', migrateCtrl.addSinistres)
-router.get('/migrateUsers', migrateCtrl.createUsers)
-router.get('/admins', migrateCtrl.getAdmins)
-router.get('/migrateAdmins', migrateCtrl.createAdmins)
-router.get('/manags', migrateCtrl.getManagers)
+// router.get('/sinis', migrateCtrl.getSinistres)
+// router.get('/migrateSinis', migrateCtrl.addSinistres)
+// router.get('/migrateUsers', migrateCtrl.createUsers)
+// router.get('/admins', migrateCtrl.getAdmins)
+// router.get('/migrateAdmins', migrateCtrl.createAdmins)
+// router.get('/manags', migrateCtrl.getManagers)
 // post-sinistres
 router.get('/postSinistres', postSinistreCtrl.getEPS)
 router.post('/getUserEpsList', postSinistreCtrl.getUserEpsList)
