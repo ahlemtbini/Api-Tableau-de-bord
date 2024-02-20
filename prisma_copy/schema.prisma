@@ -1,0 +1,501 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["orderByRelation"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  super_admin
+  client_admin
+  manager
+  chauffeur
+}
+
+enum ContractType {
+  CDI
+  CDD
+  Interimaire
+  Stagiaire
+}
+
+enum Droits {
+  consulter
+  gerer
+}
+
+enum Etat {
+  recu
+  enAttente
+  confirme
+  refuse
+}
+
+enum EtatSinistre {
+  En_cours
+  Clos
+}
+
+enum EPA_declared {
+  oui
+  non
+  ne_sais_pas
+}
+
+enum Jours {
+  Lundi
+  Mardi
+  Mercredi
+  Jeudi
+  Vendredi
+  Samedi
+  Dimanche
+}
+
+enum intervalle_des_heures {
+  Entre_3h_6h
+  Entre_6h_9h
+  Entre_9h_11h
+  Entre_11h_13h
+  Entre_13h_15h
+  Entre_15h_17h
+  Entre_17h_19h
+  Entre_19h_22h
+  Entre_22h_3h
+}
+
+enum intervalle_de_temps_conduite {
+  Moins_30min
+  Entre_30min_1h
+  Entre_1h_2h
+  Entre_2h_3h
+  Entre_3h_4h
+  plus_4h
+}
+
+model User {
+  id                 Int                 @id @default(autoincrement())
+  email              String              @unique
+  nom                String?
+  prenom             String?
+  mdp                String?             @default("default")
+  role               Role
+  numTel             String?
+  resetLink          String?             @db.Text
+  aciveInactive      Boolean             @default(false)
+  profile            Profile?
+  dashbordPrefrences DashbordPrefrences?
+  super_admin        SuperAdmin?
+  admin_client       AdminClient?
+  manager            Manager?
+}
+
+model DashbordPrefrences {
+  id        Int   @id @default(autoincrement())
+  page1     Json?
+  page2     Json?
+  rangeDate Json?
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int   @unique
+}
+
+model Profile {
+  numTel            String?
+  date_de_naissance String?
+  typeContrat       ContractType?
+  dateEmbauche      String?
+  creerPar          Role          @default(manager)
+  permisConduire    String?
+  photo             String?
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            Int           @unique
+}
+
+model SuperAdmin {
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int      @unique
+  clients Client[]
+}
+
+model AdminClient {
+  id       Int     @id @default(autoincrement())
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int     @unique
+  client   Client? @relation(fields: [clientID], references: [id], map: "clientID_FK")
+  clientID Int?
+}
+
+model Manager {
+  id       Int              @id @default(autoincrement())
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int              @unique
+  client   Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId Int
+  droits   Droits?
+  societes SocieteManager[]
+}
+
+model Chauffeur {
+  id                Int                 @id @default(autoincrement())
+  nom               String?
+  prenom            String?
+  email             String              @unique
+  numTel            String?
+  date_de_naissance String?
+  typeContrat       ContractType?
+  dateEmbauche      String?
+  creerPar          Role          
+  permisConduire    String?
+  photo             String?
+  client            String?
+  clientName        String?
+  region            String?
+  regionName        String?
+  societe           String?
+  societeName       String?
+  site              String?
+  siteName          String?
+}
+
+model Objectif {
+  id        Int      @id @default(autoincrement())
+  value     String
+  year      String
+  current   Boolean  @default(false)
+  contratId Int?
+  Client    Client?  @relation(fields: [ClientID], references: [id], onDelete: Cascade)
+  ClientID  Int?
+  Societe   Societe? @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  SocieteID Int?
+  region    Region?  @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId  Int?
+  Site      Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  siteId    Int?
+}
+
+model Client {
+  id                   Int           @id @default(autoincrement())
+  nomClient            String
+  email                String        @unique
+  numTel               String
+  ville                String?
+  codePostale          String?       @map("code postale")
+  adresse              String?
+  numAssistance        String?
+  descriptifAssistance String?       @db.VarChar(1000)
+  nomDomaine           String
+  numSiret             String?
+  nbreSociete          Int           @default(0)
+  nbreSites            Int?          @default(0)
+  nbreAdmins           Int?          @default(0)
+  startDate            String?
+  endDate              String?
+  donneesCrypte        Boolean
+  isActive             Boolean       @default(true)
+  logo                 String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime?     @updatedAt
+  superAdmin           SuperAdmin    @relation(fields: [superAdminID], references: [userId])
+  superAdminID         Int
+  adminClient          AdminClient[]
+  countrys             Country[]
+  contrats             Contrat[]
+  societes             Societe[]
+  managers             Manager[]
+  objectifs            Objectif[]
+}
+
+model Contrat {
+  id          Int       @id @default(autoincrement())
+  refContrat  String
+  Assureur    String
+  typeContrat String?
+  startDate   String?
+  endDate     String?
+  Client      Client?   @relation(fields: [ClientID], references: [id])
+  ClientID    Int?
+  // Societe             Societe?                 @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  SocieteID   Int?
+  societes    Societe[]
+}
+
+model Country {
+  id       Int       @id @default(autoincrement())
+  name     String
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId Int
+  regions  Region[]
+  societes Societe[]
+}
+
+model Region {
+  id        Int        @id @default(autoincrement())
+  name      String
+  country   Country    @relation(fields: [countryID], references: [id], onDelete: Cascade)
+  countryID Int
+  societes  Societe[]
+  objectifs Objectif[]
+}
+
+model Societe {
+  id         Int              @id @default(autoincrement())
+  name       String
+  email      String
+  numTel     String?
+  numSiret   String?
+  nmbreSites Int              @default(0)
+  creerPar   Role
+  isActive   Boolean          @default(true)
+  region     Region?          @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId   Int?
+  country    Country?         @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId  Int?
+  client     Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId   Int
+  managers   SocieteManager[]
+  sites      Site[]
+  contrat    Contrat?         @relation(fields: [contratId], references: [id], onDelete: Cascade)
+  contratId  Int?
+  objectifs  Objectif[]
+  // contrats Contrat[]
+}
+
+model SocieteManager {
+  id        Int      @id @default(autoincrement())
+  manager   Manager? @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  managerId Int?
+  societe   Societe? @relation(fields: [societeId], references: [id], onDelete: Cascade)
+  societeId Int?
+}
+
+model Site {
+  id           Int         @id @default(autoincrement())
+  nom          String
+  email        String
+  tel          String
+  adresse      String
+  numSiret     String?
+  nbrChauffeur Int?        @default(0)
+  creerPar     Role
+  isActive     Boolean     @default(true)
+  clientId     Int
+  Societe      Societe?    @relation(fields: [SocieteID], references: [id], onDelete: Cascade)
+  SocieteID    Int?
+  objectifs    Objectif[]
+}
+
+enum VehiculeTypeEnum {
+  TRR
+  SR
+  VL
+  Camion
+}
+
+enum CasSinistre {
+  Arret
+  En_Circulation
+  Manoeuvre
+}
+
+//@map("Arrêt")
+// @map("En Circulation")
+// @map("Manœuvre")
+enum NatureSinistre {
+  ETRANGER
+  Corpo
+  Non_Auto
+}
+
+//@map("Non Auto")
+enum DPMenum {
+  Devis
+  CG
+  Permis
+  Facture
+  DC
+  PV
+  Constat
+}
+
+//@map("Déclaration Chauffeur")
+enum BolType {
+  oui
+  non
+}
+
+model Sinistre {
+  id                    Int                  @id @default(autoincrement())
+  etat                  Etat?                @default(recu)
+  chauffeur             String?
+  chauffeurEmail        String?
+  creatorRole           Role?                @map("créer par")
+  creatorId             String?              @map("id créateur")
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  constat               Json?
+  permis_conduire       Json?
+  carte_grise           Json?
+  declaration_chauffeur Json?
+  autres_pieces         Json?
+  declarationSinistre   DeclarationSinistre?
+  // documents            SinistreDocuments?
+}
+
+model DeclarationSinistre {
+  sinistre                       Sinistre @relation(fields: [DOSSIER], references: [id], onDelete: Cascade)
+  NUMERO_CLIENT                  String? //@map("Numéro Client")
+  DOSSIER                        Int      @unique
+  DOSSIER_CLIENT                 String? //@map("Dossier Client")
+  ANNEE                          String? //@map("Année")
+  ASSUREUR                       String?
+  NUMERO_CONTRAT                 String? //@map("Numéro Contrat")
+  AMIABLE                        String?
+  REF_SINISTRE_ASUREUR           String? //@map("Ref Sinistre Assureur")
+  DATE_RECEPTION                 String? //@map("Date récep.")
+  DATE_SURVENANCE                String? //@map("Date Survenance.")
+  HEURE                          String? // intervalle_des_heures
+  CAS                            String? // CasSinistre
+  LIEU_SINISTRE                  String? //@map("LIEU SINISTRE")
+  REGION                         String? //@map("Région")
+  SOCIETE                        String? //@map("SOCIETE")
+  SITE                           String?
+  TYPE_VEHICULE                  String? // VehiculeTypeEnum? @map("Type Véhicule")
+  IMMATRICULATION                String? //@map("Immatriculation")
+  MARQUE                         String?
+  PREMIERE_MEC                   String? //@map("1ère MEC")
+  PERTE_FI                       String? // BolType?  //@map("Perte Fi")
+  CONDUCTEUR                     String?
+  POURCENTAGE_RC                 String? //@map("%RC")
+  CAS_IDA                        String? //@map("Cas IDA")
+  NATURE                         String? // NatureSinistre
+  CIRCONSTANCE                   String?  @db.Text
+  DOMMAGES                       String?
+  DOMMAGES_SAISIE8_LIBRE         String?  @db.Text // n'existe plus
+  ASSUREUR_ADV                   String? //@map("Cie adv.")
+  CONVENTION                     String? // BolType? //@map("Conv.")
+  FRANCHISE                      String?
+  MONTANT_DOM                    String? //@map("Mt Dom.") n'existe plus
+  DATE_MISSIONNEMENT             String? //@map("Date MISSIONNEMENT")
+  LIEU_EXPERTISE                 String? //@map("Lieu expertise")
+  DATE_EXPERTISE                 String? //@map("Date EXPERTISE")
+  DATE_PRE_RAPPORT               String? //@map("Date RAPPORT")
+  REF_EXPERTISE                  String? //@map("Ref expertise")
+  DATE_RAPPORT_DEFINITIF         String? //@map("Date RAPPORT DEFINITIF")
+  COUT_EXPERT                    String? //@map("coût expert")
+  REPARATION                     String? //@map("REPARATION O/N")
+  CESSION_EPAVE                  String? // BolType? //@map("CESSION/EPAVE")
+  MONTANT_RECOURS                String? //@map("Mt rec.")
+  PIECES_MANQUANTES              String? //@map("Pièces manquantes O/N")
+  DETAIL_PIECES_MANQUANTES       String? //DPMenum? //@map("Détail pièces manquantes")
+  DATE_RELANCE_PIECES_MANQUANTES String? //@map("Date de relance pièces M")
+  CONSTAT_ORIGINAL               String? //BolType? //@map("Constat original O/N")
+  DATE_CLOTURE                   String? //@map("Date clot.")
+  CHARGE_PROVISIONNELLE_ASSUREUR String? //@map("Charge Provisionnelle Solaris")
+  CHARGE_REELLE                  String? //@map("Charge réelle")
+  ETAT                           String? //EtatSinistre?  
+  CHARGE_AJUSTEE                 String? //@map("Charge ajustée") // n'existe plus
+  COMMENTAIRES                   String?  @db.Text
+}
+
+model EntretienPostAccident {
+  id                                                              Int           @id @default(autoincrement())
+  // chauffeur                     Chauffeur ?             @relation(fields: [chauffeurId], references: [id])
+  // chauffeurId                   Int                     @unique
+  // 1 - Identification
+  dossier_sinistre                                                Int?
+  clientId                                                        Int?
+  societe                                                         String?
+  nom_prenom_chauffeur                                            String?
+  region                                                          String?
+  date_entree_dans_fonction                                       String?
+  date_accident                                                   String?
+  date_entretien                                                  String?
+  contrat                                                         ContractType?
+  site                                                            String?
+  entretien_realisee_par                                          String?
+  // declare_a_assureur                                              EPA_declared
+  // Entite                                                          String
+  // 2 - Jour de l’accident
+  jour_de_survenance_de_accident                                  String?
+  Heure_accident                                                  String?
+  Heure_prise_service                                             String?
+  temps_coduite_depuis_prise_servise_au_dernier_pause_obligatoire String?
+  Dernier_jour_de_pause_hebdomadaire                              String?
+  // 3 - Type de véhicule
+  vehicule_inf_35                                                 String?
+  vehicule_sup_35                                                 String?
+  matiere_dangereuse                                              String?
+  dotation_de_vehicule                                            String?
+  formation_conduire_vhicule                                      String?
+  prise_en_main_accompagne                                        String?
+  vehicule_deja_conduit                                           String?
+  vehicule_habituel                                               String?
+  derniere_formation_date                                         String?
+  etat_chargemen_vehicule                                         String?
+  vehicule_adapte_au_mission                                      String?
+  non_dire_pourquoi                                               String?       @db.Text
+  // type_de_vehicule                                                String
+  // chauffeur                                                       Chauffeur                    @relation(fields: [chauffeurID], references: [id])
+  // chauffeurID                                                     Int
+
+  // 4 - Conditions de survenance
+  meteo                                     String?
+  luminosite                                String?
+  environement                              String?
+  configuration                             String?
+  type_de_voie                              String?
+  type_de_tiers                             String?
+  type_de_trajet                            String?
+  kilometres_parcourus_avant_le_sinistre    String?
+  circonstance_trajet                       String?
+  distraction                               String?
+  comment_sentiez_vous                      String?
+  //5 - Nature du sinistre
+  Estimation_de_accident                    String?
+  Genre_du_sinistre                         String?
+  Degats                                    String?
+  estimation_cout                           String?
+  // 6 - Impact sur le véhicule
+  endroit_impact                            String?
+  Expression_libre                          String? @db.Text
+  // 7- Situation de Survenance
+  situation_de_survenance_conducteur        String? @db.Text
+  situation_de_survenance_tiers             String? @db.Text
+  // 8 - Situations de survenance
+  Circonstance_de_accident                  String? @db.Text
+  Circonstance_de_accident_expression_libre String? @db.Text
+  Evitabilite_de_accident                   String? @db.Text
+  Evitabilite_de_accident_expression_libre  String? @db.Text
+  Suggestion_limitation_de_risque           String? @db.Text
+  Avis_Evitable_O_N                         String?
+  Signature_responsable                     String?
+  Signature_Conducteur                      String?
+}
+
+model EntretienVehicule {
+  id                    Int       @id @default(autoincrement())
+  etat                  String // reçu/ en cours / confirmé / refus
+  resultat_entretien    String
+  description_entretien String    @db.Text
+  type_vehicule         String
+  matricule             String
+  chauffeurID           Int
+}
+
+model apiAdmin {
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  nom           String?
+  prenom        String?
+  mdp           String? @default("default")
+  role          String
+  resetLink     String? @db.Text
+  aciveInactive Boolean @default(false)
+}
