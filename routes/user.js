@@ -110,6 +110,7 @@ router.delete('/chauffeurs/:id', chauffeurCtrl.deleteChauffeur)
 router.post('/chauffeurs/import', upload, chauffeurCtrl.importChauffeurs)
 // societes
 router.get('/societes', societesCtrl.getSocietes)
+router.get('/societes/:id', societesCtrl.getSociete)
 router.post('/UserSocietesByRegion', societesCtrl.getSocietesByUserId)
 router.get('/countries/:id', societesCtrl.getCountry)
 router.post('/societes/add', societesCtrl.addSociete)
