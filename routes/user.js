@@ -57,7 +57,7 @@ router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
 
 /**
  * @swagger
- *  /fleetriskapi/users/add:
+ *  /users/add:
  *    post:
  *      tags: [FleetRisk signup]
  *      summary: À exécuter une seule fois pour la création du compte
@@ -139,7 +139,7 @@ router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
  */
 
 router.post('/users/add', userCtrl.createUser);
-router.post('/fleetrisk/signup', fleetriskCtrl.register);
+// router.post('/fleetrisk/signup', fleetriskCtrl.register);
 /**
  * @swagger
  * tags:
@@ -151,7 +151,7 @@ router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
 /** 
  * @swagger
- *  /fleetriskapi/users/login:
+ *  /users/login:
  *    post:
  *      tags: [FleetRisk login]
  *      summary: À exécuter pour générer le token
@@ -212,7 +212,7 @@ router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
 
 router.post('/users/login', userCtrl.login)
-router.post('/fleetrisk/login', fleetriskCtrl.login)
+// router.post('/fleetrisk/login', fleetriskCtrl.login)
 
 /**
  * @swagger
@@ -225,7 +225,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
 
 /**
  * @swagger
- * /fleetriskapi/fleetrisk/dashbord:
+ * /dashbord:
  *   post:
  *     summary: Obtenez les graphiques du tableau de bord FleetRisk
  *     description: Récupère les données graphiques pour le tableau de bord FleetRisk.
@@ -551,9 +551,9 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  */
 
 
-router.post('/fleetrisk/dashbord', fleetriskAuth, fleetriskCtrl.getGraphs);
-router.get('/fleetrisk/admins', fleetriskCtrl.getAdmins)
-router.delete('/fleetrisk/delete-admins', fleetriskCtrl.deleteAdmins)
+router.post('/dashbord', fleetriskAuth, fleetriskCtrl.getGraphs);
+router.get('/admins', fleetriskCtrl.getAdmins)
+router.delete('/delete-admins', fleetriskCtrl.deleteAdmins)
 
 
 

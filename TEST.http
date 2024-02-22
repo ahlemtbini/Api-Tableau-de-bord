@@ -2,9 +2,9 @@
 GET http://localhost:5001/api/fleetrisk/clients
 
 ###
-POST  http://localhost:5004/fleetriskapi/fleetrisk/dashbord
+POST  http://localhost:5004/fleetrisk/dashbord
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg1OTgzNjl9.PR7obXhvJehhFpak2AgQPa50VE6a0-VYeS3-SOJW_5s
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
 
 
 {
@@ -15,7 +15,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsI
 }
 
 ###
-POST http://localhost:5004/fleetriskapi/users/add
+POST http://localhost:5004/users/add
 Content-Type: application/json
 
 {
@@ -29,10 +29,51 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5004/fleetriskapi/users/login
+POST http://localhost:5004/users/login
 Content-Type: application/json
 
 {
     "email": "api.admin@fleetrisk.fr",
     "mdp": "Mcxl.kj5dd.sqd!"
 }
+
+###
+POST http://dashboard.fleetrisk.fr/users/add
+Content-Type: application/json
+
+{
+    "user": {
+        "email": "api.admin@fleetrisk.fr",
+        "nom": "fleetrisk",
+        "prenom": "api admin",
+        "role": "client_admin",
+        "mdp": "Mcxl.kj5dd.sqd!"
+    }
+}
+
+###
+POST http://dashboard.fleetrisk.fr/users/login
+Content-Type: application/json
+
+{
+    "email": "api.admin@fleetrisk.fr",
+    "mdp": "Mcxl.kj5dd.sqd!"
+}
+
+
+###
+GET http://dashboard.fleetrisk.fr/users
+
+###
+POST  http://dashboard.fleetrisk.fr/fleetrisk/dashbord
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
+
+
+{
+    "annee": "2023",
+    "region": null,
+    "societe": null,
+    "site": null
+}
+GET https://dashboard.fleetrisk.fr/users
