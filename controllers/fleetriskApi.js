@@ -115,13 +115,12 @@ const getGraph2 = (sinis,annee)=>{
     aujourdhui =  new Date(annee+"-12-31"); 
     currentYear= parseInt(annee)
   }
-  // console.log('current yrear',currentYear)
-  // const currentYear =2023
   const debutAnnee =  new Date(currentYear+'-01-01'); 
   const difference =  aujourdhui - debutAnnee
+  // console.log('current yrear',currentYear,'aujoudhui',aujourdhui,'debutAnnee',debutAnnee,'diff',difference)
   const upSin =sinis?.filter((sin)=> {
     const date= sin.DATE_SURVENANCE && dateToNumber(sin.DATE_SURVENANCE)
-    const aujourdhui = new Date();
+    // const aujourdhui = new Date();
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const dateFormatee = aujourdhui.toLocaleDateString('fr-FR', options).replace(/\//g, '-');
     const startDate= dateToNumber("01-01-"+currentYear)
@@ -371,10 +370,9 @@ const getGraph10 = (sinis) =>{
     }
     return item;
   });
-
   let nbreData = {}
     upArr.map((el,id)=>{
-      nbreData =  {...nbreData, [updatedArray[id]] : sinis.length}
+      nbreData =  {...nbreData, [updatedArray[id]] : el}
     })
   let arrData = {}
     upArr.map((el,id)=>{
@@ -418,39 +416,43 @@ const getGraph11 = (sinis) => {
       {title:"Partagée",value: s3, percentage:ps3},
       {title:"Indéterminé",value: s4, percentage:ps4},
     ]
-
+    let ns1=0
+    let ns2=0
+    let ns3=0
+    let ns4=0
     sinis.map((sin)=>{
       if(sin.POURCENTAGE_RC == 100){
-          s1 =!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(s1+ parseFloat(sin.CHARGE_REELLE)) : s1
+          ns1 =!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(ns1+ parseFloat(sin.CHARGE_REELLE)) : ns1
       } else if (sin.POURCENTAGE_RC == 0){
-          s2=!isNaN(parseFloat(sin.CHARGE_REELLE)) ?  Math.round(s2+ parseFloat(sin.CHARGE_REELLE)) : s2
+          ns2=!isNaN(parseFloat(sin.CHARGE_REELLE)) ?  Math.round(ns2+ parseFloat(sin.CHARGE_REELLE)) : ns2
       } else if(sin.POURCENTAGE_RC == 50){
-          s3=!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(s3+ parseFloat(sin.CHARGE_REELLE)) : s3
+          ns3=!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(ns3+ parseFloat(sin.CHARGE_REELLE)) : ns3
       } else {
-        s4=0
+        ns4=0
       }
     })
-    let sommeNbr = s1+s2+s3+s4
-    const nps1 = Math.round(s1 * 100 / sommeNbr)
-    const nps2 = Math.round(s2 * 100 / sommeNbr)
-    const nps3 = Math.round(s3 * 100 / sommeNbr)
-    const nps4 = Math.round(s4 * 100 / sommeNbr)
+    let sommeNbr = ns1+ns2+ns3+ns4
+    const nps1 = Math.round(ns1 * 100 / sommeNbr)
+    const nps2 = Math.round(ns2 * 100 / sommeNbr)
+    const nps3 = Math.round(ns3 * 100 / sommeNbr)
+    const nps4 = Math.round(ns4 * 100 / sommeNbr)
     tabNbr=[
-      {title:"Responsable", value: separateurMilier(s1),percentage: nps1},
-      {title:"Non responsable", value:separateurMilier(s2),percentage: nps2},
-      {title:"Partagée", value:separateurMilier(s3),percentage: nps3},
-      {title:"Indéterminé", value:separateurMilier(s4),percentage: nps4},
+      {title:"Responsable", value: separateurMilier(ns1),percentage: nps1},
+      {title:"Non responsable", value:separateurMilier(ns2),percentage: nps2},
+      {title:"Partagée", value:separateurMilier(ns3),percentage: nps3},
+      {title:"Indéterminé", value:separateurMilier(ns4),percentage: nps4},
     ]
   upArr=[s1,s2,s3,s4]
   return {'charge': tabNbr, 'pourcentage': tabPer}
 }
 
 const getGraph12 = (sinis,annee) =>{
+  // console.log('graph 12',annee)
   const upSin = []
   const currentDate = new Date();
   const currentYear = annee? annee : currentDate.getFullYear();
   // const currentYear = '2023'
-  let daysData = {}
+  let daysData = {"lundi":[],"mardi":[],"mercredi":[],"jeudi":[],"vendredi":[],"samedi":[],"dimanche":[]}
   const week=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]
   for(let key in week){
     const upJour =upSin[key] ? [...upSin[key]] : []
@@ -473,10 +475,10 @@ const getGraph12 = (sinis,annee) =>{
   const responsabilitePartagee = []
   const autres = []
   let result={}
-  // console.log('length',daysData.length)
+  // console.log('graph 12',daysData)
   Object.entries(daysData).map((val,key)=>{
     const el =val[1]
-    console.log(val[0],el.length)
+    // console.log(val[0],el.length)
         const nbre= el.length
         let s1=0
         let s2=0
@@ -496,11 +498,17 @@ const getGraph12 = (sinis,annee) =>{
             }
         })
         // console.log('respo',s1,s2,s3,s4)
-        result={...result, [val[0]] : {"nbre de sinistre par jour": el.length,responsable: {nbre:s1, '%': Math.round(s1*100/el.length)}, nonResponsable: {nbre:s2, '%': Math.round(s2*100/el.length)}, "partagée":{nbre:s3, '%': Math.round(s3*100/el.length)},"Indétérminé":{nbre:s4, '%': Math.round(s4*100/el.length)}}}
-        responsable.push(s1*100/nbre)
-        nonResponsable.push(s2*100/nbre)
-        responsabilitePartagee.push(s3*100/nbre)
-        autres.push(s4*100/nbre)
+        result={...result, [val[0]] : {
+          "nbre de sinistre par jour":  el.length>0 ? el.length : 0,
+            responsable: {nbre:s1, '%': el.length>0 ? Math.round(s1*100/el.length) :0 },
+            nonResponsable: {nbre:s2, '%': el.length>0 ? Math.round(s2*100/el.length) : 0},
+            "partagée":{nbre:s3, '%': el.length>0 ? Math.round(s3*100/el.length) : 0},
+            "Indétérminé":{nbre:s4, '%': el.length>0 ? Math.round(s4*100/el.length) : 0}}
+        }
+        responsable[key] =el.length>0 ? (s1*100/el.length) : 0
+        nonResponsable[key] =el.length>0 ? (s2*100/el.length) : 0
+        responsabilitePartagee[key] =el.length>0 ? (s3*100/el.length) : 0
+        autres[key] =el.length>0 ? (s4*100/el.length) : 0
   })
  
   let res={}
@@ -606,14 +614,16 @@ const getGraph17_2 = (sinis) =>{
       }
   })
   upArr.sort((a, b) => a[0] - b[0]);
-  const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
+  const firstFiveArrays = upArr.sort((a, b) => b["charge réelle"] - a["charge réelle"])
+  .slice(0, 5);
+  // const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
   const headers =["charge réelle","Conducteur","Région","Société","Date de survenance"]
 
   // const res= []
   // firstFiveArrays.map((el,id)=>{
   //   res.push({[headers[id]]: el})
   // })
-  return upArr
+  return firstFiveArrays
 }
 
 
@@ -638,6 +648,7 @@ exports.getGraphs = async (req, res, next) => {
         ...obj
       }
     })
+    // console.log('nbr sin',sinistres.length, obj)
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
