@@ -30,7 +30,7 @@ exports.register = (req, res, next) => {
       return res.status(200).json(user)
     })
     .catch(error=>{
-      next(error)
+      res.status(404).json({ error: "impossible de se registrer" })
     })
   } catch (error) {
     return res.status(400).json("ce email existe déja!")
@@ -115,13 +115,12 @@ const getGraph2 = (sinis,annee)=>{
     aujourdhui =  new Date(annee+"-12-31"); 
     currentYear= parseInt(annee)
   }
-  console.log('current yrear',currentYear)
-  // const currentYear =2023
   const debutAnnee =  new Date(currentYear+'-01-01'); 
   const difference =  aujourdhui - debutAnnee
+  // console.log('current yrear',currentYear,'aujoudhui',aujourdhui,'debutAnnee',debutAnnee,'diff',difference)
   const upSin =sinis?.filter((sin)=> {
     const date= sin.DATE_SURVENANCE && dateToNumber(sin.DATE_SURVENANCE)
-    const aujourdhui = new Date();
+    // const aujourdhui = new Date();
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const dateFormatee = aujourdhui.toLocaleDateString('fr-FR', options).replace(/\//g, '-');
     const startDate= dateToNumber("01-01-"+currentYear)
@@ -134,7 +133,7 @@ const getGraph2 = (sinis,annee)=>{
   })
   // Convert the difference to days
   const daysFromStartOfYear = Math.floor(difference / (1000 * 60 * 60 * 24));
-  console.log(difference,daysFromStartOfYear,upSin.length)
+  // console.log(difference,daysFromStartOfYear,upSin.length)
   const res=roundNumber((upSin.length/daysFromStartOfYear),2)
   return {res:res,"nbre de sinistres":upSin.length, "nbre de jours depuis debut d'année":daysFromStartOfYear }
 }
@@ -222,7 +221,6 @@ const PrepareDayData = (sinis)=>{
   let sinsPerDay ={}
   upSin.map((el,id)=>{
     const key= week[id]
-    console.log(id)
     sinsPerDay = {...sinsPerDay, [key]: el.length }
   })
   return sinsPerDay
@@ -372,12 +370,15 @@ const getGraph10 = (sinis) =>{
     }
     return item;
   });
-
-  let arrData = []
+  let nbreData = {}
     upArr.map((el,id)=>{
-      arrData[id] = { [updatedArray[id]] : el*100/sinis.length}
+      nbreData =  {...nbreData, [updatedArray[id]] : el}
     })
-  return {nbe:upArr,'%': arrData}
+  let arrData = {}
+    upArr.map((el,id)=>{
+      arrData= {...arrData, [updatedArray[id]] : el*100/sinis.length}
+    })
+  return {nbre:nbreData,'pourcentage': arrData}
 }
 
 const getGraph11 = (sinis) => {
@@ -390,8 +391,8 @@ const getGraph11 = (sinis) => {
   let tabPer=[]
   let tabNbr=[]
   let partagee= []
-  // if(type == '%'){
-    sinis.map((sin)=>{
+
+  sinis.map((sin)=>{
         if(sin.POURCENTAGE_RC == 100){
             s1 = s1+1
         } else if (sin.POURCENTAGE_RC == 0){
@@ -415,49 +416,56 @@ const getGraph11 = (sinis) => {
       {title:"Partagée",value: s3, percentage:ps3},
       {title:"Indéterminé",value: s4, percentage:ps4},
     ]
-  // } else {
+    let ns1=0
+    let ns2=0
+    let ns3=0
+    let ns4=0
     sinis.map((sin)=>{
       if(sin.POURCENTAGE_RC == 100){
-          s1 =!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(s1+ parseFloat(sin.CHARGE_REELLE)) : s1
+          ns1 =!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(ns1+ parseFloat(sin.CHARGE_REELLE)) : ns1
       } else if (sin.POURCENTAGE_RC == 0){
-          s2=!isNaN(parseFloat(sin.CHARGE_REELLE)) ?  Math.round(s2+ parseFloat(sin.CHARGE_REELLE)) : s2
+          ns2=!isNaN(parseFloat(sin.CHARGE_REELLE)) ?  Math.round(ns2+ parseFloat(sin.CHARGE_REELLE)) : ns2
       } else if(sin.POURCENTAGE_RC == 50){
-          s3=!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(s3+ parseFloat(sin.CHARGE_REELLE)) : s3
+          ns3=!isNaN(parseFloat(sin.CHARGE_REELLE)) ? Math.round(ns3+ parseFloat(sin.CHARGE_REELLE)) : ns3
       } else {
-        s4=0
+        ns4=0
       }
     })
-    let sommeNbr = s1+s2+s3+s4
-    const nps1 = Math.round(s1 * 100 / sommeNbr)
-    const nps2 = Math.round(s2 * 100 / sommeNbr)
-    const nps3 = Math.round(s3 * 100 / sommeNbr)
-    const nps4 = Math.round(s4 * 100 / sommeNbr)
+    let sommeNbr = ns1+ns2+ns3+ns4
+    const nps1 = Math.round(ns1 * 100 / sommeNbr)
+    const nps2 = Math.round(ns2 * 100 / sommeNbr)
+    const nps3 = Math.round(ns3 * 100 / sommeNbr)
+    const nps4 = Math.round(ns4 * 100 / sommeNbr)
     tabNbr=[
-      {title:"Responsable", value: separateurMilier(s1),percentage: nps1},
-      {title:"Non responsable", value:separateurMilier(s2),percentage: nps2},
-      {title:"Partagée", value:separateurMilier(s3),percentage: nps3},
-      {title:"Indéterminé", value:separateurMilier(s4),percentage: nps4},
+      {title:"Responsable", value: separateurMilier(ns1),percentage: nps1},
+      {title:"Non responsable", value:separateurMilier(ns2),percentage: nps2},
+      {title:"Partagée", value:separateurMilier(ns3),percentage: nps3},
+      {title:"Indéterminé", value:separateurMilier(ns4),percentage: nps4},
     ]
   upArr=[s1,s2,s3,s4]
-  return {'charge': tabNbr, '%': tabPer}
+  return {'charge': tabNbr, 'pourcentage': tabPer}
 }
 
 const getGraph12 = (sinis,annee) =>{
+  // console.log('graph 12',annee)
   const upSin = []
   const currentDate = new Date();
   const currentYear = annee? annee : currentDate.getFullYear();
   // const currentYear = '2023'
-
+  let daysData = {"lundi":[],"mardi":[],"mercredi":[],"jeudi":[],"vendredi":[],"samedi":[],"dimanche":[]}
   const week=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]
   for(let key in week){
     const upJour =upSin[key] ? [...upSin[key]] : []
     sinis.map((sin)=>{
       const date= sin.DATE_SURVENANCE 
       if(getYear(date) == currentYear){
-        if(getDayName(date) == week[key]){
+        const dayName=getDayName(date)
+        if(dayName == week[key]){
             // console.log(getDayName(date) ,week[key])
             upJour.push(sin)
             upSin[key] = upJour
+            daysData= {...daysData, [dayName]: upJour}
+            // daysData[dayName].push(sin.POURCENTAGE_RC )
           }
       }
     })
@@ -466,39 +474,49 @@ const getGraph12 = (sinis,annee) =>{
   const nonResponsable =[]
   const responsabilitePartagee = []
   const autres = []
-  const result=[]
-  upSin.map(el=>{
-      const nbre= el.length
-      let s1=0
-      let s2=0
-      let s3=0
-      let s4=0
-      el.map((sin)=>{
-          if(sin.POURCENTAGE_RC == 100){
-              s1= s1+1
-          }
-          else if(sin.POURCENTAGE_RC == 0){
-              s2= s2+1
-          }
-          else if(sin.POURCENTAGE_RC  == 50){
-              s3= s3+1
-          }  else {
-              s4= s4+1
-          }
-      })
-      // console.log('respo',s1,s2,s3,s4)
-      result.push({nbre: el.length,respo: s1, nonResp: s2, partagee:s3,autres:s4})
-      responsable.push(s1*100/nbre)
-      nonResponsable.push(s2*100/nbre)
-      responsabilitePartagee.push(s3*100/nbre)
-      autres.push(s4*100/nbre)
+  let result={}
+  // console.log('graph 12',daysData)
+  Object.entries(daysData).map((val,key)=>{
+    const el =val[1]
+    // console.log(val[0],el.length)
+        const nbre= el.length
+        let s1=0
+        let s2=0
+        let s3=0
+        let s4=0
+        el.map((sin)=>{
+            if(sin.POURCENTAGE_RC == 100){
+                s1= s1+1
+            }
+            else if(sin.POURCENTAGE_RC == 0){
+                s2= s2+1
+            }
+            else if(sin.POURCENTAGE_RC  == 50){
+                s3= s3+1
+            }  else {
+                s4= s4+1
+            }
+        })
+        // console.log('respo',s1,s2,s3,s4)
+        result={...result, [val[0]] : {
+          "nbre de sinistre par jour":  el.length>0 ? el.length : 0,
+            responsable: {nbre:s1, '%': el.length>0 ? Math.round(s1*100/el.length) :0 },
+            nonResponsable: {nbre:s2, '%': el.length>0 ? Math.round(s2*100/el.length) : 0},
+            "partagée":{nbre:s3, '%': el.length>0 ? Math.round(s3*100/el.length) : 0},
+            "Indétérminé":{nbre:s4, '%': el.length>0 ? Math.round(s4*100/el.length) : 0}}
+        }
+        responsable[key] =el.length>0 ? (s1*100/el.length) : 0
+        nonResponsable[key] =el.length>0 ? (s2*100/el.length) : 0
+        responsabilitePartagee[key] =el.length>0 ? (s3*100/el.length) : 0
+        autres[key] =el.length>0 ? (s4*100/el.length) : 0
   })
-
+ 
   let res={}
   week.map((day,id)=>{
+    // console.log('id',id)
     res = {...res, [day]: {'responsable': Math.round(responsable[id]), 'nonResponsable': Math.round(nonResponsable[id]), 'responsabilitePartagee': Math.round(responsabilitePartagee[id]), 'Indétérminé': Math.round(autres[id]) } }
   })
-  return res
+  return result
 }
 
 const getGraph13 = (sinis) =>{
@@ -518,7 +536,7 @@ const getGraph13 = (sinis) =>{
         upSin[key]= { [hours[key]] : s*100/sinis.length }
         total=total+upSin[key]
   }
-  return { 'nbr': nbrArr, '%': upSin}
+  return { 'nbr': nbrArr, 'pourcentage': upSin}
 }
 
 const getGraph14 = (sinis) =>{
@@ -592,23 +610,25 @@ const getGraph17_2 = (sinis) =>{
   sinis.map((sin,key)=>{
       const CR= parseInt(sin.CHARGE_REELLE)
       if(!isNaN(CR)){
-          upArr.push([CR,sin.CONDUCTEUR,sin.REGION,sin.SOCIETE,sin.DATE_SURVENANCE])
+          upArr.push({"charge réelle":CR,"Conducteur":sin.CONDUCTEUR,"Région":sin.REGION,"Société":sin.SOCIETE,"Date de survenance":sin.DATE_SURVENANCE})
       }
   })
   upArr.sort((a, b) => a[0] - b[0]);
-  const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
+  const firstFiveArrays = upArr.sort((a, b) => b["charge réelle"] - a["charge réelle"])
+  .slice(0, 5);
+  // const firstFiveArrays = upArr.slice(-5).sort((a, b) => b - a);
   const headers =["charge réelle","Conducteur","Région","Société","Date de survenance"]
 
-  const res= []
-  firstFiveArrays.map((el,id)=>{
-    res.push({[headers[id]]: el})
-  })
-  return res
+  // const res= []
+  // firstFiveArrays.map((el,id)=>{
+  //   res.push({[headers[id]]: el})
+  // })
+  return firstFiveArrays
 }
 
 
 exports.getGraphs = async (req, res, next) => {
-   console.log('annee ',req.body)
+  // console.log('annee ',req.body)
   try {
     let obj= {NUMERO_CLIENT: '1'}
     if(req.body.annee){
@@ -628,6 +648,7 @@ exports.getGraphs = async (req, res, next) => {
         ...obj
       }
     })
+    // console.log('nbr sin',sinistres.length, obj)
     const client= await prisma.client.findUnique({
       where:{id: 1},
       include:{
@@ -638,7 +659,7 @@ exports.getGraphs = async (req, res, next) => {
     let objectif
     if(req.body.annee){
       if(!req.body.region && !req.body.societe && !req.body.site && req.body.annee){
-        const chosenObjectif= client?.objectifs?.find(obj => obj.year == req.body.annee)
+        const chosenObjectif= client.objectifs.find(obj => obj.year == req.body.annee)
         objectif = chosenObjectif?.value
       } else if(!req.body.societe && !req.body.site && req.body.annee && req.body.region) {
         const region = await prisma.region.findFirst({
@@ -676,6 +697,7 @@ exports.getGraphs = async (req, res, next) => {
     }
 
     const sinis=removeDoubles(sinistres)
+
     const graph4 = getGraph4(sinistres)
       let dashbord = {
         "Nombre de sinistres" : {"tous":sinistres.length, "sansDoublons": sinis.length},
@@ -694,8 +716,9 @@ exports.getGraphs = async (req, res, next) => {
         'Année de véhicule': getGraph17_1(sinistres),
         "Sinistres par plages horaires": getGraph13(sinistres),
       }
-      
+
       res.status(200).json(dashbord)
   } catch (error) {
-    res.status(404).json({ error: error.message });   }
+      res.status(404).json({ error: "Mauvaise req" })
+  }
 }
