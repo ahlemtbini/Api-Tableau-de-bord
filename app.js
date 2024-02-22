@@ -29,7 +29,7 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+app.use('/api-docs-fleetrisk', swaggerUi.serve, swaggerUi.setup(specs, {
   customSiteTitle: "Documentation API FleetRisk",
 }));
 app.use(express.json());
@@ -47,8 +47,8 @@ app.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
 
-app.use('/api/documents', express.static(path.join(__dirname, '/documents')));
-app.use('/api', userRoutes);
+app.use('/fleetriskapi/documents', express.static(path.join(__dirname, '/documents')));
+app.use('/fleetriskapi', userRoutes);
 
 app.use((req, res, next) => {
   createError.NotFound();
@@ -58,5 +58,5 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || 'server error' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5004;
 app.listen(PORT, () => console.log(`🚀 @ http://localhost:${PORT}`));

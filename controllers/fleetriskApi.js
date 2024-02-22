@@ -608,7 +608,7 @@ const getGraph17_2 = (sinis) =>{
 
 
 exports.getGraphs = async (req, res, next) => {
-  // console.log('annee ',req.body)
+   console.log('annee ',req.body)
   try {
     let obj= {NUMERO_CLIENT: '1'}
     if(req.body.annee){
@@ -676,7 +676,6 @@ exports.getGraphs = async (req, res, next) => {
     }
 
     const sinis=removeDoubles(sinistres)
-
     const graph4 = getGraph4(sinistres)
       let dashbord = {
         "Nombre de sinistres" : {"tous":sinistres.length, "sansDoublons": sinis.length},
@@ -695,7 +694,7 @@ exports.getGraphs = async (req, res, next) => {
         'Année de véhicule': getGraph17_1(sinistres),
         "Sinistres par plages horaires": getGraph13(sinistres),
       }
-
+      
       res.status(200).json(dashbord)
   } catch (error) {
     res.status(404).json({ error: error.message });   }

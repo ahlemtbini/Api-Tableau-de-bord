@@ -1,0 +1,38 @@
+###
+GET http://localhost:5001/api/fleetrisk/clients
+
+###
+POST  http://localhost:5004/fleetriskapi/fleetrisk/dashbord
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg1OTgzNjl9.PR7obXhvJehhFpak2AgQPa50VE6a0-VYeS3-SOJW_5s
+
+
+{
+    "annee": "2023",
+    "region": null,
+    "societe": null,
+    "site": null
+}
+
+###
+POST http://localhost:5004/fleetriskapi/users/add
+Content-Type: application/json
+
+{
+    "user": {
+        "email": "api.admin@fleetrisk.fr",
+        "nom": "fleetrisk",
+        "prenom": "api admin",
+        "role": "client_admin",
+        "mdp": "Mcxl.kj5dd.sqd!"
+    }
+}
+
+###
+POST http://localhost:5004/fleetriskapi/users/login
+Content-Type: application/json
+
+{
+    "email": "api.admin@fleetrisk.fr",
+    "mdp": "Mcxl.kj5dd.sqd!"
+}

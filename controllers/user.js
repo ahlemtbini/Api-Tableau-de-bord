@@ -60,6 +60,7 @@ const createRole = async (role, id, roleData) => {
 }
 
 exports.createUser = (req, res, next) => {
+  console.log(req.body)
   try {
     const unhasheMdp = req.body.user.mdp ? req.body.user.mdp :"default"
     bcrypt.hash(unhasheMdp, 10)
@@ -231,6 +232,7 @@ exports.addPhoto = async (req, res, next) => {
 //auth
 
 exports.login = async (req, res, next) => {
+  console.log(req.body)
   try {
     const user = await prisma.user.update({
       where: { email: req.body.email },

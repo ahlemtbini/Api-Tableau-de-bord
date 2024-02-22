@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
   try {
     const authType= req.headers.authorization.split(" ")[0];
+
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = decode(token, process.env.FLEET_ENCRYPT)
     if(authType.toLowerCase() == 'basic'){
@@ -21,11 +22,12 @@ module.exports = async (req, res, next) => {
       // .catch((err)=> res.status(401).json({ error: "Utilisateur non autorisé !" }))
 
     } else {
-      if (decodedToken.email == 'api.admin@fleetrisk.fr' && decodedToken.role == 'admin_api_fleetrisk') {
-          const user = await prisma.apiAdmin.findUnique({
+      if (decodedToken.email == 'api.admin@fleetrisk.fr' && decodedToken.role == 'client_admin') {
+          const user = await prisma.user.findUnique({
               where: {id: decodedToken.id}
           })
           if(user){
+            console.log("userrrrrrrrrr",user)
             req.user= {user}
             next();
           } else {
