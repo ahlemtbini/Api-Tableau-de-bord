@@ -30,7 +30,7 @@ const createRole = async (role, id, roleData) => {
         })
        return role
       } catch (error) {
-        return res.status(400).json({error})
+        return res.status(400).json({error: 'ce email existe déja!'})
         // next(error)
       }      
     }
@@ -79,8 +79,7 @@ exports.createUser = (req, res, next) => {
       return res.status(200).json(user)
     })
     .catch(error=>{
-      next(error)
-      // return res.status(400).json("ce email existe déja!")
+      return res.status(400).json("ce email existe déja!")
     })
   } catch (error) {
     return res.status(400).json("ce email existe déja!")
