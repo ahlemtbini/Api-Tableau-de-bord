@@ -549,70 +549,70 @@ router.post('/dashbord', fleetriskAuth, fleetriskCtrl.getGraphs);
 // router.get('/admins', fleetriskCtrl.getAdmins)
 // router.delete('/delete-admins', fleetriskCtrl.deleteAdmins)
 
-/**
- * @swagger
- *  /user/refresh:
- *    post:
- *      tags: [Refresh token]
- *      summary: Utiliser pour générer un nouveau token à partir de celui expiré, le token expire après 8 heures
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                user:
- *                  type: object
- *                  properties:
- *                    token:
- *                      type: string
- *                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
- *              example:
- *                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
- *      produces:
- *        - application/json
- *      responses:
- *        200:
- *          description: Inscription réussie
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  status:
- *                    type: string
- *                    example: success
- *                  message:
- *                    type: string
- *                    example: Token généré avec succès
- *        400:
- *          description: Requête incorrecte - Entrée invalide
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  status:
- *                    type: string
- *                    example: error
- *                  message:
- *                    type: string
- *                    example: Token non valide !
- *        500:
- *          description: Erreur interne du serveur
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  status:
- *                    type: string
- *                    example: error
- *                  message:
- *                    type: string
- *                    example: Erreur interne du serveur, veuillez réessayer plus tard
- */
+// /**
+//  * @swagger
+//  *  /user/refresh:
+//  *    post:
+//  *      tags: [Refresh token]
+//  *      summary: Utiliser pour générer un nouveau token à partir de celui expiré, le token expire après 8 heures
+//  *      requestBody:
+//  *        required: true
+//  *        content:
+//  *          application/json:
+//  *            schema:
+//  *              type: object
+//  *              properties:
+//  *                user:
+//  *                  type: object
+//  *                  properties:
+//  *                    token:
+//  *                      type: string
+//  *                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+//  *              example:
+//  *                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+//  *      produces:
+//  *        - application/json
+//  *      responses:
+//  *        200:
+//  *          description: Inscription réussie
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: success
+//  *                  message:
+//  *                    type: string
+//  *                    example: Token généré avec succès
+//  *        400:
+//  *          description: Requête incorrecte - Entrée invalide
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: error
+//  *                  message:
+//  *                    type: string
+//  *                    example: Token non valide !
+//  *        500:
+//  *          description: Erreur interne du serveur
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: error
+//  *                  message:
+//  *                    type: string
+//  *                    example: Erreur interne du serveur, veuillez réessayer plus tard
+//  */
 router.post('/user/refresh', userCtrl.refreshUser)
 
 /*

@@ -29,7 +29,7 @@ Content-Type: application/json
 ###
 POST  https://dashboard.fleetrisk.fr/dashbord
 Content-Type: application/json
-Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJpYXQiOjE3MDg2NTM5MzAsImV4cCI6MTczNzQ1MzkzMH0.EjzbE5_fOEDa7nZ9A8Nyp3Sdlwiq4eDB06Sd8mnaJV0
 
 
 {
@@ -51,13 +51,14 @@ Content-Type: application/json
 ###
 POST  http://localhost:5004/user/refresh
 Content-Type: application/json
-# Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
 
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NTA0NTd9.TWAi8gtoIHiyb559O0HnF836adgtlq1H3Csxq85Px9c"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJpYXQiOjE3MDg2NTMxMTgsImV4cCI6MTczNzQ1MzExOH0.CkPs0pitr2umKPjKOt5fpeC3nMgzcB-eVmlq_e_0ZTM"
 }
+
 
 ###
 GET https://dashboard.fleetrisk.fr/users
 
 ###
+# Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
