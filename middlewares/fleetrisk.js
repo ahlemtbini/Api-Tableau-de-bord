@@ -27,7 +27,6 @@ module.exports = async (req, res, next) => {
               where: {id: decodedToken.id}
           })
           if(user){
-            console.log("userrrrrrrrrr",user)
             req.user= {user}
             next();
           } else {

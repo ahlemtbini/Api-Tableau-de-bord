@@ -240,9 +240,6 @@ exports.login = async (req, res, next) => {
       }
     })
 
-    // if ( user.role == "manager") {
-    //   return res.status(404).json({ error: "Les comptes manager sont sous maintenance" });
-    // }
     if (!user ) {
       return res.status(404).json({ error: "Il n’existe pas un compte avec ce mail !" });
     }
@@ -256,10 +253,9 @@ exports.login = async (req, res, next) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        expiresIn: 36000
       },
       process.env.ENCRYPT_KEY,
-      { algorithm: "HS256" }
+      { algorithm: "HS256", expiresIn: 28800000 }
       )})
     })
     .catch((error) => res.status(404).json({ error: "Mot de passe incorrect !" }));
@@ -269,31 +265,30 @@ exports.login = async (req, res, next) => {
   }
 }
 
- exports.refreshUser = (req, res, next) => {
-   if (req.body.reToken) {
-     oldToken = req.body.reToken
+ exports.refreshUser = async(req, res, next) => {
+   if (req.body.token) {
+     oldToken = req.body.token
      const data = decode(oldToken, process.env.SECRET_KEY);
-     User.findOne({ _id: data.userId })
-       .then(user => {
-         if (!user) {
-           return res.status(401).json({ error: "couldnt refresh" });
-         }
-         res.status(200).json({
-           token: jwt.sign(
-            {token: jwt.sign({
-              id: user.id,
-              email: user.email,
-              role: user.role,
-              expiresIn: 36000
-            },
-            process.env.ENCRYPT_KEY,
-            { algorithm: "HS256" }
-            )}
-           ),
-         });
-
+    //  console.log('data',data)
+     try {
+       const user = await prisma.user.findUnique({
+        where: {id: parseInt(data.id)}
        })
-       .catch(error => res.status(401).json({ error: "couldnt refresh" }))
+       if (!user.id) {
+         return res.status(401).json({ error: "Token non valide !" });
+        }
+        const token = jwt.sign({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        process.env.ENCRYPT_KEY,
+        { algorithm: "HS256", expiresIn: 28800000 }
+        )
+        return res.status(200).json({token })
+      } catch (error) {
+        return res.status(401).json({ error: "Token non valide !" });
+     }
    }
  }
 

@@ -14,26 +14,19 @@ const userCtrl = require("../controllers/user");
 const fleetriskCtrl = require("../controllers/fleetriskApi");
 
 
-router.get('/profile', userCtrl.getProfile);
-router.get('/users', userCtrl.getUsers);
-router.get('/users/:id', userCtrl.getUser);
-router.put('/users/:id', userCtrl.editUser);
+// router.get('/profile', userCtrl.getProfile);
+// router.get('/users', userCtrl.getUsers);
+// router.get('/users/:id', userCtrl.getUser);
+// router.put('/users/:id', userCtrl.editUser);
 // router.delete('/users/deleteAll', userCtrl.deleteAll);
-router.delete('/users/:id', userCtrl.deleteUser);
-router.delete('/profile/:id', userCtrl.deleteProfile);
-router.post('/users/refreshUser', userCtrl.refreshUser)
-router.post('/users/forgotPass', userCtrl.forgotPassword)
-router.post('/users/resetPass', userCtrl.resetPassword)
-router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
-router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
-router.post('/users/confirmationMail', userCtrl.confirmationMail)
+// router.delete('/users/:id', userCtrl.deleteUser);
+// router.delete('/profile/:id', userCtrl.deleteProfile);
 
-
-//Dashbord
-router.get(`/dashbord/userPrefrnces/:id`, userCtrl.getDashbordPrefrences)
-router.post('/dashbord/addUserPrefrnces', userCtrl.saveDashbordPrefrences)
-router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
-
+// router.post('/users/forgotPass', userCtrl.forgotPassword)
+// router.post('/users/resetPass', userCtrl.resetPassword)
+// router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
+// router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
+// router.post('/users/confirmationMail', userCtrl.confirmationMail)
 
 /**
  * @swagger
@@ -44,16 +37,7 @@ router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
 
  */
 
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     BearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *       description: Ajouter ici votre token pour acceder au API
- */
+
 
 /**
  * @swagger
@@ -213,6 +197,17 @@ router.post('/users/add', userCtrl.createUser);
 
 router.post('/users/login', userCtrl.login)
 // router.post('/fleetrisk/login', fleetriskCtrl.login)
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: Ajouter ici votre token pour acceder au API
+ */
 
 /**
  * @swagger
@@ -550,12 +545,75 @@ router.post('/users/login', userCtrl.login)
  *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
  */
 
-
 router.post('/dashbord', fleetriskAuth, fleetriskCtrl.getGraphs);
-router.get('/admins', fleetriskCtrl.getAdmins)
-router.delete('/delete-admins', fleetriskCtrl.deleteAdmins)
+// router.get('/admins', fleetriskCtrl.getAdmins)
+// router.delete('/delete-admins', fleetriskCtrl.deleteAdmins)
 
-
+/**
+ * @swagger
+ *  /user/refresh:
+ *    post:
+ *      tags: [Refresh token]
+ *      summary: Utiliser pour générer un nouveau token à partir de celui expiré, le token expire après 8 heures
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                user:
+ *                  type: object
+ *                  properties:
+ *                    token:
+ *                      type: string
+ *                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+ *              example:
+ *                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+ *      produces:
+ *        - application/json
+ *      responses:
+ *        200:
+ *          description: Inscription réussie
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: success
+ *                  message:
+ *                    type: string
+ *                    example: Token généré avec succès
+ *        400:
+ *          description: Requête incorrecte - Entrée invalide
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: error
+ *                  message:
+ *                    type: string
+ *                    example: Token non valide !
+ *        500:
+ *          description: Erreur interne du serveur
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: error
+ *                  message:
+ *                    type: string
+ *                    example: Erreur interne du serveur, veuillez réessayer plus tard
+ */
+router.post('/user/refresh', userCtrl.refreshUser)
 
 /*
 async function main() {

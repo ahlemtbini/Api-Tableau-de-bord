@@ -38,7 +38,7 @@ app.use(morgan('dev'));
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://dashboard.fleetrisk.fr',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   })
 );

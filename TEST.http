@@ -1,21 +1,9 @@
 ###
-GET http://localhost:5001/api/fleetrisk/clients
+DELETE https://dashboard.fleetrisk.fr/users/69
+
 
 ###
-POST  http://localhost:5004/fleetrisk/dashbord
-Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
-
-
-{
-    "annee": "2023",
-    "region": null,
-    "societe": null,
-    "site": null
-}
-
-###
-POST http://localhost:5004/users/add
+POST https://dashboard.fleetrisk.fr/users/add
 Content-Type: application/json
 
 {
@@ -26,6 +14,29 @@ Content-Type: application/json
         "role": "client_admin",
         "mdp": "Mcxl.kj5dd.sqd!"
     }
+}
+
+###
+POST https://dashboard.fleetrisk.fr/users/login
+Content-Type: application/json
+
+{
+    "email": "api.admin@fleetrisk.fr",
+    "mdp": "Mcxl.kj5dd.sqd!"
+}
+
+
+###
+POST  https://dashboard.fleetrisk.fr/dashbord
+Content-Type: application/json
+Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
+
+
+{
+    "annee": "2023",
+    "region": null,
+    "societe": null,
+    "site": null
 }
 
 ###
@@ -38,42 +49,15 @@ Content-Type: application/json
 }
 
 ###
-POST http://dashboard.fleetrisk.fr/users/add
+POST  http://localhost:5004/user/refresh
 Content-Type: application/json
+# Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
 
 {
-    "user": {
-        "email": "api.admin@fleetrisk.fr",
-        "nom": "fleetrisk",
-        "prenom": "api admin",
-        "role": "client_admin",
-        "mdp": "Mcxl.kj5dd.sqd!"
-    }
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NTA0NTd9.TWAi8gtoIHiyb559O0HnF836adgtlq1H3Csxq85Px9c"
 }
 
 ###
-POST http://dashboard.fleetrisk.fr/users/login
-Content-Type: application/json
-
-{
-    "email": "api.admin@fleetrisk.fr",
-    "mdp": "Mcxl.kj5dd.sqd!"
-}
-
-
-###
-GET http://dashboard.fleetrisk.fr/users
-
-###
-POST  http://dashboard.fleetrisk.fr/fleetrisk/dashbord
-Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
-
-
-{
-    "annee": "2023",
-    "region": null,
-    "societe": null,
-    "site": null
-}
 GET https://dashboard.fleetrisk.fr/users
+
+###
