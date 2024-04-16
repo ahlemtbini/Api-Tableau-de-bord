@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 node_modules
 documents
 # Keep environment variables out of version control
+=======
+node_modules
+documents
+# Keep environment variables out of version control
+>>>>>>> 2fc023a (first commit)
 .env

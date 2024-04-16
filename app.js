@@ -1,17 +1,18 @@
 const express = require('express');
-const createError = require('http-errors');
-const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const createError = require('http-errors');
+const morgan = require('morgan');
 require('dotenv').config();
-
-const cors = require("cors");
+const cors = require('cors');
 const path = require('path');
-const fs = require("fs");
-const { json } = require("express");
-const userRoutes = require("./routes/user");
+const fs = require('fs');
+const { json } = require('express');
+const userRoutes = require('./routes/user');
 
 const app = express();
+
 // Define Swagger options
 const options = {
   definition: {
@@ -19,7 +20,7 @@ const options = {
     info: {
       title: 'Documentation', // Specify the title of your API
       version: '1.0.0', // Specify the version of your API
-      description: 'documentation de lAPI de FleetRisk',
+      description: "Documentation de l'API FleetRisk qui retourne les données du dashboard",
     },
   },
   // Paths to files containing OpenAPI definitions
@@ -28,17 +29,17 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
-// Serve Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  customSiteTitle: "Documentation API FleetRisk",
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
   })
 );
 
@@ -47,19 +48,15 @@ app.get('/', async (req, res, next) => {
 });
 
 app.use('/api/documents', express.static(path.join(__dirname, '/documents')));
-app.use("/api", userRoutes);
-
+app.use('/api', userRoutes);
 
 app.use((req, res, next) => {
-  createError.NotFound()
+  createError.NotFound();
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({error: err.message || 'server error' })
-
+  res.status(err.status || 500).json({ error: err.message || 'server error' });
 });
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 @ http://localhost:${PORT}`));
-

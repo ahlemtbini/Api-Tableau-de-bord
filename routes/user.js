@@ -9,6 +9,7 @@ const { findSync } = require("@prisma/client/runtime");
 const multer = require("multer")
 const fleetriskAuth = require("../middlewares/fleetrisk");
 const upload = require("../middlewares/multer-config")
+const cache = require("../middlewares/cashRequest")
 
 const userCtrl = require("../controllers/user");
 const clientsCtrl = require("../controllers/clients");
@@ -169,8 +170,6 @@ router.post('/getUserEpsList', postSinistreCtrl.getUserEpsList)
 router.post('/postSinistres/add', postSinistreCtrl.addEPS)
 router.put('/postSinistres/:id', postSinistreCtrl.upEPS)
 router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
-
-
 /**
  * @swagger
  * tags:
@@ -179,6 +178,91 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  *   order: 1
 
  */
+
+
+/** 
+ * @swagger
+ *  /api/fleetrisk/signup:
+ *    post:
+ *      tags: [FleetRisk signup]
+ *      summary: À exécuter une seule fois pour la création du compte
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                user:
+ *                  type: object
+ *                  properties:
+ *                    email:
+ *                      type: string
+ *                      format: email
+ *                      example: api.admin@fleetrisk.fr
+ *                    nom:
+ *                      type: string
+ *                      example: fleetrisk
+ *                    prenom:
+ *                      type: string
+ *                      example: api admin
+ *                    role:
+ *                      type: string
+ *                      example: client_admin
+ *                    mdp:
+ *                      type: string
+ *                      example: Mcxl.kj5dd.sqd!
+ *              example:
+ *                user:
+ *                  email: api.admin@fleetrisk.fr
+ *                  nom: fleetrisk
+ *                  prenom: api admin
+ *                  role: client_admin
+ *                  mdp: Mcxl.kj5dd.sqd!
+ *      produces:
+ *        - application/json
+ *      responses:
+ *        200:
+ *          description: Inscription réussie
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: success
+ *                  message:
+ *                    type: string
+ *                    example: Utilisateur inscrit avec succès
+ *        400:
+ *          description: Requête incorrecte - Entrée invalide
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: error
+ *                  message:
+ *                    type: string
+ *                    example: Entrée invalide, veuillez vérifier votre requête
+ *        500:
+ *          description: Erreur interne du serveur
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                    example: error
+ *                  message:
+ *                    type: string
+ *                    example: Erreur interne du serveur, veuillez réessayer plus tard
+ */
+router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
 /**
  * @swagger
@@ -191,82 +275,6 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  *       description: Ajouter ici votre token pour acceder au API
  */
 
-/** 
- * @swagger
- *  /fleetrisk/signup:
- *    post:
- *      tags: [FleetRisk signup]
- *      summary: A exécuter une seule fois pour la création du compte
- *      consumes:
- *        - application/json
- *      produces:
- *        - application/json
- *      parameters:
- *        - in: body
- *          name: user
- *          description: Informations utilisateur pour l'inscription
- *          required: true
- *          schema:
- *            type: object
- *            properties:
- *              email:
- *                type: string
- *                format: email
- *                example: api.admin@fleetrisk.fr
- *              nom:
- *                type: string
- *                example: fleetrisk
- *              prenom:
- *                type: string
- *                example: api admin
- *              role:
- *                type: string
- *                example: admin_api_fleetrisk
- *              mdp:
- *                type: string
- *                example: Mcxl.kj5dd.sqd!
- *            example:
- *              email: api.admin@fleetrisk.fr
- *              nom: fleetrisk
- *              prenom: api admin
- *              role: admin_api_fleetrisk
- *              mdp: Mcxl.kj5dd.sqd!
- *      responses:
- *        200:
- *          description: Inscription réussie
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: success
- *              message:
- *                type: string
- *                example: Utilisateur inscrit avec succès
- *        400:
- *          description: Requête incorrecte - Entrée invalide
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: error
- *              message:
- *                type: string
- *                example: Entrée invalide, veuillez vérifier votre requête
- *        500:
- *          description: Erreur interne du serveur
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: error
- *              message:
- *                type: string
- *                example: Erreur interne du serveur, veuillez réessayer plus tard
- */
-router.post('/fleetrisk/signup', fleetriskCtrl.register);
 /**
  * @swagger
  * tags:
@@ -278,69 +286,63 @@ router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
 /** 
  * @swagger
- *  /fleetrisk/login:
+ *  /api/fleetrisk/login:
  *    post:
  *      tags: [FleetRisk login]
- *      summary: A exécuter pour générer le token
- *      consumes:
- *        - application/json
- *      produces:
- *        - application/json
- *      parameters:
- *        - in: body
- *          name: user
- *          description: Email d'utilisateur et mot de passe
- *          required: true
- *          schema:
- *            type: object
- *            properties:
- *              email:
- *                type: string
- *                format: email
- *                example: api.admin@fleetrisk.fr
- *              mdp:
- *                type: string
- *                example: Mcxl.kj5dd.sqd!
+ *      summary: À exécuter pour générer le token
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                email:
+ *                  type: string
+ *                  format: email
+ *                mdp:
+ *                  type: string
  *            example:
  *              email: api.admin@fleetrisk.fr
  *              mdp: Mcxl.kj5dd.sqd!
+ *      produces:
+ *        - application/json
  *      responses:
  *        200:
- *          description: Connexion réussie (Cette requête va générer un Token à utiliser par la suite pour pouvoir accèder aux données du dashboard)
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: success
- *              message:
- *                type: string
- *                example: Utilisateur connecté avec succès
- *              token:
- *                type: string
- *                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *          description: Connexion réussie (Cette requête va générer un Token à utiliser par la suite pour pouvoir accéder aux données du dashboard)
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                  message:
+ *                    type: string
+ *                  token:
+ *                    type: string
  *        400:
  *          description: Requête incorrecte - Entrée invalide
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: error
- *              message:
- *                type: string
- *                example: Entrée invalide, veuillez vérifier votre requête
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                  message:
+ *                    type: string
  *        500:
  *          description: Erreur interne du serveur
- *          schema:
- *            type: object
- *            properties:
- *              status:
- *                type: string
- *                example: error
- *              message:
- *                type: string
- *                example: Erreur interne du serveur, veuillez réessayer plus tard
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                    type: string
+ *                  message:
+ *                    type: string
  */
 router.post('/fleetrisk/login', fleetriskCtrl.login)
 
@@ -355,7 +357,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
 
 /**
  * @swagger
- * /fleetrisk/dashboard:
+ * /api/fleetrisk/dashbord:
  *   post:
  *     summary: Obtenez les graphiques du tableau de bord FleetRisk
  *     description: Récupère les données graphiques pour le tableau de bord FleetRisk.
@@ -385,7 +387,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                 description: Nom du site (facultatif,non sensible à la casse)
  *                 exemple: PTSO (MERLE)	,ptso (merle),SATAR MOISSAC,PRIMEVER LIMOUSIN OBJAT
  *             example:
- *               annee: 2023
+ *               annee: "2023"
  *               region: null
  *               societe: null
  *               site: null
@@ -402,10 +404,10 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                   properties:
  *                     tous:
  *                       type: integer
- *                       description: Nombre total d'accidents.
+ *                       description: Nombre total de sinistres.
  *                     sansDoublons:
  *                       type: integer
- *                       description: Nombre d'accidents sans doublons.
+ *                       description: Nombre de sinistres sans doublons (si doublon Ref ne compter qu’un sinistres).
  *                 "Nbr sinistres par jour":
  *                   type: object
  *                   properties:
@@ -414,77 +416,77 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                       description: Nbr sinistres par jour.
  *                     nbre de sinistres:
  *                       type: integer
- *                       description: Nombre d'accidents.
+ *                       description: Nombre de sinistres.
  *                     nbre de jours depuis debut d'année:
  *                       type: integer
  *                       description: Nombre de jours depuis le début de l'année.
  *                 "Objectifs charge sinistres": 
  *                   type: string
  *                   example: "50 000 €"
- *                   description: Inscrire un objectif  (choisi par le client) une fois par an. Doit s'adapter à la date  de démarrage et de fin du contrat. Doit pouvoir se comparer d'une année sur l'autre
+ *                   description: Un objectif  (choisi par le client) une fois par an. Doit s'adapter à la date  de démarrage et de fin du contrat. Doit pouvoir se comparer d'une année sur l'autre
  *                 "Charge estimée":
  *                   type: integer
  *                   example: 622000
  *                   description: Somme  colonne charge réelle selon sélection année/trimestre/mois
- *                 "Coût Sinistre Moyen": 
+ *                 "Coût Sinistres Moyen": 
  *                   type: string
  *                   example: "4 231 €"
- *                   description : Charge réelle/nombre de sinistre
+ *                   description : Charge réelle/nombre de sinistres
  *                 "Répartition des sinistres par":
  *                   type: object
  *                   description: Charge Réelle en % de l'objectif/ Client/Region/Société
  *                   properties:
  *                     ILE_DE_FRANCE:
  *                       type: integer
- *                       description: Nombre d'accidents en Île de France.
+ *                       description: Nombre de sinistres en Île de France.
  *                     SIEGE:
  *                       type: integer
- *                       description: Nombre d'accidents au siège.
+ *                       description: Nombre de sinistres au siège.
  *                     NORD:
  *                       type: integer
- *                       description: Nombre d'accidents dans la région Nord.
+ *                       description: Nombre de sinistres dans la région Nord.
  *                     ROUSSILLON:
  *                       type: integer
- *                       description: Nombre d'accidents à Roussillon.
+ *                       description: Nombre de sinistres à Roussillon.
  *                     PROVENCE:
  *                       type: integer
- *                       description: Nombre d'accidents en Provence.
+ *                       description: Nombre de sinistres en Provence.
  *                     SUD_OUEST:
  *                       type: integer
- *                       description: Nombre d'accidents dans la région Sud-Ouest.
+ *                       description: Nombre de sinistres dans la région Sud-Ouest.
  *                     RHONE_ALPES:
  *                       type: integer
- *                       description: Nombre d'accidents en Rhône-Alpes.
+ *                       description: Nombre de sinistres en Rhône-Alpes.
  *                     ATLANTIQUE:
  *                       type: integer
- *                       description: Nombre d'accidents dans la région Atlantique.
+ *                       description: Nombre de sinistres dans la région Atlantique.
  *                     Indeterminé:
  *                       type: integer
- *                       description: Nombre d'accidents avec une région indéterminée.
+ *                       description: Nombre de sinistres avec une région indéterminée.
  *                 "Répartition des sinistres par cas":
  *                   type: object
  *                   description: nombre de sinistres par Colonne CAS (Manœuvre, Arrêt, Circulation) + %
  *                   properties:
  *                     nbe:
- *                       description: Tableau des comptes d'accidents.
+ *                       description: Tableau des comptes de sinistres.
  *                     %:
- *                       description: Tableau des pourcentages d'accidents.
+ *                       description: Tableau des pourcentages de sinistres.
  *                 "Taux de respect de l'objectif": 
  *                   type: integer
  *                   example: 1244
  *                   description: Taux de respect de l'objectif suivant l'avancée de l'année (12 mois) Doit s'adapter à la date  de démarrage et de fin du contrat.
  *                 "Top 5 sinistres":
  *                   description: Les 5 plus gros sinistres (charge réelle)/Conducteur/Région/Société/Date de survenance Mettre Somme Charge en % de l'objetif total (Client)
- *                 "Saisonnalité de la fréquence sinistre":
+ *                 "Saisonnalité de la fréquence sinistres":
  *                   type: object
- *                   description: Nombre de sinistre par mois + Nombre de sinistre représenté par jour de semaine
+ *                   description: Nombre de sinistres par mois + Nombre de sinistres représenté par jour de semaine
  *                   properties:
  *                     months:
  *                       type: object
- *                       description: Objet représentant le nombre d'accidents par mois.
+ *                       description: Objet représentant le nombre de sinistres par mois.
  *                     days:
  *                       type: object
- *                       description: Objet représentant le nombre d'accidents par jour de la semaine.
+ *                       description: Objet représentant le nombre de sinistres par jour de la semaine.
  *                 "Liste Chauffeur Récidiviste":
  *                   description: Afficher Chauffeurs ayant au moins 2 sinistres avec Charge cumulée et nombre de sinistes sur 2 ans
  *                   items:
@@ -504,14 +506,14 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                         description: Montant lié au chauffeur.
  *                       Nbre. sinistres:
  *                         type: integer
- *                         description: Nombre d'accidents liés au chauffeur.
+ *                         description: Nombre de sinistres liés au chauffeur.
  *                 "Responsabilité":
  *                   type: object
  *                   properties:
  *                     charge:
- *                       description: Nombre sinistre Responsable/Non responsable/Responsabilité Partagée et charges réelles correspondante  en €
+ *                       description: Nombre sinistres Responsable/Non responsable/Responsabilité Partagée et charges réelles correspondante  en €
  *                     %:
- *                       description: Nombre sinistre Responsable/Non responsable/Responsabilité Partagée en %.
+ *                       description: Nombre sinistres Responsable/Non responsable/Responsabilité Partagée en %.
  *                 "Jour de la semaine vs Responsabilité":
  *                   description: Mix responsabilité par jour de survenance sur une année (le jeudi 80% des sinistres responsable et 20% non responsable)
  *                   type: object
@@ -539,7 +541,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                       description: Statistiques pour le dimanche.
  *                 "Année de véhicule":
  *                   type: array
- *                   description: Nombre de sinistre selon Année du véhicule (1première MEC) ou répartir en 3 caatégorie  0-3 ans/3-6ans/ + de 6 ans
+ *                   description: Nombre de sinistres selon Année du véhicule (1première MEC) ou répartir en 3 caatégorie  0-3 ans/3-6ans/ + de 6 ans
  *                   items:
  *                     type: object
  *                     properties:
@@ -548,18 +550,18 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                         description: Année du véhicule.
  *                       value:
  *                         type: integer
- *                         description: Nombre d'accidents associés à cette année.
+ *                         description: Nombre de sinistres associés à cette année.
  *                       percentage:
  *                         type: integer
- *                         description: Pourcentage d'accidents associés à cette année.
+ *                         description: Pourcentage de sinistres associés à cette année.
  *                 "Sinistres par plages horaires":
  *                   type: object
- *                   description: Nombre de sinistre par plages horaires
+ *                   description: Nombre de sinistres par plages horaires
  *                   properties:
  *                     nbr:
- *                       description: Tableau représentant le nombre d'accidents par plage horaire.
+ *                       description: Tableau représentant le nombre de sinistres par plage horaire.
  *                     %:
- *                       description: Tableau représentant le pourcentage d'accidents par plage horaire.
+ *                       description: Tableau représentant le pourcentage de sinistres par plage horaire.
  *             example: 
  *               {
  *                 "Nombre de sinistres": {
@@ -597,7 +599,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                   {"Société": [60451, "MOREIRA ANTHONY", "SUD_OUEST", "PRIMEVER LIMOUSIN", "26-01-2023"]},
  *                   {"Date de survenance": [80000, "MOLISAK JEREMIE", "NORD", "GUIDEZ", "13-03-2023"]}
  *                 ],
- *                 "Saisonnalité de la fréquence sinistre": {
+ *                 "Saisonnalité de la fréquence sinistres": {
  *                   "months": {"Janvier": 30, "février": 17, "mars": 24, "avril": 22, "mai": 22, "juin": 13, "juillet": 4, "août": 12, "septembre": 3, "octobre": 0, "novembre": 0, "décembre": 0},
  *                   "days": {"lundi": 17, "mardi": 35, "mercredi": 22, "jeudi": 33, "vendredi": 20, "samedi": 16, "dimanche": 4}
  *                 },
@@ -679,13 +681,362 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *       500:
  *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
  */
+router.post('/fleetrisk/dashbord', cache, fleetriskAuth, fleetriskCtrl.getGraphs);
 
-// fleetrisk api
-router.post('/fleetrisk/dashbord',fleetriskAuth, fleetriskCtrl.getGraphs)
-router.get('/fleetrisk/admins', fleetriskCtrl.getAdmins)
+/**
+ * @swagger
+ * tags:
+ *   name: FleetRisk sinistres
+ *   description: table sinistres
+ *   order: 4
+
+ */
+/**
+ * @swagger
+ * /api/fleetrisk/sinistres:
+ *   post:
+ *     summary: Obtenez les sinistres du tableau de bord FleetRisk
+ *     description: Récupère les données sinistres pour le tableau de bord FleetRisk.
+ *     tags: [FleetRisk sinistres]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               all:
+ *                 type: boolean
+ *                 description: Si valeur true, obtenir tous les sinistres de fleetrisk sinon appliquer le filtre
+ *               annee:
+ *                 type: string
+ *                 description: Année (facultatif)
+ *               region:
+ *                 type: string
+ *                 description: Nom de la région (facultatif, non sensible à la casse)
+ *                 example: ILE_DE_FRANCE
+ *               societe:
+ *                 type: string
+ *                 description: Nom de la société (facultatif, non sensible à la casse)
+ *                 example: PRIMEVER SERVICES
+ *               site:
+ *                 type: string
+ *                 description: Nom du site (facultatif, non sensible à la casse)
+ *                 example: PTSO (MERLE)
+ *             example:
+ *               all: false
+ *               annee: "2023"
+ *               region: null
+ *               societe: null
+ *               site: null
+ *     responses:
+ *       200:
+ *         description: Succès. Renvoie les données sinistres pour le tableau de bord FleetRisk.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   NUMERO_CLIENT:
+ *                     type: string
+ *                   DOSSIER:
+ *                     type: integer
+ *                   DOSSIER_CLIENT:
+ *                     type: string
+ *                   ANNEE:
+ *                     type: string
+ *                   ASSUREUR:
+ *                     type: string
+ *                   NUMERO_CONTRAT:
+ *                     type: string
+ *                   AMIABLE:
+ *                     type: string
+ *                   REF_SINISTRE_ASUREUR:
+ *                     type: string
+ *                   DATE_RECEPTION:
+ *                     type: string
+ *                   DATE_SURVENANCE:
+ *                     type: string
+ *                   HEURE:
+ *                     type: string
+ *                   CAS:
+ *                     type: string
+ *                   LIEU_SINISTRE:
+ *                     type: string
+ *                   REGION:
+ *                     type: string
+ *                   SOCIETE:
+ *                     type: string
+ *                   SITE:
+ *                     type: string
+ *                   TYPE_VEHICULE:
+ *                     type: string
+ *                   IMMATRICULATION:
+ *                     type: string
+ *                   MARQUE:
+ *                     type: string
+ *                   PREMIERE_MEC:
+ *                     type: string
+ *                   PERTE_FI:
+ *                     type: string
+ *                   CONDUCTEUR:
+ *                     type: string
+ *                   POURCENTAGE_RC:
+ *                     type: string
+ *                   CAS_IDA:
+ *                     type: string
+ *                   NATURE:
+ *                     type: string
+ *                   CIRCONSTANCE:
+ *                     type: string
+ *                   DOMMAGES:
+ *                     type: string
+ *                   DOMMAGES_SAISIE8_LIBRE:
+ *                     type: string
+ *                   ASSUREUR_ADV:
+ *                     type: string
+ *                   CONVENTION:
+ *                     type: string
+ *                   FRANCHISE:
+ *                     type: string
+ *                   MONTANT_DOM:
+ *                     type: string
+ *                   DATE_MISSIONNEMENT:
+ *                     type: string
+ *                   LIEU_EXPERTISE:
+ *                     type: string
+ *                   DATE_EXPERTISE:
+ *                     type: string
+ *                   DATE_PRE_RAPPORT:
+ *                     type: string
+ *                   REF_EXPERTISE:
+ *                     type: string
+ *                   DATE_RAPPORT_DEFINITIF:
+ *                     type: string
+ *                   COUT_EXPERT:
+ *                     type: string
+ *                   REPARATION:
+ *                     type: string
+ *                   CESSION_EPAVE:
+ *                     type: string
+ *                   MONTANT_RECOURS:
+ *                     type: string
+ *                   PIECES_MANQUANTES:
+ *                     type: string
+ *                   DETAIL_PIECES_MANQUANTES:
+ *                     type: string
+ *                   DATE_RELANCE_PIECES_MANQUANTES:
+ *                     type: string
+ *                   CONSTAT_ORIGINAL:
+ *                     type: string
+ *                   DATE_CLOTURE:
+ *                     type: string
+ *                   CHARGE_PROVISIONNELLE_ASSUREUR:
+ *                     type: string
+ *                   CHARGE_REELLE:
+ *                     type: string
+ *                   ETAT:
+ *                     type: string
+ *                   CHARGE_AJUSTEE:
+ *                     type: string
+ *                   COMMENTAIRES:
+ *                     type: string
+ *             example: 
+ *                 - NUMERO_CLIENT: "1"
+ *                   DOSSIER: 10252
+ *                   DOSSIER_CLIENT: "20230228-01"
+ *                   ANNEE: "2023"
+ *                   ASSUREUR: "AXA"
+ *                   NUMERO_CONTRAT: "6969812304"
+ *                   AMIABLE: "oui"
+ *                   REF_SINISTRE_ASUREUR: ""
+ *                   DATE_RECEPTION: "20-03-2023"
+ *                   DATE_SURVENANCE: "28-02-2023"
+ *                   HEURE: "Aucun"
+ *                   CAS: "Manoeuvre"
+ *                   LIEU_SINISTRE: "FOISSY SUR VANNE"
+ *                   REGION: "ILE DE FRANCE"
+ *                   SOCIETE: "PRIMEVER TROYES"
+ *                   SITE: "TROYES"
+ *                   TYPE_VEHICULE: "TRR"
+ *                   IMMATRICULATION: "GB-982-VK"
+ *                   MARQUE: "VOLVO"
+ *                   PREMIERE_MEC: "16-09-2021"
+ *                   PERTE_FI: "oui"
+ *                   CONDUCTEUR: "SAKHI SIDI"
+ *                   POURCENTAGE_RC: "100"
+ *                   CAS_IDA: ""
+ *                   NATURE: "NON AUTO"
+ *                   CIRCONSTANCE: "Notre assuré recule dans le mur du quai"
+ *                   DOMMAGES: ""
+ *                   DOMMAGES_SAISIE8_LIBRE: ""
+ *                   ASSUREUR_ADV: "groupama"
+ *                   CONVENTION: ""
+ *                   FRANCHISE: ""
+ *                   MONTANT_DOM: ""
+ *                   DATE_MISSIONNEMENT: ""
+ *                   LIEU_EXPERTISE: ""
+ *                   DATE_EXPERTISE: ""
+ *                   DATE_PRE_RAPPORT: ""
+ *                   REF_EXPERTISE: ""
+ *                   DATE_RAPPORT_DEFINITIF: ""
+ *                   COUT_EXPERT: ""
+ *                   REPARATION: ""
+ *                   CESSION_EPAVE: ""
+ *                   MONTANT_RECOURS: ""
+ *                   PIECES_MANQUANTES: ""
+ *                   DETAIL_PIECES_MANQUANTES: ""
+ *                   DATE_RELANCE_PIECES_MANQUANTES: ""
+ *                   CONSTAT_ORIGINAL: ""
+ *                   DATE_CLOTURE: ""
+ *                   CHARGE_PROVISIONNELLE_ASSUREUR: ""
+ *                   CHARGE_REELLE: ""
+ *                   ETAT: "Clos"
+ *                   CHARGE_AJUSTEE: ""
+ *                   COMMENTAIRES: "convocation à Expertise contradictoire annulée AMIABLE ABOUTI Charge sinistre 2735,16€"
+ *       401:
+ *         description: Non autorisé. L'utilisateur doit être authentifié avec un jeton JWT.
+ *       404:
+ *         description: Ressource non trouvée. Les données du tableau de bord n'ont pas pu être récupérées.
+ *       500:
+ *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
+ */
+
+router.post('/fleetrisk/sinistres',cache, fleetriskCtrl.getSinistres)
+
+// objectifs
+
+
+/**
+ * @swagger
+ * /api/fleetrisk/objectives:
+ *   post:
+ *     summary: Obtenez les objectifs du tableau de bord FleetRisk
+ *     description: Récupère les données objectifs pour le tableau de bord FleetRisk.
+ *     tags: [FleetRisk Objectifs]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Succès. Renvoie les objectifs du tableau de bord FleetRisk.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: L'identifiant unique de l'objectif.
+ *                   value:
+ *                     type: string
+ *                     description: La valeur de l'objectif.
+ *                   year:
+ *                     type: string
+ *                     description: L'année de l'objectif.
+ *                   current:
+ *                     type: boolean
+ *                     description: Indique si l'objectif est celui en cours.
+ *                   contratId:
+ *                     type: integer
+ *                     nullable: true
+ *                     description: L'identifiant du contrat associé à l'objectif .
+ *                   ClientID:
+ *                     type: integer
+ *                     description: L'identifiant du client associé à l'objectif.
+ *                   SocieteID:
+ *                     type: integer
+ *                     nullable: true
+ *                     description: L'identifiant de la société associée à l'objectif .
+ *                   regionId:
+ *                     type: integer
+ *                     nullable: true
+ *                     description: L'identifiant de la région associée à l'objectif .
+ *                   siteId:
+ *                     type: integer
+ *                     nullable: true
+ *                     description: L'identifiant du site associé à l'objectif .
+ *             example: 
+ *              [
+ *                {
+ *                  "id": 13,
+ *                  "value": "1179797",
+ *                  "year": "2023",
+ *                  "current": true,
+ *                  "contratId": null,
+ *                  "ClientID": 1,
+ *                  "SocieteID": null,
+ *                  "regionId": null,
+ *                  "siteId": null
+ *                },
+ *                {
+ *                  "id": 37,
+ *                  "value": "831709",
+ *                  "year": "2022",
+ *                  "current": false,
+ *                  "contratId": null,
+ *                  "ClientID": 1,
+ *                  "SocieteID": null,
+ *                  "regionId": null,
+ *                  "siteId": null
+ *                },
+ *                {
+ *                  "id": 55,
+ *                  "value": "795682",
+ *                  "year": "2020",
+ *                  "current": false,
+ *                  "contratId": null,
+ *                  "ClientID": 1,
+ *                  "SocieteID": null,
+ *                  "regionId": null,
+ *                  "siteId": null
+ *                },
+ *                {
+ *                  "id": 56,
+ *                  "value": "800901",
+ *                  "year": "2021",
+ *                  "current": false,
+ *                  "contratId": null,
+ *                  "ClientID": 1,
+ *                  "SocieteID": null,
+ *                  "regionId": null,
+ *                  "siteId": null
+ *                },
+ *                {
+ *                  "id": 93,
+ *                  "value": "1216491",
+ *                  "year": "2024",
+ *                  "current": true,
+ *                  "contratId": null,
+ *                  "ClientID": 1,
+ *                  "SocieteID": null,
+ *                  "regionId": null,
+ *                  "siteId": null
+ *                }
+ *              ]
+ *       401:
+ *         description: Non autorisé. L'utilisateur doit être authentifié avec un jeton JWT.
+ *       404:
+ *         description: Ressource non trouvée. Les données du tableau de bord n'ont pas pu être récupérées.
+ *       500:
+ *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
+ */
+
+router.post('/fleetrisk/objectives', cache, fleetriskCtrl.getObjectives)
+
+
+// router.get('/fleetrisk/sinistres', fleetriskCtrl.getSinistres)
+router.post('/fleetrisk/dashbord', fleetriskAuth, cache, fleetriskCtrl.getGraphs);
+router.get('/fleetrisk/admins', cache, fleetriskCtrl.getAdmins)
+router.get('/fleetrisk/sinistres', cache, fleetriskCtrl.getSinistres)
 router.delete('/fleetrisk/delete-admins', fleetriskCtrl.deleteAdmins)
-router.post('/fleetrisk/signup', fleetriskCtrl.register)
-router.post('/fleetrisk/login', fleetriskCtrl.login)
+
+
 
 /*
 async function main() {
