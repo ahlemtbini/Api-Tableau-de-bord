@@ -47,8 +47,8 @@ app.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
 
-app.use('/documents', express.static(path.join(__dirname, '/documents')));
-app.use('/', userRoutes);
+app.use('/fleetriskapi/documents', express.static(path.join(__dirname, '/documents')));
+app.use('/fleetriskapi', userRoutes);
 
 app.use((req, res, next) => {
   createError.NotFound();

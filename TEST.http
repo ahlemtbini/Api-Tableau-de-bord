@@ -1,4 +1,5 @@
 ###
+<<<<<<< HEAD
 DELETE https://dashboard.fleetrisk.fr/users/69
 
 
@@ -30,6 +31,14 @@ Content-Type: application/json
 POST  https://dashboard.fleetrisk.fr/dashbord
 Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJpYXQiOjE3MDg2NTM5MzAsImV4cCI6MTczNzQ1MzkzMH0.EjzbE5_fOEDa7nZ9A8Nyp3Sdlwiq4eDB06Sd8mnaJV0
+=======
+GET http://localhost:5001/api/fleetrisk/clients
+
+###
+POST  http://localhost:5004/fleetriskapi/fleetrisk/dashbord
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg1OTgzNjl9.PR7obXhvJehhFpak2AgQPa50VE6a0-VYeS3-SOJW_5s
+>>>>>>> f6480a8 (v22022024)
 
 
 {
@@ -40,6 +49,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsI
 }
 
 ###
+<<<<<<< HEAD
 POST http://localhost:5004/users/login
 Content-Type: application/json
 
@@ -62,3 +72,26 @@ GET https://dashboard.fleetrisk.fr/users
 
 ###
 # Authorization: bearer seyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjYsImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDQ1MjR9.CxTAWMDETVGybD3Mhs2p77EdbsafVBOBOunCa8drdBY
+=======
+POST http://localhost:5004/fleetriskapi/users/add
+Content-Type: application/json
+
+{
+    "user": {
+        "email": "api.admin@fleetrisk.fr",
+        "nom": "fleetrisk",
+        "prenom": "api admin",
+        "role": "client_admin",
+        "mdp": "Mcxl.kj5dd.sqd!"
+    }
+}
+
+###
+POST http://localhost:5004/fleetriskapi/users/login
+Content-Type: application/json
+
+{
+    "email": "api.admin@fleetrisk.fr",
+    "mdp": "Mcxl.kj5dd.sqd!"
+}
+>>>>>>> f6480a8 (v22022024)

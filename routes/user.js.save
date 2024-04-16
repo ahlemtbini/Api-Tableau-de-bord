@@ -9,167 +9,25 @@ const { findSync } = require("@prisma/client/runtime");
 const multer = require("multer")
 const fleetriskAuth = require("../middlewares/fleetrisk");
 const upload = require("../middlewares/multer-config")
-const cache = require("../middlewares/cashRequest")
 
 const userCtrl = require("../controllers/user");
-const clientsCtrl = require("../controllers/clients");
-const sinistresCtrl = require("../controllers/sinistres");
-const adminsCtrl = require("../controllers/admins");
-const chauffeurCtrl = require("../controllers/chauffeurs");
-const societesCtrl = require("../controllers/societes");
-const sitesCtrl = require("../controllers/sites");
-const managersCtrl = require("../controllers/managers");
-// const migrateCtrl = require("../controllers/migrateDB");
-const objectiveCtrl = require("../controllers/objectives");
-const postSinistreCtrl = require("../controllers/postSinistre");
 const fleetriskCtrl = require("../controllers/fleetriskApi");
 
-//Dashbord
-router.get(`/dashbord/userPrefrnces/:id`, userCtrl.getDashbordPrefrences)
-router.post('/dashbord/addUserPrefrnces', userCtrl.saveDashbordPrefrences)
-router.put('/dashbord/upUserPrefrnces', userCtrl.upDashbordPrefrences)
 
-//documents
-router.post('/documents/save', upload, sinistresCtrl.saveDocs)
-router.put('/documents/update', upload, sinistresCtrl.upDocs)
-
-// user controller
-router.get('/profile', userCtrl.getProfile);
-router.get('/users', userCtrl.getUsers);
-router.get('/users/:id', userCtrl.getUser);
-router.post('/users/add', userCtrl.createUser);
-router.put('/users/:id', userCtrl.editUser);
+// router.get('/profile', userCtrl.getProfile);
+// router.get('/users', userCtrl.getUsers);
+// router.get('/users/:id', userCtrl.getUser);
+// router.put('/users/:id', userCtrl.editUser);
 // router.delete('/users/deleteAll', userCtrl.deleteAll);
-router.delete('/users/:id', userCtrl.deleteUser);
-router.delete('/profile/:id', userCtrl.deleteProfile);
+// router.delete('/users/:id', userCtrl.deleteUser);
+// router.delete('/profile/:id', userCtrl.deleteProfile);
 
-router.post('/users/login', userCtrl.login)
-router.post('/users/refreshUser', userCtrl.refreshUser)
-router.post('/users/forgotPass', userCtrl.forgotPassword)
-router.post('/users/resetPass', userCtrl.resetPassword)
-router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
-router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
-router.post('/users/confirmationMail', userCtrl.confirmationMail)
+// router.post('/users/forgotPass', userCtrl.forgotPassword)
+// router.post('/users/resetPass', userCtrl.resetPassword)
+// router.post('/users/addPhoto/:id', upload, userCtrl.addPhoto);
+// router.post('/clients/addPhoto/:id', upload, userCtrl.addPhoto);
+// router.post('/users/confirmationMail', userCtrl.confirmationMail)
 
-
-// clients controller
-router.get('/clients', clientsCtrl.getClients)
-router.get('/clients/:id', clientsCtrl.getClient)
-router.get('/admin/clients/:id', clientsCtrl.getAdminClient)
-router.get('/clients/user_client/:id', clientsCtrl.getUserClient)
-router.post('/clients/add', clientsCtrl.addClient)
-router.put('/clients/:id', clientsCtrl.editClient);
-router.delete('/clients/:id', clientsCtrl.deleteClient);
-router.post('/clients/addLogo/:id', upload, clientsCtrl.addLogo);
-router.post('/clients/importAll', clientsCtrl.importAllClients)
-
-router.post('/clients/contrats', clientsCtrl.addContrat)
-router.put('/clients/contrats/:id', clientsCtrl.editContrat)
-router.delete('/clients/contrats/:id', clientsCtrl.deleteContrat)
-router.get('/clients/contrats/:id', clientsCtrl.getContrats)
-router.post('/clients/country', clientsCtrl.addCountry)
-router.delete('/clients/countries/:id', clientsCtrl.deleteCountry)
-router.get('/clients/countries/:id', clientsCtrl.getCountries)
-router.post('/clients/region', clientsCtrl.addRegion)
-router.delete('/clients/regions/:id', clientsCtrl.deleteRegion)
-router.get('/initRegions/:id', clientsCtrl.initRegions)
-router.get('/getClientByName/:name', clientsCtrl.getClientByName)
-
-// sinistres
-router.get('/sinistresAdminManager', sinistresCtrl.getSinisAdminManger)
-router.get('/sinistres', sinistresCtrl.getSinistres)
-router.get('/sinis/:id', sinistresCtrl.getSinis)
-router.get('/sinistres/:id', sinistresCtrl.getSinistre)
-router.post('/sinistres/add', sinistresCtrl.addSinistre)
-router.delete('/sinistres/:id', sinistresCtrl.deleteSinistre)
-router.delete('/sinistres/', sinistresCtrl.deleteAll)
-router.put('/sinistres/:id', sinistresCtrl.editSinistre);
-router.get('/decSinistres', sinistresCtrl.getDecSinistres)
-router.delete('/decSinistres/:id', sinistresCtrl.deleteDecSinistre)
-router.post('/sinistres/import', upload, sinistresCtrl.importExcel)
-router.post('/sinistres/filtre', sinistresCtrl.getFiltredData)
-router.get('/reparer', sinistresCtrl.reparerDateFormat)
-router.post('/sinistres/etape3/:id', sinistresCtrl.saveDocuments)
-// router.put('/sinistres/documents/:id', sinistresCtrl.editDocuments);
-
-// admins
-router.get('/admins', adminsCtrl.getAdmins)
-router.get('/admins/sinistres/:id', adminsCtrl.getAdminSinistres)
-router.get('/admins/clients/:id', adminsCtrl.getAdminClients)
-router.get('/admins/saClients/:id', adminsCtrl.getSaClients)
-router.post('/admins/add', adminsCtrl.createAdmin)
-router.put('/admins/:id', adminsCtrl.editAdmin);
-router.post('/admins/addClient', adminsCtrl.addClient)
-// admins
-router.get('/chauffeurs', chauffeurCtrl.getChauffeurs)
-router.get('/chauffeurs/user/:id', chauffeurCtrl.getUserChauffeurs)
-router.get('/chauffeurs/export/:id', chauffeurCtrl.getToExport)
-router.get('/chauffeurs/:id', chauffeurCtrl.getChauffeur)
-router.post('/chauffeurs/add', chauffeurCtrl.addChauffeur)
-router.put('/chauffeurs/:id', chauffeurCtrl.editChauffeur)
-router.delete('/chauffeurs/:id', chauffeurCtrl.deleteChauffeur)
-router.post('/chauffeurs/import', upload, chauffeurCtrl.importChauffeurs)
-// societes
-router.get('/societes', societesCtrl.getSocietes)
-router.get('/societes/:id', societesCtrl.getSociete)
-router.post('/UserSocietesByRegion', societesCtrl.getSocietesByUserId)
-router.get('/countries/:id', societesCtrl.getCountry)
-router.post('/societes/add', societesCtrl.addSociete)
-router.put('/societes/:id', societesCtrl.editSociete);
-router.delete('/societes/:id', societesCtrl.deleteSociete);
-// router.post('/societes/contrats', societesCtrl.addContrat)
-// router.delete('/societes/contrats/:id', societesCtrl.deleteContrat)
-// router.get('/societes/contrats/:id', societesCtrl.getContrats)
-router.get('/countries', societesCtrl.getCountries)
-router.get('/regions', societesCtrl.getRegions)
-router.post('/societes/filtre', societesCtrl.getFiltredData)
-
-// managers
-router.get('/manager/sinistres/:id', managersCtrl.getManagerSinistres)
-router.get('/managers', managersCtrl.getManagers)
-router.get('/managers/:id', managersCtrl.getManager)
-router.get('/managers/userManagers/:id', managersCtrl.getUserManagers)
-router.post('/managers/add', managersCtrl.createManager)
-router.post('/managers/connetSocietes', managersCtrl.connectSocietes)
-router.put('/managers/edit/:id', managersCtrl.editManager);
-router.delete('/managers/:id', managersCtrl.deleteManager);
-
-// sites
-router.get('/sites', sitesCtrl.getSites)
-router.get('/sites/bySoiciete/:id', sitesCtrl.getSitesBySocieteId)
-router.get('/sites/byRegion/:id', sitesCtrl.getSitesByRegionID)
-router.get('/sites/byName/:name', sitesCtrl.getSiteByName)
-router.get('/sites/:id', sitesCtrl.getSite)
-router.get('/sites/user/:id', sitesCtrl.getUserSites)
-router.post('/sites/add', sitesCtrl.createSite)
-router.post('/sites/coonetSocietes', sitesCtrl.connectSites)
-router.put('/sites/edit/:id', sitesCtrl.editSite);
-router.delete('/sites/:id', sitesCtrl.deleteSite);
-//regions
-
-// Objectives
-router.post('/objectifs/manager/:id', objectiveCtrl.getManagerAll)
-router.post('/objectifs/getAll', objectiveCtrl.getAll)
-router.post('/objectifs/getByName', objectiveCtrl.getByName)
-router.post('/objectifs/add', objectiveCtrl.addObjective)
-router.delete('/objectifs/:id', objectiveCtrl.deleteObjective)
-router.post('/objectifs/filter', objectiveCtrl.getFiltred)
-// router.put('/objectives/up', objectiveCtrl.upObjective);
-// router.delete('/objectives/:id', sitesCtrl.deleteSite);
-
-// migrate
-// router.get('/sinis', migrateCtrl.getSinistres)
-// router.get('/migrateSinis', migrateCtrl.addSinistres)
-// router.get('/migrateUsers', migrateCtrl.createUsers)
-// router.get('/admins', migrateCtrl.getAdmins)
-// router.get('/migrateAdmins', migrateCtrl.createAdmins)
-// router.get('/manags', migrateCtrl.getManagers)
-// post-sinistres
-router.get('/postSinistres', postSinistreCtrl.getEPS)
-router.post('/getUserEpsList', postSinistreCtrl.getUserEpsList)
-router.post('/postSinistres/add', postSinistreCtrl.addEPS)
-router.put('/postSinistres/:id', postSinistreCtrl.upEPS)
-router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
 /**
  * @swagger
  * tags:
@@ -180,9 +38,10 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  */
 
 
-/** 
+
+/**
  * @swagger
- *  /api/fleetrisk/signup:
+ *  /users/add:
  *    post:
  *      tags: [FleetRisk signup]
  *      summary: À exécuter une seule fois pour la création du compte
@@ -262,19 +121,9 @@ router.delete('/postSinistres/:id', postSinistreCtrl.deleteEPS)
  *                    type: string
  *                    example: Erreur interne du serveur, veuillez réessayer plus tard
  */
-router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     BearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *       description: Ajouter ici votre token pour acceder au API
- */
-
+router.post('/users/add', userCtrl.createUser);
+// router.post('/fleetrisk/signup', fleetriskCtrl.register);
 /**
  * @swagger
  * tags:
@@ -286,7 +135,7 @@ router.post('/fleetrisk/signup', fleetriskCtrl.register);
 
 /** 
  * @swagger
- *  /api/fleetrisk/login:
+ *  /users/login:
  *    post:
  *      tags: [FleetRisk login]
  *      summary: À exécuter pour générer le token
@@ -344,7 +193,21 @@ router.post('/fleetrisk/signup', fleetriskCtrl.register);
  *                  message:
  *                    type: string
  */
-router.post('/fleetrisk/login', fleetriskCtrl.login)
+
+
+router.post('/users/login', userCtrl.login)
+// router.post('/fleetrisk/login', fleetriskCtrl.login)
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *       description: Ajouter ici votre token pour acceder au API
+ */
 
 /**
  * @swagger
@@ -357,7 +220,7 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
 
 /**
  * @swagger
- * /api/fleetrisk/dashbord:
+ * /dashbord:
  *   post:
  *     summary: Obtenez les graphiques du tableau de bord FleetRisk
  *     description: Récupère les données graphiques pour le tableau de bord FleetRisk.
@@ -513,7 +376,6 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *                     charge:
  *                       description: Nombre sinistres Responsable/Non responsable/Responsabilité Partagée et charges réelles correspondante  en €
  *                     %:
- *                       description: Nombre sinistres Responsable/Non responsable/Responsabilité Partagée en %.
  *                 "Jour de la semaine vs Responsabilité":
  *                   description: Mix responsabilité par jour de survenance sur une année (le jeudi 80% des sinistres responsable et 20% non responsable)
  *                   type: object
@@ -681,362 +543,76 @@ router.post('/fleetrisk/login', fleetriskCtrl.login)
  *       500:
  *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
  */
-router.post('/fleetrisk/dashbord', cache, fleetriskAuth, fleetriskCtrl.getGraphs);
 
-/**
- * @swagger
- * tags:
- *   name: FleetRisk sinistres
- *   description: table sinistres
- *   order: 4
+router.post('/dashbord', fleetriskAuth, fleetriskCtrl.getGraphs);
+// router.get('/admins', fleetriskCtrl.getAdmins)
+// router.delete('/delete-admins', fleetriskCtrl.deleteAdmins)
 
- */
-/**
- * @swagger
- * /api/fleetrisk/sinistres:
- *   post:
- *     summary: Obtenez les sinistres du tableau de bord FleetRisk
- *     description: Récupère les données sinistres pour le tableau de bord FleetRisk.
- *     tags: [FleetRisk sinistres]
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               all:
- *                 type: boolean
- *                 description: Si valeur true, obtenir tous les sinistres de fleetrisk sinon appliquer le filtre
- *               annee:
- *                 type: string
- *                 description: Année (facultatif)
- *               region:
- *                 type: string
- *                 description: Nom de la région (facultatif, non sensible à la casse)
- *                 example: ILE_DE_FRANCE
- *               societe:
- *                 type: string
- *                 description: Nom de la société (facultatif, non sensible à la casse)
- *                 example: PRIMEVER SERVICES
- *               site:
- *                 type: string
- *                 description: Nom du site (facultatif, non sensible à la casse)
- *                 example: PTSO (MERLE)
- *             example:
- *               all: false
- *               annee: "2023"
- *               region: null
- *               societe: null
- *               site: null
- *     responses:
- *       200:
- *         description: Succès. Renvoie les données sinistres pour le tableau de bord FleetRisk.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   NUMERO_CLIENT:
- *                     type: string
- *                   DOSSIER:
- *                     type: integer
- *                   DOSSIER_CLIENT:
- *                     type: string
- *                   ANNEE:
- *                     type: string
- *                   ASSUREUR:
- *                     type: string
- *                   NUMERO_CONTRAT:
- *                     type: string
- *                   AMIABLE:
- *                     type: string
- *                   REF_SINISTRE_ASUREUR:
- *                     type: string
- *                   DATE_RECEPTION:
- *                     type: string
- *                   DATE_SURVENANCE:
- *                     type: string
- *                   HEURE:
- *                     type: string
- *                   CAS:
- *                     type: string
- *                   LIEU_SINISTRE:
- *                     type: string
- *                   REGION:
- *                     type: string
- *                   SOCIETE:
- *                     type: string
- *                   SITE:
- *                     type: string
- *                   TYPE_VEHICULE:
- *                     type: string
- *                   IMMATRICULATION:
- *                     type: string
- *                   MARQUE:
- *                     type: string
- *                   PREMIERE_MEC:
- *                     type: string
- *                   PERTE_FI:
- *                     type: string
- *                   CONDUCTEUR:
- *                     type: string
- *                   POURCENTAGE_RC:
- *                     type: string
- *                   CAS_IDA:
- *                     type: string
- *                   NATURE:
- *                     type: string
- *                   CIRCONSTANCE:
- *                     type: string
- *                   DOMMAGES:
- *                     type: string
- *                   DOMMAGES_SAISIE8_LIBRE:
- *                     type: string
- *                   ASSUREUR_ADV:
- *                     type: string
- *                   CONVENTION:
- *                     type: string
- *                   FRANCHISE:
- *                     type: string
- *                   MONTANT_DOM:
- *                     type: string
- *                   DATE_MISSIONNEMENT:
- *                     type: string
- *                   LIEU_EXPERTISE:
- *                     type: string
- *                   DATE_EXPERTISE:
- *                     type: string
- *                   DATE_PRE_RAPPORT:
- *                     type: string
- *                   REF_EXPERTISE:
- *                     type: string
- *                   DATE_RAPPORT_DEFINITIF:
- *                     type: string
- *                   COUT_EXPERT:
- *                     type: string
- *                   REPARATION:
- *                     type: string
- *                   CESSION_EPAVE:
- *                     type: string
- *                   MONTANT_RECOURS:
- *                     type: string
- *                   PIECES_MANQUANTES:
- *                     type: string
- *                   DETAIL_PIECES_MANQUANTES:
- *                     type: string
- *                   DATE_RELANCE_PIECES_MANQUANTES:
- *                     type: string
- *                   CONSTAT_ORIGINAL:
- *                     type: string
- *                   DATE_CLOTURE:
- *                     type: string
- *                   CHARGE_PROVISIONNELLE_ASSUREUR:
- *                     type: string
- *                   CHARGE_REELLE:
- *                     type: string
- *                   ETAT:
- *                     type: string
- *                   CHARGE_AJUSTEE:
- *                     type: string
- *                   COMMENTAIRES:
- *                     type: string
- *             example: 
- *                 - NUMERO_CLIENT: "1"
- *                   DOSSIER: 10252
- *                   DOSSIER_CLIENT: "20230228-01"
- *                   ANNEE: "2023"
- *                   ASSUREUR: "AXA"
- *                   NUMERO_CONTRAT: "6969812304"
- *                   AMIABLE: "oui"
- *                   REF_SINISTRE_ASUREUR: ""
- *                   DATE_RECEPTION: "20-03-2023"
- *                   DATE_SURVENANCE: "28-02-2023"
- *                   HEURE: "Aucun"
- *                   CAS: "Manoeuvre"
- *                   LIEU_SINISTRE: "FOISSY SUR VANNE"
- *                   REGION: "ILE DE FRANCE"
- *                   SOCIETE: "PRIMEVER TROYES"
- *                   SITE: "TROYES"
- *                   TYPE_VEHICULE: "TRR"
- *                   IMMATRICULATION: "GB-982-VK"
- *                   MARQUE: "VOLVO"
- *                   PREMIERE_MEC: "16-09-2021"
- *                   PERTE_FI: "oui"
- *                   CONDUCTEUR: "SAKHI SIDI"
- *                   POURCENTAGE_RC: "100"
- *                   CAS_IDA: ""
- *                   NATURE: "NON AUTO"
- *                   CIRCONSTANCE: "Notre assuré recule dans le mur du quai"
- *                   DOMMAGES: ""
- *                   DOMMAGES_SAISIE8_LIBRE: ""
- *                   ASSUREUR_ADV: "groupama"
- *                   CONVENTION: ""
- *                   FRANCHISE: ""
- *                   MONTANT_DOM: ""
- *                   DATE_MISSIONNEMENT: ""
- *                   LIEU_EXPERTISE: ""
- *                   DATE_EXPERTISE: ""
- *                   DATE_PRE_RAPPORT: ""
- *                   REF_EXPERTISE: ""
- *                   DATE_RAPPORT_DEFINITIF: ""
- *                   COUT_EXPERT: ""
- *                   REPARATION: ""
- *                   CESSION_EPAVE: ""
- *                   MONTANT_RECOURS: ""
- *                   PIECES_MANQUANTES: ""
- *                   DETAIL_PIECES_MANQUANTES: ""
- *                   DATE_RELANCE_PIECES_MANQUANTES: ""
- *                   CONSTAT_ORIGINAL: ""
- *                   DATE_CLOTURE: ""
- *                   CHARGE_PROVISIONNELLE_ASSUREUR: ""
- *                   CHARGE_REELLE: ""
- *                   ETAT: "Clos"
- *                   CHARGE_AJUSTEE: ""
- *                   COMMENTAIRES: "convocation à Expertise contradictoire annulée AMIABLE ABOUTI Charge sinistre 2735,16€"
- *       401:
- *         description: Non autorisé. L'utilisateur doit être authentifié avec un jeton JWT.
- *       404:
- *         description: Ressource non trouvée. Les données du tableau de bord n'ont pas pu être récupérées.
- *       500:
- *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
- */
-
-router.post('/fleetrisk/sinistres',cache, fleetriskCtrl.getSinistres)
-
-// objectifs
-
-
-/**
- * @swagger
- * /api/fleetrisk/objectives:
- *   post:
- *     summary: Obtenez les objectifs du tableau de bord FleetRisk
- *     description: Récupère les données objectifs pour le tableau de bord FleetRisk.
- *     tags: [FleetRisk Objectifs]
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       200:
- *         description: Succès. Renvoie les objectifs du tableau de bord FleetRisk.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     description: L'identifiant unique de l'objectif.
- *                   value:
- *                     type: string
- *                     description: La valeur de l'objectif.
- *                   year:
- *                     type: string
- *                     description: L'année de l'objectif.
- *                   current:
- *                     type: boolean
- *                     description: Indique si l'objectif est celui en cours.
- *                   contratId:
- *                     type: integer
- *                     nullable: true
- *                     description: L'identifiant du contrat associé à l'objectif .
- *                   ClientID:
- *                     type: integer
- *                     description: L'identifiant du client associé à l'objectif.
- *                   SocieteID:
- *                     type: integer
- *                     nullable: true
- *                     description: L'identifiant de la société associée à l'objectif .
- *                   regionId:
- *                     type: integer
- *                     nullable: true
- *                     description: L'identifiant de la région associée à l'objectif .
- *                   siteId:
- *                     type: integer
- *                     nullable: true
- *                     description: L'identifiant du site associé à l'objectif .
- *             example: 
- *              [
- *                {
- *                  "id": 13,
- *                  "value": "1179797",
- *                  "year": "2023",
- *                  "current": true,
- *                  "contratId": null,
- *                  "ClientID": 1,
- *                  "SocieteID": null,
- *                  "regionId": null,
- *                  "siteId": null
- *                },
- *                {
- *                  "id": 37,
- *                  "value": "831709",
- *                  "year": "2022",
- *                  "current": false,
- *                  "contratId": null,
- *                  "ClientID": 1,
- *                  "SocieteID": null,
- *                  "regionId": null,
- *                  "siteId": null
- *                },
- *                {
- *                  "id": 55,
- *                  "value": "795682",
- *                  "year": "2020",
- *                  "current": false,
- *                  "contratId": null,
- *                  "ClientID": 1,
- *                  "SocieteID": null,
- *                  "regionId": null,
- *                  "siteId": null
- *                },
- *                {
- *                  "id": 56,
- *                  "value": "800901",
- *                  "year": "2021",
- *                  "current": false,
- *                  "contratId": null,
- *                  "ClientID": 1,
- *                  "SocieteID": null,
- *                  "regionId": null,
- *                  "siteId": null
- *                },
- *                {
- *                  "id": 93,
- *                  "value": "1216491",
- *                  "year": "2024",
- *                  "current": true,
- *                  "contratId": null,
- *                  "ClientID": 1,
- *                  "SocieteID": null,
- *                  "regionId": null,
- *                  "siteId": null
- *                }
- *              ]
- *       401:
- *         description: Non autorisé. L'utilisateur doit être authentifié avec un jeton JWT.
- *       404:
- *         description: Ressource non trouvée. Les données du tableau de bord n'ont pas pu être récupérées.
- *       500:
- *         description: Erreur interne du serveur. Veuillez réessayer ultérieurement.
- */
-
-router.post('/fleetrisk/objectives', cache, fleetriskCtrl.getObjectives)
-
-
-// router.get('/fleetrisk/sinistres', fleetriskCtrl.getSinistres)
-router.post('/fleetrisk/dashbord', fleetriskAuth, cache, fleetriskCtrl.getGraphs);
-router.get('/fleetrisk/admins', cache, fleetriskCtrl.getAdmins)
-router.get('/fleetrisk/sinistres', cache, fleetriskCtrl.getSinistres)
-router.delete('/fleetrisk/delete-admins', fleetriskCtrl.deleteAdmins)
-
-
+// /**
+//  * @swagger
+//  *  /user/refresh:
+//  *    post:
+//  *      tags: [Refresh token]
+//  *      summary: Utiliser pour générer un nouveau token à partir de celui expiré, le token expire après 8 heures
+//  *      requestBody:
+//  *        required: true
+//  *        content:
+//  *          application/json:
+//  *            schema:
+//  *              type: object
+//  *              properties:
+//  *                user:
+//  *                  type: object
+//  *                  properties:
+//  *                    token:
+//  *                      type: string
+//  *                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+//  *              example:
+//  *                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjksImVtYWlsIjoiYXBpLmFkbWluQGZsZWV0cmlzay5mciIsInJvbGUiOiJjbGllbnRfYWRtaW4iLCJleHBpcmVzSW4iOjM2MDAwLCJpYXQiOjE3MDg2NDg1NTl9.-mYuOqe6vhQXvqwuuOTyOgPUrwBBWbL9KxlUhdQGmjU"
+//  *      produces:
+//  *        - application/json
+//  *      responses:
+//  *        200:
+//  *          description: Inscription réussie
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: success
+//  *                  message:
+//  *                    type: string
+//  *                    example: Token généré avec succès
+//  *        400:
+//  *          description: Requête incorrecte - Entrée invalide
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: error
+//  *                  message:
+//  *                    type: string
+//  *                    example: Token non valide !
+//  *        500:
+//  *          description: Erreur interne du serveur
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                type: object
+//  *                properties:
+//  *                  status:
+//  *                    type: string
+//  *                    example: error
+//  *                  message:
+//  *                    type: string
+//  *                    example: Erreur interne du serveur, veuillez réessayer plus tard
+//  */
+router.post('/user/refresh', userCtrl.refreshUser)
 
 /*
 async function main() {
